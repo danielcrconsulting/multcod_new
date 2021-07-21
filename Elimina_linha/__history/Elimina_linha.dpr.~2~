@@ -1,0 +1,14 @@
+program Elimina_linha;
+
+uses
+  Vcl.Forms,
+  UElimina_linha in 'UElimina_linha.pas' {frmPrincipal};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TfrmPrincipal, frmPrincipal);
+  Application.Run;
+end.

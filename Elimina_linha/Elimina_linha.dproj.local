@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2021/07/01 14:14:22.000.022,=C:\Users\luciano.maranho\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2021/07/01 14:15:14.000.367,C:\delphi\Elimina_linha\UElimina_linha.pas=C:\Users\luciano.maranho\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2021/07/01 14:15:14.000.367,C:\delphi\Elimina_linha\UElimina_linha.dfm=C:\Users\luciano.maranho\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2021/07/01 14:15:29.000.079,C:\delphi\Elimina_linha\Elimina_linha.dproj=C:\Users\luciano.maranho\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,102 @@
+unit UMetodosServer;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, ClientClassesUnit2,System.NetEncoding,
+    Datasnap.DSClientRest, System.IniFiles;
+
+type
+  clsMetodosServer = class
+  private
+    DSRestConnection1: TDSRestConnection;
+    FInstanceOwner: Boolean;
+    FServerMethodsPrincipalClient: TServerMethods1Client;
+
+    function GetServerMethodsPrincipalClient: TServerMethods1Client;
+
+    { Private declarations }
+  public
+    fCaminhoINI : String;
+
+    constructor Create(AOwner: TComponent);
+    destructor Destroy; override;
+    procedure Configurar;
+    procedure ConfigurarPedido;
+    procedure ConfigurarPedido_Cont;
+
+    function TestarConnect(var ErrorMsg: String): Boolean;
+    function RetornarConexao: String;
+
+    property InstanceOwner: Boolean read FInstanceOwner write FInstanceOwner;
+    property ServerMethodsPrincipalClient: TServerMethods1Client read GetServerMethodsPrincipalClient write FServerMethodsPrincipalClient;
+    property CaminhoINI           : String   read fCaminhoINI            write fCaminhoINI;
+
+end;
+
+implementation
+
+procedure clsMetodosServer.Configurar;
+var
+  ArquivoINI: TIniFile;
+begin
+  try
+    if FileExists(GetCurrentDir + '/conf.ini') then
+    begin
+      ArquivoINI := TIniFile.Create(fCaminhoINI + 'UniWEB.ini');
+      DSRestConnection1.Host := TEncoding.ANSI.GetString(TNetEncoding.Base64.DecodeStringToBytes(ArquivoINI.ReadString('CLIENT','HOST','')));
+      DSRestConnection1.Port := clsBasica.ConverterStrToInt(TEncoding.ANSI.GetString(TNetEncoding.Base64.DecodeStringToBytes(ArquivoINI.ReadString('CLIENT','PORT',''))));
+      DSRestConnection1.Username := 'forcauniversal';
+      DSRestConnection1.Password := 'univ#2021';
+    end;
+  except
+    on e: exception do begin
+      raise Exception.Create('Erro ao configurar: ' + e.Message);
+    end;
+  end;
+end;
+
+
+function clsMetodosServer.TestarConnect(var ErrorMsg: String): Boolean;
+var
+  returned: String;
+begin
+  Result := True;
+  try
+    DSRestConnection1.TestConnection([toNoLoginPrompt]);
+  except
+  on e: exception do
+    begin
+      Result := False;
+      ErrorMsg := e.Message;
+    end
+  end;
+end;
+
+constructor clsMetodosServer.Create(AOwner: TComponent);
+begin
+  FInstanceOwner := True;
+  DSRestConnection1 := TDSRestConnection.Create(nil);
+end;
+
+destructor clsMetodosServer.Destroy;
+begin
+  FServerMethodsPrincipalClient := nil;
+  FServerMethodsPrincipalClient.DisposeOf;
+  inherited;
+end;
+
+function clsMetodosServer.GetServerMethodsPrincipalClient: TServerMethods1Client;
+begin
+  if FServerMethodsPrincipalClient = nil then
+    FServerMethodsPrincipalClient:= TServerMethods1Client.Create(DSRestConnection1, FInstanceOwner);
+  Result := FServerMethodsPrincipalClient;
+end;
+
+function clsMetodosServer.RetornarConexao: String;
+begin
+  Result := DSRestConnection1.Connection;
+end;
+
+end.
+
