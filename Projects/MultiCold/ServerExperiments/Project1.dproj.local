@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2016/09/29 18:19:08.115,=C:\Users\Romero\Documents\RAD Studio\Projects\WebModuleUnit1.pas</Transaction>
+    <Transaction>2016/09/29 18:19:57.686,=C:\Users\Romero\Documents\RAD Studio\Projects\MultiColdServerImpl.pas</Transaction>
+    <Transaction>2016/09/29 18:19:57.722,=C:\Users\Romero\Documents\RAD Studio\Projects\MultiColdServerIntf.pas</Transaction>
+    <Transaction>2016/09/29 18:22:06.669,C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\ServerExperiments\WebModuleUnit1.pas=C:\Users\Romero\Documents\RAD Studio\Projects\WebModuleUnit1.pas</Transaction>
+    <Transaction>2016/09/29 18:22:06.669,C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\ServerExperiments\WebModuleUnit1.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\WebModuleUnit1.dfm</Transaction>
+    <Transaction>2016/09/29 18:22:10.912,C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\ServerExperiments\MultiColdServerImpl.pas=C:\Users\Romero\Documents\RAD Studio\Projects\MultiColdServerImpl.pas</Transaction>
+    <Transaction>2016/09/29 18:22:12.969,C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\ServerExperiments\MultiColdServerIntf.pas=C:\Users\Romero\Documents\RAD Studio\Projects\MultiColdServerIntf.pas</Transaction>
+    <Transaction>2016/09/29 18:22:14.994,C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\ServerExperiments\Project1.dproj=C:\Users\Romero\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

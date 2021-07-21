@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2013/05/14 04:44:30.000.577,=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2013/05/14 04:44:48.000.339,=C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\MultiCold\IMulticoldServer1.pas</Transaction>
+    <Transaction>2013/05/14 04:49:30.000.027,C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\MultiCold\Temp\Unit1.pas=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2013/05/14 04:49:30.000.027,C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\MultiCold\Temp\Unit1.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2013/05/14 04:49:39.000.118,C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\MultiCold\Temp\Project1.dproj=C:\Users\Romero\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

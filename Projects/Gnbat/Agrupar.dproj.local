@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2018/01/24 17:53:36.000.053,=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/01/24 17:58:44.000.178,C:\Users\Romero\Documents\RAD Studio\Projects\Gnbat\Agrupa.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2018/01/24 17:58:44.000.178,C:\Users\Romero\Documents\RAD Studio\Projects\Gnbat\Agrupa.pas=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2018/01/24 17:59:50.000.704,C:\Users\Romero\Documents\RAD Studio\Projects\Gnbat\Agrupar.dproj=C:\Users\Romero\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2018/01/26 02:44:54.000.488,=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\Subrug.pas</Transaction>
+    <Transaction>2018/01/26 02:45:12.000.920,=C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\Pilha.pas</Transaction>
+    <Transaction>2018/01/26 02:45:34.000.951,=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\SuTypGer.pas</Transaction>
+  </Transactions>
+</BorlandProject>

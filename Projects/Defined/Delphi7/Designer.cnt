@@ -1,0 +1,15 @@
+:Base Designer.hlp
+:Title Form Designer Reference
+1 Form Designer Quick Reference
+2 About=Welcome_to_Defined_Forms
+2 File Formats=File_Formats
+2 Form Object Classes
+3 TDFForm Class=TDFForm_Class
+3 TDFPage Class=TDFPage_Class
+3 TDFObject Class=TDFObject_Class
+3 TDFLine Class=TDFLine_Class
+3 TDFFrame Class=TDFFrame_Class
+3 TDFLogo Class=TDFLogo_Class
+3 TDFButton Class=TDFButton_Class
+3 TDFText Class=TDFText_Class
+3 TDFField Class=TDFField_Class

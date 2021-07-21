@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2018/06/05 03:16:52.000.764,=C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\Unit1.pas</Transaction>
+    <Transaction>2018/06/05 03:17:26.000.230,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\Unit1.pas=C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\DataModuleFormUnit.pas</Transaction>
+    <Transaction>2018/06/05 03:17:26.000.230,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\Unit1.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\DataModuleFormUnit.dfm</Transaction>
+    <Transaction>2018/06/05 04:52:11.000.730,=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\Subrug.pas</Transaction>
+    <Transaction>2018/06/05 04:53:14.000.892,=C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\Pilha.pas</Transaction>
+    <Transaction>2018/06/05 04:53:41.000.909,=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\SuTypGer.pas</Transaction>
+    <Transaction>2018/06/14 10:05:48.000.033,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\FileHandles.pas=</Transaction>
+    <Transaction>2018/07/05 14:29:34.000.357,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\PedeAlteração_.pas=</Transaction>
+    <Transaction>2018/07/05 14:29:48.000.346,=C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\Unit1.pas</Transaction>
+    <Transaction>2018/07/05 14:32:31.000.368,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\PedeAlteração_.pas=C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\Unit1.pas</Transaction>
+    <Transaction>2018/07/05 14:32:31.000.368,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\PedeAlteração_.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\Unit1.dfm</Transaction>
+    <Transaction>2018/07/05 15:36:18.000.124,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\PedeAlteração_.pas=</Transaction>
+    <Transaction>2018/07/05 15:48:43.000.275,=C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\Unit1.pas</Transaction>
+    <Transaction>2018/07/05 15:49:58.000.120,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\Unit1.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\PedeAlteraca.dfm</Transaction>
+    <Transaction>2018/07/05 15:49:58.000.120,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\Unit1.pas=C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\PedeAlteraca.pas</Transaction>
+    <Transaction>2018/07/08 04:31:07.000.200,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\frmUsuario_.pas=</Transaction>
+    <Transaction>2018/07/08 04:32:45.000.838,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\frmAltUsuario_.pas=</Transaction>
+    <Transaction>2018/07/08 23:03:40.000.734,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\frmConvMes_.pas=</Transaction>
+    <Transaction>2018/07/08 23:55:44.000.153,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\frmBIN_.pas=</Transaction>
+    <Transaction>2018/07/09 23:32:24.000.841,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\GrupoCon_.pas=</Transaction>
+    <Transaction>2018/07/09 23:32:44.000.472,C:\Users\Romero\Documents\RAD Studio\Projects\SisCoc\GrupoConAlt_.pas=</Transaction>
+  </Transactions>
+</BorlandProject>

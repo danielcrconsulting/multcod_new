@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2015/07/16 00:30:17.000.582,=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/07/16 00:31:40.000.178,C:\Users\Romero\Documents\RAD Studio\Projects\Qg\PdfUnit1.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2015/07/16 00:31:40.000.178,C:\Users\Romero\Documents\RAD Studio\Projects\Qg\PdfUnit1.pas=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/07/16 00:32:03.000.355,C:\Users\Romero\Documents\RAD Studio\Projects\Qg\Pdf.dproj=C:\Users\Romero\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2015/07/16 00:38:00.000.587,=C:\Program Files (x86)\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win32\DebenuPDFLibrary.pas</Transaction>
+    <Transaction>2015/07/20 18:28:58.000.525,=C:\Users\Romero\Documents\RAD Studio\Projects\PDF\Debenu\QPLDelphiDemoMainForm.pas</Transaction>
+    <Transaction>2015/07/20 18:29:58.000.366,C:\Program Files (x86)\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win32\DebenuPDFLibrary.pas=</Transaction>
+    <Transaction>2015/07/20 18:32:02.000.127,=C:\Program Files (x86)\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win32\DebenuPDFLibrary.pas</Transaction>
+    <Transaction>2015/07/28 16:26:39.000.469,C:\Program Files (x86)\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win32\DebenuPDFLibrary.pas=</Transaction>
+    <Transaction>2015/07/28 16:27:02.000.782,=C:\Program Files (x86)\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win64\DebenuPDFLibrary.pas</Transaction>
+    <Transaction>2015/07/28 16:31:14.000.938,C:\Users\Romero\Documents\RAD Studio\Projects\PDF\Debenu\QPLDelphiDemoMainForm.pas=</Transaction>
+    <Transaction>2015/07/28 16:40:36.000.895,C:\Program Files (x86)\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win64\DebenuPDFLibrary.pas=</Transaction>
+    <Transaction>2015/07/28 16:41:51.000.844,=C:\Program Files (x86)\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win64\DebenuPDFLibrary.pas</Transaction>
+    <Transaction>2015/07/28 16:47:32.000.880,C:\Program Files (x86)\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win64\DebenuPDFLibrary.pas=</Transaction>
+    <Transaction>2015/07/28 16:48:05.000.989,=C:\Users\Romero\Documents\RAD Studio\Projects\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win64\DebenuPDFLibrary.pas</Transaction>
+  </Transactions>
+</BorlandProject>
