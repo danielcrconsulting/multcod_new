@@ -1,0 +1,72 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{B43C6689-492F-443F-B57D-C194EFFE6C3A}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="SOAP\MulticoldServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="StandAlone\MulticoldStandAlone.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="MulticoldReportTest\MulticoldReportTest.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ProcessadorExtrator\ProcessadorExtrator.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="MulticoldServer">
+        <MSBuild Projects="SOAP\MulticoldServer.dproj"/>
+    </Target>
+    <Target Name="MulticoldServer:Clean">
+        <MSBuild Projects="SOAP\MulticoldServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MulticoldServer:Make">
+        <MSBuild Projects="SOAP\MulticoldServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MulticoldStandAlone">
+        <MSBuild Projects="StandAlone\MulticoldStandAlone.dproj"/>
+    </Target>
+    <Target Name="MulticoldStandAlone:Clean">
+        <MSBuild Projects="StandAlone\MulticoldStandAlone.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MulticoldStandAlone:Make">
+        <MSBuild Projects="StandAlone\MulticoldStandAlone.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MulticoldReportTest">
+        <MSBuild Projects="MulticoldReportTest\MulticoldReportTest.dproj"/>
+    </Target>
+    <Target Name="MulticoldReportTest:Clean">
+        <MSBuild Projects="MulticoldReportTest\MulticoldReportTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MulticoldReportTest:Make">
+        <MSBuild Projects="MulticoldReportTest\MulticoldReportTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ProcessadorExtrator">
+        <MSBuild Projects="ProcessadorExtrator\ProcessadorExtrator.dproj"/>
+    </Target>
+    <Target Name="ProcessadorExtrator:Clean">
+        <MSBuild Projects="ProcessadorExtrator\ProcessadorExtrator.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProcessadorExtrator:Make">
+        <MSBuild Projects="ProcessadorExtrator\ProcessadorExtrator.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="MulticoldServer;MulticoldStandAlone;MulticoldReportTest;ProcessadorExtrator"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="MulticoldServer:Clean;MulticoldStandAlone:Clean;MulticoldReportTest:Clean;ProcessadorExtrator:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="MulticoldServer:Make;MulticoldStandAlone:Make;MulticoldReportTest:Make;ProcessadorExtrator:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

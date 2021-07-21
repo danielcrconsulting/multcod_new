@@ -1,0 +1,262 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Conversor de Arquivos - Tipo 001 - Vers'#227'o 1.0.0.2 06/02/2014'
+  ClientHeight = 514
+  ClientWidth = 801
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [dkDesktop, dkiPhone, dkiPad]
+  OnCreate = FormCreate
+  DesignerMobile = False
+  DesignerWidth = 0
+  DesignerHeight = 0
+  DesignerDeviceName = ''
+  DesignerOrientation = 0
+  object StringGrid3: TStringGrid
+    Height = 217.000000000000000000
+    Position.X = 24.000000000000000000
+    Position.Y = 72.000000000000000000
+    TabOrder = 0
+    Width = 737.000000000000000000
+    RowCount = 100
+    RowHeight = 21.000000000000000000
+    object StringColumn1: TStringColumn
+      Height = 189.000000000000000000
+      TabOrder = 0
+      Width = 100.000000000000000000
+    end
+    object StringColumn2: TStringColumn
+      Height = 189.000000000000000000
+      Position.X = 100.000000000000000000
+      TabOrder = 1
+      Width = 100.000000000000000000
+    end
+    object StringColumn3: TStringColumn
+      Height = 189.000000000000000000
+      Position.X = 200.000000000000000000
+      TabOrder = 2
+      Width = 100.000000000000000000
+    end
+    object StringColumn4: TStringColumn
+      Height = 189.000000000000000000
+      Position.X = 300.000000000000000000
+      TabOrder = 3
+      Width = 100.000000000000000000
+    end
+    object StringColumn5: TStringColumn
+      Height = 189.000000000000000000
+      Position.X = 400.000000000000000000
+      TabOrder = 4
+      Width = 100.000000000000000000
+    end
+    object StringColumn6: TStringColumn
+      Height = 189.000000000000000000
+      Position.X = 500.000000000000000000
+      TabOrder = 5
+      Width = 100.000000000000000000
+    end
+    object StringColumn7: TStringColumn
+      Height = 189.000000000000000000
+      Position.X = 600.000000000000000000
+      TabOrder = 6
+      Width = 100.000000000000000000
+    end
+    object StringColumn8: TStringColumn
+      Height = 189.000000000000000000
+      Position.X = 700.000000000000000000
+      TabOrder = 7
+      Width = 100.000000000000000000
+    end
+    object StringColumn9: TStringColumn
+      Height = 189.000000000000000000
+      Position.X = 800.000000000000000000
+      TabOrder = 8
+      Width = 100.000000000000000000
+    end
+    object StringColumn10: TStringColumn
+      Height = 189.000000000000000000
+      Position.X = 900.000000000000000000
+      TabOrder = 9
+      Width = 100.000000000000000000
+    end
+  end
+  object ButtonAnal: TButton
+    Height = 22.000000000000000000
+    Position.X = 24.000000000000000000
+    Position.Y = 312.000000000000000000
+    TabOrder = 1
+    Text = 'Analisar'
+    Width = 80.000000000000000000
+    OnClick = ButtonAnalClick
+  end
+  object Sair: TButton
+    Height = 22.000000000000000000
+    Position.X = 680.000000000000000000
+    Position.Y = 456.000000000000000000
+    TabOrder = 2
+    Text = 'Sair'
+    Width = 80.000000000000000000
+    OnClick = SairClick
+  end
+  object Label1: TLabel
+    Height = 17.000000000000000000
+    Position.X = 24.000000000000000000
+    Position.Y = 24.000000000000000000
+    Text = 'Arquivo de Entrada:'
+    Width = 105.000000000000000000
+  end
+  object EditArqIn: TEdit
+    TabOrder = 4
+    Position.X = 128.000000000000000000
+    Position.Y = 16.000000000000000000
+    Width = 633.000000000000000000
+    Height = 22.000000000000000000
+    KillFocusByReturn = False
+    OnDblClick = EditArqInDblClick
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 704
+    Top = 336
+  end
+  object Button2: TButton
+    Height = 22.000000000000000000
+    Position.X = 24.000000000000000000
+    Position.Y = 352.000000000000000000
+    TabOrder = 5
+    Text = 'Abrir'
+    Width = 80.000000000000000000
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Height = 22.000000000000000000
+    Position.X = 120.000000000000000000
+    Position.Y = 352.000000000000000000
+    TabOrder = 6
+    Text = 'Salvar'
+    Width = 80.000000000000000000
+    OnClick = Button3Click
+  end
+  object Limpar: TButton
+    Height = 22.000000000000000000
+    Position.X = 216.000000000000000000
+    Position.Y = 352.000000000000000000
+    TabOrder = 7
+    Text = 'Limpar'
+    Width = 80.000000000000000000
+    OnClick = LimparClick
+  end
+  object StringGrid1: TStringGrid
+    Height = 100.000000000000000000
+    Position.X = 384.000000000000000000
+    Position.Y = 144.000000000000000000
+    TabOrder = 8
+    Visible = False
+    Width = 100.000000000000000000
+    RowCount = 100
+    RowHeight = 21.000000000000000000
+    object StringColumn11: TStringColumn
+      Height = 63.000000000000000000
+      TabOrder = 0
+      Width = 100.000000000000000000
+    end
+    object StringColumn12: TStringColumn
+      Height = 63.000000000000000000
+      Position.X = 100.000000000000000000
+      TabOrder = 1
+      Width = 100.000000000000000000
+    end
+  end
+  object StringGrid2: TStringGrid
+    Height = 100.000000000000000000
+    Position.X = 488.000000000000000000
+    Position.Y = 144.000000000000000000
+    TabOrder = 9
+    Visible = False
+    Width = 100.000000000000000000
+    RowCount = 100
+    RowHeight = 21.000000000000000000
+    object StringColumn13: TStringColumn
+      Height = 63.000000000000000000
+      TabOrder = 0
+      Width = 100.000000000000000000
+    end
+    object StringColumn14: TStringColumn
+      Height = 63.000000000000000000
+      Position.X = 100.000000000000000000
+      TabOrder = 1
+      Width = 100.000000000000000000
+    end
+    object StringColumn15: TStringColumn
+      Height = 63.000000000000000000
+      Position.X = 200.000000000000000000
+      TabOrder = 2
+      Width = 100.000000000000000000
+    end
+  end
+  object StringGrid4: TStringGrid
+    Height = 97.000000000000000000
+    Position.X = 592.000000000000000000
+    Position.Y = 144.000000000000000000
+    TabOrder = 10
+    Visible = False
+    Width = 100.000000000000000000
+    RowCount = 100
+    RowHeight = 21.000000000000000000
+    object StringColumn16: TStringColumn
+      Height = 63.000000000000000000
+      TabOrder = 0
+      Width = 100.000000000000000000
+    end
+    object StringColumn17: TStringColumn
+      Height = 63.000000000000000000
+      Position.X = 100.000000000000000000
+      TabOrder = 1
+      Width = 100.000000000000000000
+    end
+    object StringColumn18: TStringColumn
+      Height = 63.000000000000000000
+      Position.X = 200.000000000000000000
+      TabOrder = 2
+      Width = 100.000000000000000000
+    end
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 616
+    Top = 336
+  end
+  object ProgressBar1: TProgressBar
+    Height = 20.000000000000000000
+    Orientation = orHorizontal
+    Position.X = 120.000000000000000000
+    Position.Y = 312.000000000000000000
+    Width = 640.000000000000000000
+  end
+  object Label2: TLabel
+    Height = 17.000000000000000000
+    Position.X = 32.000000000000000000
+    Position.Y = 424.000000000000000000
+    Text = 'Arquivo de Saida:'
+    Width = 97.000000000000000000
+  end
+  object Edit1: TEdit
+    TabOrder = 13
+    Position.X = 128.000000000000000000
+    Position.Y = 416.000000000000000000
+    Width = 633.000000000000000000
+    Height = 22.000000000000000000
+    KillFocusByReturn = False
+  end
+  object CornerButton1: TCornerButton
+    Height = 22.000000000000000000
+    Position.X = 128.000000000000000000
+    Position.Y = 456.000000000000000000
+    Sides = [sdTop, sdLeft, sdBottom, sdRight]
+    TabOrder = 14
+    Text = 'Processar'
+    Width = 169.000000000000000000
+    XRadius = 3.000000000000000000
+    YRadius = 3.000000000000000000
+    OnClick = CornerButton1Click
+  end
+end

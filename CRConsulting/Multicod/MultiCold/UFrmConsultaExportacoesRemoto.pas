@@ -1,0 +1,362 @@
+unit UFrmConsultaExportacoesRemoto;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Datasnap.DBClient, Vcl.Grids,
+  Vcl.DBGrids, Datasnap.Provider, Vcl.StdCtrls, Vcl.Menus, Vcl.ExtCtrls, ADODB,
+  Vcl.ComCtrls, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
+  IdSSLOpenSSL;
+
+type
+  TFrmConsultaExportacoesRemoto = class(TForm)
+    DSProcessadorTemplate: TDataSource;
+    DBGridConsultaExportacao: TDBGrid;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    BtnFechar: TButton;
+    PopupMenuGrid: TPopupMenu;
+    BaixarArquivo1: TMenuItem;
+    AbrirTemplate1: TMenuItem;
+    Label1: TLabel;
+    Bevel1: TBevel;
+    BtnDownload: TButton;
+    Label2: TLabel;
+    LblNomeUsuario: TLabel;
+    BtnAbrirTemplate: TButton;
+    Label3: TLabel;
+    ComboBoxStatus: TComboBox;
+    BtnPesquisar: TButton;
+    Panel3: TPanel;
+    Label4: TLabel;
+    DateTimePickerIni: TDateTimePicker;
+    DateTimePickerFin: TDateTimePicker;
+    CheckBoxData: TCheckBox;
+    SaveDialog1: TSaveDialog;
+    LblStatus: TLabel;
+    procedure BtnFecharClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BtnPesquisarClick(Sender: TObject);
+    procedure BtnAbrirTemplateClick(Sender: TObject);
+    procedure BtnDownloadClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+  strict private
+    { Private declarations }
+    FCodUsuario: String;
+    FUrlBase: String;
+    procedure DownloadFile(aFileName: String);
+  public
+    { Public declarations }
+    procedure SetParameters(codUsuario, urlBase: String);
+  end;
+
+  TMyThreadPathResultEvent = procedure(const APath: string; AResult: Boolean; AStream: TStream) of object;
+  TMyThreadStatusEvent = procedure(const APath, AStr: string) of object;
+
+  TMyThreadWorkBeginEvent = procedure(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64) of object;
+  TMyThreadWorkEvent = procedure(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64) of object;
+  TMyThreadWorkEndEvent = procedure(ASender: TObject; AWorkMode: TWorkMode) of object;
+
+
+  TMyThread = class(TThread)
+  strict private
+    FStream: TFileStream;
+    FUrl, FLocalFile: string;
+    FHTTP: TIdHTTP;
+    FdSSL: TIdSSLIOHandlerSocketOpenSSL;
+
+    fOnPathResult: TMyThreadPathResultEvent;
+    fOnStatus: TMyThreadStatusEvent;
+    FOnWorkBegin: TMyThreadWorkBeginEvent;
+    FOnWork: TMyThreadWorkEvent;
+    FOnWorkEnd: TMyThreadWorkEndEvent;
+
+    procedure PathResult(AResult: Boolean);
+    procedure ShowStatus(const Str: string);
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(const AUrl, ALocalFile: string); reintroduce;
+    Destructor Destroy; override;
+    property OnPathResult: TMyThreadPathResultEvent read fOnPathResult write fOnPathResult;
+    property OnStatus: TMyThreadStatusEvent read fOnStatus write fOnStatus;
+
+    property OnWork: TMyThreadWorkEvent read FOnWork write FOnWork;
+    property OnWorkBegin: TMyThreadWorkBeginEvent read FOnWorkBegin write FOnWorkBegin;
+    property OnWorkEnd: TMyThreadWorkEndEvent read FOnWorkEnd write FOnWorkEnd;
+
+    procedure CancelarDownload;
+
+  end;
+
+var
+  FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto;
+
+implementation
+
+{$R *.dfm}
+
+uses Sugeral, MExtract, UFrmDownloadManager;
+
+
+procedure TFrmConsultaExportacoesRemoto.BtnAbrirTemplateClick(Sender: TObject);
+var
+  sql: String;
+  templateCompactado: AnsiString;
+begin
+  if DSProcessadorTemplate.DataSet.FieldByName('TipoProcessamento').AsInteger = 2 then
+  begin
+    MessageDlg('Só é possível abrir o template para processamento de Extrações.', TMsgDlgType.mtInformation, [mbOk], 0);
+    exit;
+  end;
+
+  FormGeral.ADOQueryTemplate.Close;
+  FormGeral.ADOQueryTemplate.SQL.Clear;
+
+  sql := 'select 	ArquivoTemplateComp from TemplateExportacao ' +
+    ' where Id = :Id' ;
+
+  FormGeral.ADOQueryTemplate.SQL.Clear;
+  FormGeral.ADOQueryTemplate.SQL.Add(sql);
+
+  FormGeral.ADOQueryTemplate.Parameters.ParamValues['Id'] := TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('IdReferencia').AsInteger;
+
+  FormGeral.ADOQueryTemplate.Open;
+  templateCompactado := FormGeral.ADOQueryTemplate.FieldByName('ArquivoTemplateComp').AsString;
+  FormGeral.ADOQueryTemplate.Close;
+
+  FrmExtract.AbrirTemplateCompactado(templateCompactado);
+  FrmExtract.Show;
+
+  Self.Close;
+end;
+
+procedure TFrmConsultaExportacoesRemoto.BtnDownloadClick(Sender: TObject);
+var
+  fullFileName,
+  fileName: String;
+
+begin
+  if TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('StatusProcessamento').AsString = 'S' then
+  begin
+    fullFileName := TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('PathArquivoExportacao').AsString;
+    fileName := ExtractFileName(fullFileName);
+    DownloadFile(fileName);
+  end else
+    MessageDlg('Só é possível baixar o arquivo quando o processamento estiver finalizado.', TMsgDlgType.mtInformation, [mbOk], 0);
+
+end;
+
+procedure TFrmConsultaExportacoesRemoto.BtnFecharClick(Sender: TObject);
+begin
+  Self.Close;
+end;
+
+procedure TFrmConsultaExportacoesRemoto.BtnPesquisarClick(Sender: TObject);
+var
+  sql: String;
+  dataFinal: TDatetime;
+begin
+  DSProcessadorTemplate.DataSet.Close;
+
+  if CheckBoxData.Checked then
+  begin
+    dataFinal :=  DateTimePickerFin.Date;
+    ReplaceTime(dataFinal, EncodeTime(23, 59, 59, 0));
+    sql := 'select top 100 Id,	IdReferencia, PathArquivoExportacao, TipoProcessamento, NomeTemplate, DataCriacao, StatusProcessamento, ' +
+      '	CODUSUARIO from ConsultaProcessamento ' +
+      ' where CODUSUARIO = :CODUSUARIO and StatusProcessamento = :STATUS ' +
+      ' and DataCriacao between ' + QuotedStr(FormatDateTime('yyyy-mm-dd', DateTimePickerIni.Date)) + ' and ' +
+      QuotedStr(FormatDateTime('yyyy-mm-dd hh:nn:ss', dataFinal))+
+      ' order by 1 desc ';
+
+      FormGeral.ADOQueryProcessadorTemplate.SQL.Clear;
+      FormGeral.ADOQueryProcessadorTemplate.SQL.Add(sql);
+  end else
+  begin
+    sql := 'select top 100 Id,	IdReferencia, PathArquivoExportacao, TipoProcessamento, NomeTemplate, DataCriacao, StatusProcessamento, ' +
+      '	CODUSUARIO from ConsultaProcessamento ' +
+      ' where CODUSUARIO = :CODUSUARIO and StatusProcessamento = :STATUS ' +
+      ' order by 1 desc ';
+
+      FormGeral.ADOQueryProcessadorTemplate.SQL.Clear;
+      FormGeral.ADOQueryProcessadorTemplate.SQL.Add(sql);
+  end;
+
+  TClientDataSet(DSProcessadorTemplate.DataSet).ParamByName('CODUSUARIO').AsString := FCodUsuario;
+
+  case ComboBoxStatus.ItemIndex of
+    0: TClientDataSet(DSProcessadorTemplate.DataSet).ParamByName('STATUS').AsString := 'P';
+    1: TClientDataSet(DSProcessadorTemplate.DataSet).ParamByName('STATUS').AsString := 'E';
+    2: TClientDataSet(DSProcessadorTemplate.DataSet).ParamByName('STATUS').AsString := 'S';
+    3: TClientDataSet(DSProcessadorTemplate.DataSet).ParamByName('STATUS').AsString := 'R';
+  end;
+
+  DSProcessadorTemplate.DataSet.Open;
+
+end;
+
+
+procedure TFrmConsultaExportacoesRemoto.DownloadFile(aFileName: String);
+var
+  IdHTTP1: TIdHTTP;
+  Stream: TMemoryStream;
+  Url, FileName: String;
+  i: Integer;
+  Thread: TMyThread;
+  download: TDownload;
+begin
+  Url := FUrlBase + aFileName;
+  Filename := aFileName;
+
+  // DEBUG => Para Testes.
+  // ShowMessage(Url);
+
+  SaveDialog1.FileName := fileName;
+  Cursor := crHourGlass;
+  try
+    if SaveDialog1.Execute then
+    begin
+        try
+          Thread := TMyThread.Create(Url, SaveDialog1.Filename);
+          download := TDownload.Create(Url, SaveDialog1.Filename, Thread);
+
+          Thread.OnPathResult := download.PathResult;
+          Thread.OnStatus := download.ShowStatus;
+          Thread.OnWorkBegin := download.UpdateProgressBegin;
+          Thread.OnWork := download.UpdateProgress;
+          Thread.OnWorkEnd := download.UpdateProgressEnd;
+
+          FrmDownloadManager.Downloads.Add(download);
+
+          Thread.Start;
+        except on E: Exception do
+          messageDlg('Não foi possível encontrar o relatório no servidor!', mtInformation, [mbOK],0);
+        end;
+    end;
+  finally
+    Cursor := crDefault;
+  end;
+
+  Close;
+  FrmDownloadManager.Show;
+  FrmDownloadManager.RefreshList;
+end;
+
+procedure TFrmConsultaExportacoesRemoto.FormActivate(Sender: TObject);
+begin
+  LblNomeUsuario.Caption := FCodUsuario;
+
+  BtnPesquisarClick(Self);
+end;
+
+procedure TFrmConsultaExportacoesRemoto.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  DSProcessadorTemplate.DataSet.Close;
+end;
+
+procedure TFrmConsultaExportacoesRemoto.FormCreate(Sender: TObject);
+begin
+  DateTimePickerIni.DateTime := Now;
+  DateTimePickerFin.DateTime := Now;
+end;
+
+procedure TFrmConsultaExportacoesRemoto.SetParameters(codUsuario,
+  urlBase: String);
+begin
+  FCodUsuario := codUsuario;
+  FUrlBase := urlBase;
+end;
+
+{ TMyThread }
+
+
+procedure TMyThread.CancelarDownload;
+begin
+  FHTTP.Disconnect;
+end;
+
+constructor TMyThread.Create(const AUrl, ALocalFile: string);
+begin
+  inherited Create(True);
+  FreeOnTerminate := True;
+  FUrl := AUrl;
+  FLocalFile := ALocalFile;
+  FStream := TFileStream.Create(ALocalFile, fmCreate);
+end;
+
+destructor TMyThread.Destroy;
+begin
+  FStream.Free;
+  inherited;
+end;
+
+procedure TMyThread.Execute;
+begin
+  ShowStatus('Iniciando download...');
+
+  FHTTP := TIdHTTP.Create(nil);
+  try
+    FHTTP.ReadTimeout := 30000;
+    FHTTP.HandleRedirects := True;
+
+    FdSSL := TIdSSLIOHandlerSocketOpenSSL.Create(FHTTP);
+    FdSSL.SSLOptions.Method := sslvTLSv1;
+    FdSSL.SSLOptions.Mode := sslmClient;
+    FHTTP.IOHandler := FdSSL;
+    FHTTP.OnWorkBegin := FOnWorkBegin;
+    FHTTP.OnWork := FOnWork;
+    FHTTP.OnWorkEnd := FOnWorkEnd;
+
+    ShowStatus('Download em andamento...');
+
+    try
+      FHTTP.Get(FUrl, FStream);
+    except
+      on E: EIdHTTPProtocolException do
+      begin
+        if E.ErrorCode = 404 then
+          PathResult(False)
+        else
+          raise;
+      end;
+    end;
+  finally
+    FHttp.Free;
+  end;
+
+  PathResult(True);
+end;
+
+procedure TMyThread.PathResult(AResult: Boolean);
+begin
+  if Assigned(fOnPathResult) then
+  begin
+    TThread.Synchronize(Self,
+      procedure
+      begin
+        if Assigned(fOnPathResult) then
+          fOnPathResult(FLocalFile, AResult, FStream);
+      end
+    );
+  end;
+end;
+
+procedure TMyThread.ShowStatus(const Str: string);
+begin
+ if Assigned(fOnStatus) then
+  begin
+    TThread.Synchronize(Self,
+      procedure
+      begin
+        if Assigned(fOnStatus) then
+          fOnStatus(FLocalFile, Str);
+      end
+    );
+  end;
+end;
+
+end.

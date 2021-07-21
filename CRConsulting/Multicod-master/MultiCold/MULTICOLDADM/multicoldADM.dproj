@@ -1,0 +1,291 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{E3EAD041-C6A5-4628-B47C-E76C2E6214E5}</ProjectGuid>
+        <MainSource>multicoldADM.dpr</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Release</Config>
+        <TargetedPlatforms>1</TargetedPlatforms>
+        <AppType>Application</AppType>
+        <FrameworkType>VCL</FrameworkType>
+        <ProjectVersion>14.6</ProjectVersion>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <VerInfo_MinorVer>1</VerInfo_MinorVer>
+        <VerInfo_MajorVer>3</VerInfo_MajorVer>
+        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+        <Manifest_File>None</Manifest_File>
+        <VerInfo_Build>13</VerInfo_Build>
+        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;Data.Win;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_S>false</DCC_S>
+        <DCC_K>false</DCC_K>
+        <DCC_F>false</DCC_F>
+        <DCC_N>true</DCC_N>
+        <DCC_ExeOutput>c:\Rom\MultiCold\Origem</DCC_ExeOutput>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1046</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=CR Consulting Serviços de Informática e Participações Ltda.;FileDescription=Módulo administrativo do Multicold;FileVersion=3.1.0.13;InternalName=;LegalCopyright=Copyright 2005 by CR Consulting - All rights reserved.;LegalTrademarks=;OriginalFilename=MulticoldAdm.exe;ProductName=Multicold;ProductVersion=3.0.0.0;Comments=21/02/2014</VerInfo_Keys>
+        <DCC_UsePackage>vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;dclOfficeXP;DEFINEDFORMS_D70;DEFINEDSTREAM_R70;DEFINEDFORMS_R70;halcyon6_d7;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_E>false</DCC_E>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_S>false</DCC_S>
+        <DCC_K>false</DCC_K>
+        <DCC_F>false</DCC_F>
+        <DCC_N>true</DCC_N>
+        <DCC_ExeOutput>c:\Rom\MultiCold\Origem</DCC_ExeOutput>
+        <DCC_E>false</DCC_E>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <Icon_MainIcon>multicoldADM_Icon.ico</Icon_MainIcon>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_DebugInformation>false</DCC_DebugInformation>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_Keys>CompanyName=CR Consulting Serviços de Informática e Participações Ltda.;FileDescription=Módulo administrativo do Multicold;FileVersion=3.1.0.13;InternalName=;LegalCopyright=Copyright 2005 by CR Consulting - All rights reserved.;LegalTrademarks=;OriginalFilename=MulticoldAdm.exe;ProductName=Multicold;ProductVersion=3.0.0.0;Comments=30/06/2014</VerInfo_Keys>
+        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_S>false</DCC_S>
+        <DCC_K>false</DCC_K>
+        <DCC_F>false</DCC_F>
+        <DCC_N>true</DCC_N>
+        <DCC_ExeOutput>c:\Rom\MultiCold\Origem</DCC_ExeOutput>
+        <DCC_E>false</DCC_E>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_S>false</DCC_S>
+        <DCC_K>false</DCC_K>
+        <DCC_F>false</DCC_F>
+        <DCC_N>true</DCC_N>
+        <DCC_ExeOutput>c:\Rom\MultiCold\Origem</DCC_ExeOutput>
+        <DCC_E>false</DCC_E>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_Keys>CompanyName=CR Consulting Serviços de Informática e Participações Ltda.;FileDescription=Módulo administrativo do Multicold;FileVersion=3.1.0.13;InternalName=;LegalCopyright=Copyright 2005 by CR Consulting - All rights reserved.;LegalTrademarks=;OriginalFilename=MulticoldAdm.exe;ProductName=Multicold;ProductVersion=3.0.0.0;Comments=30/06/2014</VerInfo_Keys>
+        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_S>false</DCC_S>
+        <DCC_K>false</DCC_K>
+        <DCC_F>false</DCC_F>
+        <DCC_N>true</DCC_N>
+        <DCC_ExeOutput>c:\Rom\MultiCold\Origem</DCC_ExeOutput>
+        <DCC_E>false</DCC_E>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="principal.pas">
+            <Form>fPrincipal</Form>
+        </DCCReference>
+        <DCCReference Include="mascaraCampos.pas">
+            <Form>fMascaraCampos</Form>
+        </DCCReference>
+        <DCCReference Include="dataModule.pas">
+            <Form>repositorioDeDados</Form>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="mascaraUsuarios.pas">
+            <Form>fMascaraUsuarios</Form>
+        </DCCReference>
+        <DCCReference Include="formGrade.pas">
+            <Form>fGrade</Form>
+        </DCCReference>
+        <DCCReference Include="mapaDeNomes.pas">
+            <Form>fMapaDeNomes</Form>
+        </DCCReference>
+        <DCCReference Include="extrator.pas">
+            <Form>fExtrator</Form>
+        </DCCReference>
+        <DCCReference Include="destinosDfn.pas">
+            <Form>fDestinosDfn</Form>
+        </DCCReference>
+        <DCCReference Include="indicesDfn.pas">
+            <Form>fIndicesDfn</Form>
+        </DCCReference>
+        <DCCReference Include="movtoCD.pas">
+            <Form>fMovtoCD</Form>
+        </DCCReference>
+        <DCCReference Include="gruposAuxAlfaDfn.pas">
+            <Form>fGruposAuxAlfaDfn</Form>
+        </DCCReference>
+        <DCCReference Include="gruposAuxNumDfn.pas">
+            <Form>fGruposAuxNumDfn</Form>
+        </DCCReference>
+        <DCCReference Include="subGruposDfn.pas">
+            <Form>fSubGruposDfn</Form>
+        </DCCReference>
+        <DCCReference Include="gruposDfn.pas">
+            <Form>fGruposDfn</Form>
+        </DCCReference>
+        <DCCReference Include="usuarios.pas">
+            <Form>fUsuarios</Form>
+        </DCCReference>
+        <DCCReference Include="grupoUsuarios.pas">
+            <Form>fGrupoUsuarios</Form>
+        </DCCReference>
+        <DCCReference Include="usuariosEGrupos.pas">
+            <Form>fUsuariosEGrupos</Form>
+        </DCCReference>
+        <DCCReference Include="grupoRel.pas">
+            <Form>fGrupoRel</Form>
+        </DCCReference>
+        <DCCReference Include="usuRel.pas">
+            <Form>fUsuRel</Form>
+        </DCCReference>
+        <DCCReference Include="sistema.pas">
+            <Form>fSistema</Form>
+        </DCCReference>
+        <DCCReference Include="dfn.pas">
+            <Form>fDfn</Form>
+        </DCCReference>
+        <DCCReference Include="fProtocolo.pas">
+            <Form>fProtocol</Form>
+        </DCCReference>
+        <DCCReference Include="login.pas">
+            <Form>fLogin</Form>
+        </DCCReference>
+        <DCCReference Include="programa.pas">
+            <Form>fConfiguracao</Form>
+        </DCCReference>
+        <DCCReference Include="editor.pas">
+            <Form>fEditor</Form>
+        </DCCReference>
+        <DCCReference Include="sisAuto.pas">
+            <Form>fSisAuxDfn</Form>
+        </DCCReference>
+        <DCCReference Include="about.pas">
+            <Form>AboutBox</Form>
+        </DCCReference>
+        <DCCReference Include="fEvento_Visu.pas">
+            <Form>fEventosVisu</Form>
+        </DCCReference>
+        <DCCReference Include="relUsuario.pas">
+            <Form>fRelUsuario</Form>
+        </DCCReference>
+        <DCCReference Include="usuRelAdv.pas">
+            <Form>fUsuRelAdv</Form>
+        </DCCReference>
+        <DCCReference Include="heranca.pas">
+            <Form>fHeranca</Form>
+        </DCCReference>
+        <DCCReference Include="limpeza.pas">
+            <Form>fLimpeza</Form>
+        </DCCReference>
+        <DCCReference Include="grupoRelNovo.pas">
+            <Form>fGrupoRelNovo</Form>
+        </DCCReference>
+        <DCCReference Include="DfnComProbU.pas">
+            <Form>Form1</Form>
+        </DCCReference>
+        <DCCReference Include="..\..\Subrug\Subrug.pas"/>
+        <DCCReference Include="..\..\Subrug\SuTypGer.pas"/>
+        <DCCReference Include="..\..\CR CONSULTING\Pilha.pas"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">multicoldADM.dpr</Source>
+                </Source>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+                    <VersionInfo Name="MajorVer">1</VersionInfo>
+                    <VersionInfo Name="MinorVer">0</VersionInfo>
+                    <VersionInfo Name="Release">0</VersionInfo>
+                    <VersionInfo Name="Build">3</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1046</VersionInfo>
+                    <VersionInfo Name="CodePage">1252</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName">CR Consulting Serviços de Informática e Participações Ltda.</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileDescription">Módulo administrativo do Multicold</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">1.0.0.3</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName"/>
+                    <VersionInfoKeys Name="LegalCopyright">Copyright 2005 by CR Consulting - All rights reserved.</VersionInfoKeys>
+                    <VersionInfoKeys Name="LegalTrademarks"/>
+                    <VersionInfoKeys Name="OriginalFilename">MulticoldAdm.exe</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductName">Multicold</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+                    <VersionInfoKeys Name="Comments"/>
+                </VersionInfoKeys>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\Advantage 10.10\TDataSet\DelphiXE4\WIN32\adsDXE4dstudio.bpl">File C:\Program Files (x86)\Advantage 10.10\TDataSet\DelphiXE4\WIN32\adsDXE4dstudio.bpl not found</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k180.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp180.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
+            </Delphi.Personality>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+</Project>

@@ -1,0 +1,72 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{7E22DFD4-CEAF-4E76-9AA3-066EB2956360}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="DEFINEDFORMS_D70.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="DEFINEDFORMS_R70.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="DEFINEDSTREAM_D70.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="DEFINEDSTREAM_R70.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="DEFINEDFORMS_D70">
+        <MSBuild Projects="DEFINEDFORMS_D70.dproj"/>
+    </Target>
+    <Target Name="DEFINEDFORMS_D70:Clean">
+        <MSBuild Projects="DEFINEDFORMS_D70.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DEFINEDFORMS_D70:Make">
+        <MSBuild Projects="DEFINEDFORMS_D70.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DEFINEDFORMS_R70">
+        <MSBuild Projects="DEFINEDFORMS_R70.dproj"/>
+    </Target>
+    <Target Name="DEFINEDFORMS_R70:Clean">
+        <MSBuild Projects="DEFINEDFORMS_R70.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DEFINEDFORMS_R70:Make">
+        <MSBuild Projects="DEFINEDFORMS_R70.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DEFINEDSTREAM_D70">
+        <MSBuild Projects="DEFINEDSTREAM_D70.dproj"/>
+    </Target>
+    <Target Name="DEFINEDSTREAM_D70:Clean">
+        <MSBuild Projects="DEFINEDSTREAM_D70.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DEFINEDSTREAM_D70:Make">
+        <MSBuild Projects="DEFINEDSTREAM_D70.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DEFINEDSTREAM_R70">
+        <MSBuild Projects="DEFINEDSTREAM_R70.dproj"/>
+    </Target>
+    <Target Name="DEFINEDSTREAM_R70:Clean">
+        <MSBuild Projects="DEFINEDSTREAM_R70.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DEFINEDSTREAM_R70:Make">
+        <MSBuild Projects="DEFINEDSTREAM_R70.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="DEFINEDFORMS_D70;DEFINEDFORMS_R70;DEFINEDSTREAM_D70;DEFINEDSTREAM_R70"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="DEFINEDFORMS_D70:Clean;DEFINEDFORMS_R70:Clean;DEFINEDSTREAM_D70:Clean;DEFINEDSTREAM_R70:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="DEFINEDFORMS_D70:Make;DEFINEDFORMS_R70:Make;DEFINEDSTREAM_D70:Make;DEFINEDSTREAM_R70:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
