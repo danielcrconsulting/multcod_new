@@ -135,13 +135,10 @@ If (Sender = GerarTxtButton) or (Sender = GerarTxtButtonFmt) Then
     AssignFile(ArqTxt,SaveDialog1.FileName);
     if FileExists(SaveDialog1.FileName) then
     begin
-      If MessageDlg('O Arquivo: ' + SaveDialog1.FileName + ' já existe, deseja sobrepor ?',mtConfirmation,[mbyes,mbno],0) = mryes then
-        ReWrite(ArqTxt)
-      else
-        Append(ArqTxt);
-    end
-    else
-      ReWrite(ArqTxt);
+
+    end;
+
+    ReWrite(ArqTxt);
     CloseFile(ArqTxt);
     end
   else

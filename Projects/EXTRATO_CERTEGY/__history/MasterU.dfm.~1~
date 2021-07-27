@@ -1,7 +1,7 @@
 object MasterColdForm: TMasterColdForm
   Left = 178
   Top = 150
-  Caption = 'MasterCold V3.2.0.3 27/07/2021'
+  Caption = 'MasterCold V3.2.0.2 18/09/2019'
   ClientHeight = 155
   ClientWidth = 418
   Color = clBtnFace
