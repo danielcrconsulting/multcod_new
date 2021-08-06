@@ -20,7 +20,15 @@ uses
   GraphWin in '..\Subrug\Anotation\GraphWin.pas' {AnotaForm},
   Mdiedit in 'Mdiedit.pas' {EditForm},
   MdiMultiCold in 'MdiMultiCold.pas' {FrameForm},
-  Pilha in '..\CR CONSULTING\Pilha.pas';
+  Pilha in '..\CR CONSULTING\Pilha.pas',
+  UMetodosServer in '..\..\..\server_cod\UMetodosServer.pas',
+  ClientClassesUnit2 in '..\..\..\server_cod\ClientClassesUnit2.pas',
+  UBuscaSequencial in 'MULTICOLDSERVER\SOAP\UBuscaSequencial.pas',
+  UMulticoldReport in 'MULTICOLDSERVER\SOAP\UMulticoldReport.pas',
+  ZLIBEX in '..\..\..\Projects\Subrug\DelphiZLib\ZLIBEX.PAS',
+  UMulticoldFunctions in 'MULTICOLDSERVER\SOAP\UMulticoldFunctions.pas',
+  UMulticoldMigrate in 'MULTICOLDSERVER\SOAP\UMulticoldMigrate.pas',
+  UExtratorDados in 'MULTICOLDSERVER\SOAP\UExtratorDados.pas';
 
 {$R *.RES}
 

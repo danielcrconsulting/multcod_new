@@ -38,6 +38,12 @@ type
     memtbcodbloq: TStringField;
     memtbdtbloq: TStringField;
     Button3: TButton;
+    GroupBox2: TGroupBox;
+    Label5: TLabel;
+    Label6: TLabel;
+    edpg: TEdit;
+    edQtd: TEdit;
+    Button4: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -46,6 +52,7 @@ type
     procedure btnSalvarClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
     StrArq  : TStringList;
@@ -301,6 +308,50 @@ begin
       OrdenarArq;
     end
     ).Start;
+end;
+
+procedure TfrmPrincipal.Button4Click(Sender: TObject);
+var i, qtd, qtdlin, qtdpag, ctpg : Integer;
+  linha : String;
+begin
+  if edpg.Text = '' then
+  begin
+    ShowMessage('Pagina inválida');
+    exit;
+  end;
+  if edqtd.Text = '' then
+  begin
+    ShowMessage('Quantidade inválida');
+    exit;
+  end;
+  lblmsg.Visible := True;
+  Application.ProcessMessages;
+  qtdpag := StrToint(Edpg.Text);
+  qtdlin := StrToint(edQtd.Text);
+  qtd := 0;
+
+  Reset(tarq);
+  ctpg := 0;
+  while (not Eof(tarq)) do
+  begin
+    Readln(tarq, linha);
+    if copy(linha,1,1) = '1' then
+      inc(ctpg);
+    if (ctpg >= qtdpag) and (qtd <= qtdlin) then
+    begin
+      Writeln(tarqcop,linha);
+      inc(qtd);
+    end;
+  end;
+  CloseFile(tarq);
+  CloseFile(tarqcop);
+
+  gb.Enabled := False;
+  edpos.Clear;
+  edtam.Clear;
+  edCont.Clear;
+  lblmsg.Visible := False;
+  ShowMessage('Linhas Extraidas');
 end;
 
 procedure TfrmPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);

@@ -2,7 +2,7 @@ object frmPrincipal: TfrmPrincipal
   Left = 0
   Top = 0
   Caption = 'Elimina Linha'
-  ClientHeight = 452
+  ClientHeight = 505
   ClientWidth = 746
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,8 +16,8 @@ object frmPrincipal: TfrmPrincipal
   PixelsPerInch = 96
   TextHeight = 19
   object lblmsg: TLabel
-    Left = 322
-    Top = 391
+    Left = 317
+    Top = 472
     Width = 143
     Height = 25
     Caption = 'Aguarde........'
@@ -30,8 +30,8 @@ object frmPrincipal: TfrmPrincipal
     Visible = False
   end
   object btnAbrir: TButton
-    Left = 144
-    Top = 40
+    Left = 296
+    Top = 8
     Width = 153
     Height = 41
     Caption = 'Abrir Arquivo'
@@ -39,13 +39,14 @@ object frmPrincipal: TfrmPrincipal
     OnClick = btnAbrirClick
   end
   object gb: TGroupBox
-    Left = 8
-    Top = 128
+    Left = 6
+    Top = 55
     Width = 369
-    Height = 257
+    Height = 194
     Caption = 'Configurar Elimina'#231#227'o'
     Enabled = False
     TabOrder = 1
+    Visible = False
     object Label1: TLabel
       Left = 32
       Top = 40
@@ -89,8 +90,8 @@ object frmPrincipal: TfrmPrincipal
       TabOrder = 2
     end
     object Button1: TButton
-      Left = 128
-      Top = 176
+      Left = 120
+      Top = 145
       Width = 153
       Height = 41
       Caption = 'Eliminar'
@@ -99,12 +100,13 @@ object frmPrincipal: TfrmPrincipal
     end
   end
   object GroupBox1: TGroupBox
-    Left = 383
-    Top = 128
+    Left = 381
+    Top = 55
     Width = 357
-    Height = 257
+    Height = 194
     Caption = 'Separa'#231#227'o de Arquivos'
     TabOrder = 2
+    Visible = False
     object Label4: TLabel
       Left = 16
       Top = 78
@@ -121,7 +123,7 @@ object frmPrincipal: TfrmPrincipal
     end
     object Button2: TButton
       Left = 112
-      Top = 176
+      Top = 145
       Width = 153
       Height = 41
       Caption = 'Gerar'
@@ -130,16 +132,62 @@ object frmPrincipal: TfrmPrincipal
     end
   end
   object Button3: TButton
-    Left = 383
-    Top = 40
+    Left = 495
+    Top = 8
     Width = 153
     Height = 41
     Caption = 'Ordenar Arquivo'
     TabOrder = 3
+    Visible = False
     OnClick = Button3Click
   end
+  object GroupBox2: TGroupBox
+    Left = 198
+    Top = 255
+    Width = 369
+    Height = 194
+    Caption = 'Configurar Extra'#231#227'o'
+    TabOrder = 4
+    object Label5: TLabel
+      Left = 32
+      Top = 40
+      Width = 92
+      Height = 19
+      Caption = 'Pagina inicial'
+    end
+    object Label6: TLabel
+      Left = 32
+      Top = 78
+      Width = 76
+      Height = 19
+      Caption = 'Qtd Linhas'
+    end
+    object edpg: TEdit
+      Left = 151
+      Top = 33
+      Width = 58
+      Height = 27
+      TabOrder = 0
+    end
+    object edQtd: TEdit
+      Left = 151
+      Top = 70
+      Width = 58
+      Height = 27
+      TabOrder = 1
+    end
+    object Button4: TButton
+      Left = 120
+      Top = 145
+      Width = 153
+      Height = 41
+      Caption = 'Extrair'
+      TabOrder = 2
+      OnClick = Button4Click
+    end
+  end
   object OpenDialog1: TOpenDialog
-    Left = 680
+    Left = 688
     Top = 8
   end
   object memtb: TFDMemTable
@@ -151,8 +199,8 @@ object frmPrincipal: TfrmPrincipal
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 552
-    Top = 48
+    Left = 672
+    Top = 64
     object memtbident: TStringField
       FieldName = 'ident'
       Size = 6
