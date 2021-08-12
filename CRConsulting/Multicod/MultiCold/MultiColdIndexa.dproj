@@ -3,7 +3,7 @@
         <ProjectGuid>{6B9E73E2-616F-434E-AB77-FC748A07F4D9}</ProjectGuid>
         <MainSource>MultiColdIndexa.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
@@ -114,6 +114,7 @@
         <DCC_UnitSearchPath>C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\Defined\Delphi7</DCC_UnitSearchPath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
+        <BT_BuildType>Debug</BT_BuildType>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">

@@ -783,7 +783,7 @@ Var
   end;
 
   Try
-    CloseFile(ArqIn);
+    //CloseFile(ArqIn);
   Except
     End;
 
@@ -1740,7 +1740,7 @@ Var
         End
       Else
         Begin }
-//      TabelaAds[I].Exclusive := True;
+      TabelaAds[I].Exclusive := True;
       TabelaAds[I].Open;
       RichEdit1.Lines.Add('Índice '+NomesDeCampos[I]+' '+IntToStr(TabelaAds[I].RecordCount)+' Registros Gerados');
 

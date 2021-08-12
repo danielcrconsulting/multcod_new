@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2014/09/10 18:42:39.000.716,=C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\Defined\Delphi7\dfpdf.pas</Transaction>
+    <Transaction>2014/09/10 18:42:57.000.597,C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\Defined\Delphi7\dfpdf.pas=</Transaction>
+    <Transaction>2014/09/10 18:44:17.000.689,=C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\CR CONSULTING\Pilha.pas</Transaction>
+    <Transaction>2014/09/10 18:50:43.000.124,=C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\EXTRATO_CERTEGY\Analisador.pas</Transaction>
+    <Transaction>2014/09/10 18:52:41.000.554,C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\EXTRATO_CERTEGY\Conv.dproj=C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\EXTRATO_CERTEGY\Conv.dproj</Transaction>
+    <Transaction>2014/09/10 18:57:50.000.486,C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\EXTRATO_CERTEGY\Conv.dproj=C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\EXTRATO_CERTEGY\Conv.dproj</Transaction>
+    <Transaction>2015/11/03 15:02:56.000.407,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Sugeral.pas=</Transaction>
+    <Transaction>2015/11/03 15:03:01.000.352,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Analisador.pas=</Transaction>
+    <Transaction>2015/11/03 15:03:07.000.243,C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\Pilha.pas=</Transaction>
+    <Transaction>2015/11/03 15:03:20.000.660,C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\Subrug.pas=</Transaction>
+    <Transaction>2015/11/03 15:03:47.000.251,C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\Sutypger.pas=</Transaction>
+    <Transaction>2016/01/08 16:35:51.000.237,C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\ConvMulti.dproj=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Conv.dproj</Transaction>
+    <Transaction>2016/01/08 16:36:10.000.382,C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\UConv.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\UConv.dfm</Transaction>
+    <Transaction>2016/01/08 16:36:10.000.382,C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\UConv.pas=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\UConv.pas</Transaction>
+  </Transactions>
+</BorlandProject>

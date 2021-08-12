@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2015/06/20 22:24:54.000.165,=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/06/20 22:29:24.000.447,C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\Mastercold\Santander\ExtratoPDF\Unit11.dfm</Transaction>
+    <Transaction>2015/06/20 22:29:24.000.447,C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas=C:\Users\Romero\Documents\RAD Studio\Projects\Mastercold\Santander\ExtratoPDF\Unit11.pas</Transaction>
+    <Transaction>2015/06/20 22:29:31.000.803,C:\Users\Romero\Documents\RAD Studio\Projects\Project1.dproj=C:\Users\Romero\Documents\RAD Studio\Projects\Mastercold\Santander\ExtratoPDF\MastercoldPDF.dproj</Transaction>
+    <Transaction>2015/08/12 20:18:22.000.755,=C:\Program Files (x86)\Debenu\PDF Library\Delphi\DebenuPDFLibrary1115DelphiXE4Win32\DebenuPDFLibrary.pas</Transaction>
+  </Transactions>
+</BorlandProject>

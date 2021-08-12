@@ -1,0 +1,6 @@
+Count UnknownType              	FirstName       FirstForm
+----------------------------------------------------------------
+    1 Crystal.CrystalReport    	CrystalReport1	frmMain.frm
+    8 MSDataGridLib.DataGrid   	grdDataGrid 	Consulta.frm
+    2 RichTextLib.RichTextBox  	RichTextBox1	frmLog.frm
+    4 MSFlexGridLib.MSFlexGrid 	DbGrid      	AlterarManual.frm

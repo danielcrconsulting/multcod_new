@@ -1,0 +1,52 @@
+object dlDFInspector: TdlDFInspector
+  Left = 299
+  Top = 196
+  Width = 200
+  Height = 297
+  BorderStyle = bsSizeToolWin
+  Caption = 'Properties'
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  FormStyle = fsStayOnTop
+  OldCreateOrder = False
+  Scaled = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object MainPan: TPanel
+    Left = 0
+    Top = 21
+    Width = 192
+    Height = 249
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 4
+    TabOrder = 0
+    object ObjectInspector: TDefinedInspector
+      Left = 4
+      Top = 4
+      Width = 184
+      Height = 241
+      OnFilterProperty = ObjectInspectorFilterProperty
+      OnInvokeCustomEditor = ObjectInspectorInvokeCustomEditor
+      OnMakeBold = ObjectInspectorMakeBold
+      OnEnterKey = ObjectInspectorEnterKey
+      Align = alClient
+    end
+  end
+  object ObjPan: TPanel
+    Left = 0
+    Top = 0
+    Width = 192
+    Height = 21
+    Align = alTop
+    Alignment = taLeftJustify
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    Color = clWindow
+    TabOrder = 1
+  end
+end

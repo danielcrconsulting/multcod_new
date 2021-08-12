@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2015/09/21 14:54:51.475,=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/09/21 14:55:17.867,=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\Subrug.pas</Transaction>
+    <Transaction>2015/09/21 14:56:25.157,C:\Users\Romero\Documents\RAD Studio\Projects\Qg\GetCurrUserNameUnit.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2015/09/21 14:56:25.157,C:\Users\Romero\Documents\RAD Studio\Projects\Qg\GetCurrUserNameUnit.pas=C:\Users\Romero\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2015/09/21 14:56:30.928,C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\GetCurUser.dproj=C:\Users\Romero\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2015/09/21 14:57:22.432,=C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\Pilha.pas</Transaction>
+  </Transactions>
+</BorlandProject>

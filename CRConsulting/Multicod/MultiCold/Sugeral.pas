@@ -710,15 +710,30 @@ begin
                                           'Network Library=DBMSSOCN';
     //DatabaseMultiCold.Connected := True;
     //ShowMessage('Conexão Ativa');
-  finally
-    FreeAndNil(OMetodosServer);
+  except
+    begin
+      ShowMessage('Falha na conexão com o servidor');
+      Application.Terminate;
+      exit;
+    end;
   end;
+
+  FreeAndNil(OMetodosServer);
 end;
 
 procedure TFormGeral.FormCreate(Sender: TObject);
 Begin
-  ConfigurarConnect;
-  DatabaseMulticold.Open;
+  if not fileExists(extractFilePath(ParamStr(0))+'Multicold.udl') then
+  begin
+    ConfigurarConnect;
+    try
+      DatabaseMulticold.Open;
+    except
+      ShowMessage('Falha na conexão com o servidor');
+      Application.Terminate;
+      exit;
+    end;
+  end;
 FormGeral.Visible := false;
 ControleFiltro := ' ';
 Exportar := False;

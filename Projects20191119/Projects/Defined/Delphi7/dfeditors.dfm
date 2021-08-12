@@ -1,0 +1,595 @@
+object dlDFEditors: TdlDFEditors
+  Left = 393
+  Top = 278
+  Width = 370
+  Height = 335
+  Caption = 'Defined Forms Editor'
+  Color = clBtnFace
+  Font.Charset = ANSI_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  Scaled = False
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Pages: TPageControl
+    Left = 0
+    Top = 0
+    Width = 362
+    Height = 308
+    ActivePage = Links_Page
+    Align = alClient
+    Style = tsButtons
+    TabOrder = 0
+    object Picture_Page: TTabSheet
+      Hint = '370,335'
+      Caption = 'Picture_Page'
+      ImageIndex = 2
+      TabVisible = False
+      object Picture_Bevel: TBevel
+        Left = 8
+        Top = 8
+        Width = 257
+        Height = 281
+        Shape = bsFrame
+      end
+      object Picture_OK: TButton
+        Left = 274
+        Top = 16
+        Width = 75
+        Height = 25
+        Caption = 'OK'
+        Default = True
+        ModalResult = 1
+        TabOrder = 0
+      end
+      object Picture_Cancel: TButton
+        Left = 274
+        Top = 48
+        Width = 75
+        Height = 25
+        Cancel = True
+        Caption = 'Cancel'
+        ModalResult = 2
+        TabOrder = 1
+      end
+      object Picture_Panel: TPanel
+        Left = 16
+        Top = 16
+        Width = 241
+        Height = 233
+        BevelOuter = bvNone
+        BorderStyle = bsSingle
+        Color = clWhite
+        TabOrder = 2
+        object Picture_Image: TImage
+          Left = 0
+          Top = 0
+          Width = 237
+          Height = 229
+          Align = alClient
+          Center = True
+        end
+      end
+      object Picture_Load: TButton
+        Left = 16
+        Top = 255
+        Width = 75
+        Height = 25
+        Caption = '&Load..'
+        TabOrder = 3
+        OnClick = PictureClick
+      end
+      object Picture_Save: TButton
+        Left = 100
+        Top = 255
+        Width = 75
+        Height = 25
+        Caption = '&Save..'
+        TabOrder = 4
+        OnClick = PictureClick
+      end
+      object Picture_Clear: TButton
+        Left = 182
+        Top = 255
+        Width = 75
+        Height = 25
+        Caption = '&Clear'
+        TabOrder = 5
+        OnClick = PictureClick
+      end
+    end
+    object Strings_Page: TTabSheet
+      Hint = '370,335'
+      Caption = 'Strings'
+      TabVisible = False
+      object Strings_Bevel: TBevel
+        Left = 8
+        Top = 8
+        Width = 257
+        Height = 281
+        Shape = bsFrame
+      end
+      object Strings_Text: TMemo
+        Left = 16
+        Top = 16
+        Width = 244
+        Height = 265
+        ScrollBars = ssBoth
+        TabOrder = 0
+        WantTabs = True
+        WordWrap = False
+      end
+      object Strings_Apply: TButton
+        Left = 274
+        Top = 97
+        Width = 75
+        Height = 25
+        Caption = '&Apply'
+        TabOrder = 1
+        OnClick = StringsClick
+      end
+      object Strings_Load: TButton
+        Left = 274
+        Top = 129
+        Width = 75
+        Height = 25
+        Caption = '&Load'
+        TabOrder = 2
+        OnClick = StringsClick
+      end
+      object Strings_OK: TButton
+        Left = 274
+        Top = 16
+        Width = 75
+        Height = 25
+        Caption = '&OK'
+        Default = True
+        ModalResult = 1
+        TabOrder = 3
+      end
+      object Strings_Cancel: TButton
+        Left = 274
+        Top = 48
+        Width = 75
+        Height = 25
+        Cancel = True
+        Caption = '&Cancel'
+        ModalResult = 2
+        TabOrder = 4
+      end
+      object Strings_Save: TButton
+        Left = 274
+        Top = 161
+        Width = 75
+        Height = 25
+        Caption = '&Save'
+        TabOrder = 5
+        OnClick = StringsClick
+      end
+    end
+    object Tabs_Page: TTabSheet
+      Hint = '370,335'
+      Caption = 'Tabs_Page'
+      ImageIndex = 1
+      TabVisible = False
+      object Tabs_Bevel: TBevel
+        Left = 8
+        Top = 8
+        Width = 257
+        Height = 281
+        Shape = bsFrame
+      end
+      object Tabs_OK: TButton
+        Left = 274
+        Top = 16
+        Width = 75
+        Height = 25
+        Caption = 'OK'
+        Default = True
+        ModalResult = 1
+        TabOrder = 0
+      end
+      object Tabs_Cancel: TButton
+        Left = 274
+        Top = 48
+        Width = 75
+        Height = 25
+        Cancel = True
+        Caption = 'Cancel'
+        ModalResult = 2
+        TabOrder = 1
+      end
+      object Tabs_List: TListBox
+        Left = 16
+        Top = 16
+        Width = 241
+        Height = 265
+        ItemHeight = 13
+        TabOrder = 2
+      end
+      object Tabs_Up: TButton
+        Left = 274
+        Top = 97
+        Width = 75
+        Height = 25
+        Caption = 'Move &Up'
+        TabOrder = 3
+        OnClick = TabsClick
+      end
+      object Tabs_SortPos: TButton
+        Left = 274
+        Top = 178
+        Width = 75
+        Height = 25
+        Hint = 'Soft by object position (top,left)'
+        Caption = 'Sort by &Pos'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+        OnClick = TabsClick
+      end
+      object Tabs_SortSel: TButton
+        Left = 274
+        Top = 210
+        Width = 75
+        Height = 25
+        Hint = 'Soft by order selected in form designer'
+        Caption = 'Sort by &Sel'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+        OnClick = TabsClick
+      end
+      object Tabs_Down: TButton
+        Left = 274
+        Top = 129
+        Width = 75
+        Height = 25
+        Caption = 'Move &Down'
+        TabOrder = 6
+        OnClick = TabsClick
+      end
+      object Tabs_ReadOnly: TButton
+        Left = 274
+        Top = 256
+        Width = 75
+        Height = 25
+        Hint = 'Soft by order selected in form designer'
+        Caption = '&Active first'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 7
+        OnClick = TabsClick
+      end
+    end
+    object Field_Page: TTabSheet
+      Hint = '370,335'
+      Caption = 'Field_Page'
+      ImageIndex = 5
+      TabVisible = False
+      object Field_Bevel: TBevel
+        Left = 8
+        Top = 8
+        Width = 257
+        Height = 281
+        Shape = bsFrame
+      end
+      object Field_List: TListBox
+        Left = 16
+        Top = 16
+        Width = 241
+        Height = 265
+        ItemHeight = 13
+        TabOrder = 0
+        OnDblClick = FieldClick
+      end
+      object Field_OK: TButton
+        Left = 274
+        Top = 16
+        Width = 75
+        Height = 25
+        Caption = 'OK'
+        Default = True
+        ModalResult = 1
+        TabOrder = 1
+      end
+      object Field_Cancel: TButton
+        Left = 274
+        Top = 48
+        Width = 75
+        Height = 25
+        Cancel = True
+        Caption = 'Cancel'
+        ModalResult = 2
+        TabOrder = 2
+      end
+      object Field_Load: TButton
+        Left = 274
+        Top = 97
+        Width = 75
+        Height = 25
+        Caption = '&Load'
+        TabOrder = 3
+        OnClick = FieldClick
+      end
+      object Field_Find: TButton
+        Left = 274
+        Top = 129
+        Width = 75
+        Height = 25
+        Caption = '&Find...'
+        Enabled = False
+        TabOrder = 4
+        Visible = False
+        OnClick = FieldClick
+      end
+    end
+    object Links_Page: TTabSheet
+      Caption = 'Links_Page'
+      ImageIndex = 4
+      TabVisible = False
+      object Label1: TLabel
+        Left = 16
+        Top = 4
+        Width = 84
+        Height = 13
+        Caption = 'Enter Field Link...'
+      end
+      object Links_OK: TButton
+        Left = 186
+        Top = 268
+        Width = 75
+        Height = 25
+        Caption = '&OK'
+        Default = True
+        ModalResult = 1
+        TabOrder = 4
+        OnClick = LinksClick
+      end
+      object Links_Cancel: TButton
+        Left = 265
+        Top = 268
+        Width = 75
+        Height = 25
+        Cancel = True
+        Caption = '&Cancel'
+        ModalResult = 2
+        TabOrder = 5
+        OnClick = LinksClick
+      end
+      object Links_Tree: TTreeView
+        Left = 16
+        Top = 48
+        Width = 323
+        Height = 201
+        HideSelection = False
+        Images = Links_Images
+        Indent = 19
+        ShowRoot = False
+        TabOrder = 1
+        OnClick = Links_TreeClick
+        OnDblClick = Links_TreeDblClick
+      end
+      object Links_Load: TButton
+        Left = 18
+        Top = 268
+        Width = 75
+        Height = 25
+        Caption = '&Load'
+        TabOrder = 2
+        OnClick = LinksClick
+      end
+      object Links_Link: TEdit
+        Left = 16
+        Top = 24
+        Width = 323
+        Height = 21
+        TabOrder = 0
+        OnChange = Links_LinkChange
+      end
+      object Links_Search: TButton
+        Left = 98
+        Top = 268
+        Width = 75
+        Height = 25
+        Caption = '&Search'
+        TabOrder = 3
+        OnClick = LinksClick
+      end
+    end
+  end
+  object Strings_OpenDialog: TOpenDialog
+    Filter = 'Text Files|*.txt|All Files|*.*'
+    Title = 'Open Text File'
+    Left = 32
+    Top = 32
+  end
+  object Picture_OpenDialog: TOpenPictureDialog
+    Title = 'Open Picture'
+    Left = 32
+    Top = 64
+  end
+  object Picture_SaveDialog: TSavePictureDialog
+    Title = 'Save Picture'
+    Left = 64
+    Top = 64
+  end
+  object ColorDialog1: TColorDialog
+    Ctl3D = True
+    Left = 32
+    Top = 96
+  end
+  object FontDialog1: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
+    Left = 64
+    Top = 96
+  end
+  object Strings_SaveDialog: TSaveDialog
+    Filter = 'Text Files|*.txt|All Files|*.*'
+    Title = 'Save Text File'
+    Left = 64
+    Top = 32
+  end
+  object Field_OpenDialog: TOpenDialog
+    Filter = 'Text Files|*.txt|Data Files|*.dat|All Files|*.*'
+    Title = 'Open Text File'
+    Left = 32
+    Top = 128
+  end
+  object Links_Images: TImageList
+    Left = 64
+    Top = 128
+    Bitmap = {
+      494C010103000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      0000000000003600000028000000400000001000000001002000000000000010
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000008080
+      8000000000000000000000000000000000000000000000000000000000000000
+      00000000000080808000C0C0C000000000000000000000000000000000008080
+      8000000000000000000000000000000000000000000000000000000000000000
+      00000000000080808000C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000808080000000000000000000C0C0
+      C000C0C0C000C0C0C000C0C0C000808080000000000000000000000000000000
+      00008080800000000000C0C0C00000000000808080000000000000000000C0C0
+      C000C0C0C000C0C0C000C0C0C000808080000000000000000000000000000000
+      000080808000FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000080800000808000008080000080
+      8000008080000080800000808000008080000080800000808000008080000080
+      80000080800000808000000000000000000080808000C0C0C000000000000000
+      000000000000000000000000000000000000C0C0C000C0C0C000C0C0C000C0C0
+      C0000000000000000000C0C0C0000000000080808000C0C0C000FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00C0C0C000C0C0C000C0C0C000C0C0
+      C000FFFFFF00FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000808000FFFFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF00FFFFFF0000FFFF00FFFFFF0000FFFF00FFFFFF0000FF
+      FF00FFFFFF000080800000000000000000008080800000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000C0C0C0000000000080808000FFFFFF00FF000000FF00
+      0000FFFFFF00FF000000FF000000FFFFFF00FFFFFF00FF000000FF000000FF00
+      0000FFFFFF00FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000808000FFFFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF00FFFFFF0000FFFF00FFFFFF0000FFFF00FFFF
+      FF0000FFFF000080800000000000000000008080800000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000C0C0C0000000000080808000FFFFFF00FF000000FF00
+      0000FFFFFF00FF000000FF000000FFFFFF00FF000000FF000000FFFFFF00FF00
+      0000FF000000FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000808000FFFFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF00FFFFFF0000FF
+      FF00FFFFFF000080800000000000000000008080800000000000000000000000
+      8000000080000000800000008000000080000000800000008000000080000000
+      80000000000000000000C0C0C0000000000080808000FFFFFF00FF000000FF00
+      0000FFFFFF00FF000000FF000000FFFFFF00FF000000FF000000FFFFFF00FF00
+      0000FF000000FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000808000FFFFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF00FFFFFF0000FFFF00FFFFFF0000FFFF00FFFF
+      FF0000FFFF000080800000000000000000008080800000000000000080000000
+      8000000000000000800000008000000000000000800000008000000000000000
+      80000000800000000000C0C0C0000000000080808000FFFFFF00FF000000FF00
+      0000FFFFFF00FF000000FF000000FFFFFF00FFFFFF00FF000000FF000000FF00
+      0000FFFFFF00FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000808000FFFFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF00FFFFFF000080800000000000000000008080800000000000000000000000
+      8000000080000000800000008000000000000000800000008000000000000000
+      80000000800000000000C0C0C0000000000080808000FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000808000FFFFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF00FFFFFF0000FFFF00FFFF
+      FF0000FFFF000080800000000000000000008080800000000000000000000000
+      0000000000000000800000008000000000000000800000008000000000000000
+      80000000800000000000C0C0C0000000000080808000FFFFFF00FFFFFF00FF00
+      0000FF000000FF000000FFFFFF00FFFFFF00FF000000FF000000FFFFFF00FF00
+      0000FF000000FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000808000FFFFFF0000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FFFF0000FF
+      FF00FFFFFF000080800000000000000000008080800000000000000000000000
+      80000000800000008000C0C0C000000000000000800000008000000080000000
+      80000000000000000000C0C0C0000000000080808000FFFFFF00FF000000FF00
+      0000FFFFFF00FF000000FF000000FFFFFF00FF000000FF000000FFFFFF00FF00
+      0000FF000000FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000808000FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF0000FFFF000080800000000000000000008080800000000000000000000000
+      0000000000000000000000000000000000000000800000008000000000000000
+      00000000000000000000C0C0C0000000000080808000FFFFFF00FF000000FF00
+      0000FFFFFF00FF000000FF000000FFFFFF00FF000000FF000000FFFFFF00FF00
+      0000FF000000FFFFFF00C0C0C000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000080800000808000008080000080
+      8000008080000080800000808000008080000080800000808000008080000080
+      8000008080000080800000000000000000008080800000000000000000000000
+      0000000000000000000000000000000000000000800000008000000000000000
+      00008080800000000000000000000000000080808000FFFFFF00FFFFFF00FF00
+      0000FF000000FF000000FFFFFF00FFFFFF00FF000000FF000000FFFFFF00FF00
+      0000808080000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000000000000080800000FFFF0000FF
+      FF0000FFFF0000FFFF0000FFFF00008080000000000000000000000000000000
+      0000000000000000000000000000000000008080800000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00008080800000000000808080000000000080808000FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF0080808000FFFFFF0080808000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000008080000080
+      8000008080000080800000808000000000000000000000000000000000000000
+      0000000000000000000000000000000000008080800000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00008080800080808000000000000000000080808000FFFFFF00FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+      FF00808080008080800000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000008080800080808000808080008080
+      8000808080008080800080808000808080008080800080808000808080008080
+      8000808080000000000000000000000000008080800080808000808080008080
+      8000808080008080800080808000808080008080800080808000808080008080
+      8000808080000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      000000000000000000000000000000000000424D3E000000000000003E000000
+      2800000040000000100000000100010000000000800000000000000000000000
+      000000000000000000000000FFFFFF00FFFFFFF8FFF80000FFFFE0F0E0F00000
+      800100040000000000013F0C0000000000017FFC0000000000017FFC00000000
+      0001600C00000000000149240000000000016124000000000001792400000000
+      0001610C0000000000017F3C0000000000037F3000000000807F7FF500010000
+      C0FF7FF300030000FFFF00070007000000000000000000000000000000000000
+      000000000000}
+  end
+end

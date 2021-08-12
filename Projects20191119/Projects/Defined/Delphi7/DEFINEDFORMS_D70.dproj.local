@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2013/05/17 03:25:17.000.745,=rtl.dcp</Transaction>
+    <Transaction>2013/05/17 03:25:17.000.753,=xmlrtl.dcp</Transaction>
+    <Transaction>2013/05/17 03:25:17.000.749,=vclactnband.dcp</Transaction>
+    <Transaction>2013/05/17 03:25:17.000.742,=C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\Defined\Delphi7\dfcontrols.pas</Transaction>
+    <Transaction>2013/05/17 03:26:00.000.500,C:\Users\Romero\Documents\RAD Studio\Projects\CRProjects\Defined\Delphi7\dfcontrols.pas=</Transaction>
+  </Transactions>
+</BorlandProject>
