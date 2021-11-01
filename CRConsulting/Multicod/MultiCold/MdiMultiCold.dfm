@@ -12,13 +12,13 @@ object FrameForm: TFrameForm
   Font.Style = []
   FormStyle = fsMDIForm
   Menu = MainMenu1
-  OldCreateOrder = False
+  Scaled = False
   WindowState = wsMaximized
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object MemoAux: TMemo
     Left = 536
     Top = 56
@@ -181,15 +181,15 @@ object FrameForm: TFrameForm
     object Label5: TLabel
       Left = 224
       Top = 0
-      Width = 46
-      Height = 13
+      Width = 47
+      Height = 14
       Caption = 'Pesquisa:'
     end
     object Label1: TLabel
       Left = 224
       Top = 32
       Width = 32
-      Height = 13
+      Height = 14
       Caption = 'Label1'
       Color = clYellow
       ParentColor = False
@@ -197,8 +197,8 @@ object FrameForm: TFrameForm
     object Label7: TLabel
       Left = 384
       Top = 0
-      Width = 42
-      Height = 13
+      Width = 41
+      Height = 14
       Caption = 'P'#225'gina : '
     end
     object AbreRelBut: TSpeedButton
@@ -293,7 +293,7 @@ object FrameForm: TFrameForm
       Left = 600
       Top = 32
       Width = 32
-      Height = 13
+      Height = 14
       Caption = 'Label3'
     end
     object ExtrairSpeedButton: TSpeedButton
@@ -434,7 +434,7 @@ object FrameForm: TFrameForm
       Left = 384
       Top = 32
       Width = 32
-      Height = 13
+      Height = 14
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
@@ -445,7 +445,7 @@ object FrameForm: TFrameForm
       Left = 176
       Top = 0
       Width = 49
-      Height = 21
+      Height = 22
       TabOrder = 0
       OnChange = EditPesChange
     end
@@ -465,7 +465,7 @@ object FrameForm: TFrameForm
       Left = 336
       Top = 0
       Width = 49
-      Height = 21
+      Height = 22
       TabOrder = 1
       OnChange = EditPagChange
     end

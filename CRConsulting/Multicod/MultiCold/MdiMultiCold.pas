@@ -7,7 +7,7 @@ Uses
   OleCtrls, ComCtrls, Db, StdCtrls, Buttons, ExtCtrls,
   Menus, DBClient, MConnect, SConnect, ComObj, OleServer, {Word97,}
   IMulticoldServer1, ADODB, SutypGer, InvokeRegistry, System.UITypes,
-  Pilha, Vcl.FileCtrl, DBTables;
+  Pilha, Vcl.FileCtrl, DBTables, dfcontrols;
 //  adsdata, adsfunc, adstable;
 
 

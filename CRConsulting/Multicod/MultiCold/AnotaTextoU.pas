@@ -4,7 +4,10 @@ Interface
 
 Uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, DB, ADODB;
+  Dialogs, StdCtrls, ExtCtrls, DB, ADODB, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 Type
   TAnotaTextoForm = Class(TForm)
@@ -19,6 +22,8 @@ Type
     Label1: TLabel;
     ScrollBar1: TScrollBar;
     Label5: TLabel;
+    FDQuery1: TFDQuery;
+    Memtb: TFDMemTable;
     procedure SairButClick(Sender: TObject);
     procedure SalvarButtonClick(Sender: TObject);
     procedure ExcluirButtonClick(Sender: TObject);
@@ -47,7 +52,38 @@ End;
 Procedure TAnotaTextoForm.SalvarButtonClick(Sender: TObject);
 Var
   Posic : Integer;
+  strlst : TStringlist;
+  strPar : TFDParams;
+  Param  : TFDParam;
 Begin
+  strPar := TFDParams.Create;
+  strLst := TStringList.Create;
+  strlst.Add(' INSERT INTO COMENTARIOSTXT                                       ');
+  strlst.Add(' (CODUSUARIO, CODREL, PATHREL, FLAGPUBLICO, PAGINA, COMENTARIOTXT)');
+  strlst.Add(' VALUES (:A,  :B,  :C,  :D, :E, :F)                               ');
+
+  Param := strPar.Add;
+  Param.Name := ':A';
+  Param.Value := UpperCase(GetCurrentUserName);;
+  Param := strPar.Add;
+  Param.Name := ':B';
+  Param.Value := RegDFN.CODREL;
+  Param := strPar.Add;
+  Param.Name := ':C';
+  Param.Value :=  ExtractFileName(TEditForm(FrameForm.ActiveMDIChild).Filename);
+  Param := strPar.Add;
+  Param.Name := ':D';
+  If PublicaRadioButton.Checked Then
+    Param.Value := 'T'
+  Else
+    Param.Value := 'F';
+  Param := strPar.Add;
+  Param.Name := ':E';
+  Param.Value := TEditForm(FrameForm.ActiveMDIChild).PaginaAtu;;
+  Param := strPar.Add;
+  Param.Name := ':F';
+  Param.Value := Memo1.Text;
+
 
   FormGeral.QueryInsAnotText.Close;
   FormGeral.QueryInsAnotText.Parameters[0].Value := UpperCase(GetCurrentUserName);

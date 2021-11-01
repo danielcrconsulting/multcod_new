@@ -10,11 +10,10 @@ object FormGeral: TFormGeral
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDefault
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object DatabaseMultiCold: TADOConnection
     ConnectionString = 'FILE NAME=C:\ROM\MULTICOLD\Multicold.udl'
     LoginPrompt = False
@@ -933,5 +932,16 @@ object FormGeral: TFormGeral
       end>
     Left = 176
     Top = 384
+  end
+  object Memtb: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 24
+    Top = 184
   end
 end

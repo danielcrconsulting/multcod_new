@@ -5,7 +5,11 @@ interface
 uses
   Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.AppEvnts, Vcl.StdCtrls, IdHTTPWebBrokerBridge, Web.HTTPApp;
+  Vcl.AppEvnts, Vcl.StdCtrls, IdHTTPWebBrokerBridge, Web.HTTPApp,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
 
 type
   TForm1 = class(TForm)
@@ -15,11 +19,14 @@ type
     Label1: TLabel;
     ApplicationEvents1: TApplicationEvents;
     ButtonOpenBrowser: TButton;
+    Button1: TButton;
+    FDQuery1: TFDQuery;
     procedure FormCreate(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
     procedure ButtonStartClick(Sender: TObject);
     procedure ButtonStopClick(Sender: TObject);
     procedure ButtonOpenBrowserClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     FServer: TIdHTTPWebBrokerBridge;
     procedure StartServer;
@@ -43,6 +50,17 @@ begin
   ButtonStart.Enabled := not FServer.Active;
   ButtonStop.Enabled := FServer.Active;
   EditPort.Enabled := not FServer.Active;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+FDQuery1.Close;
+  FDQuery1.Sql.Clear;
+  FDQuery1.Sql.Add('INSERT INTO EVENTOS_VISU (DT, HR, ARQUIVO, DIRETORIO, CODREL, GRUPO, SUBGRUPO, CODUSUARIO, NOMEGRUPOUSUARIO, CODMENSAGEM) ');
+  FDQuery1.SQL.Add('VALUES (:a, :b, :c, :d, :e, :f, :g, :h, :i, :j)');
+  FDQuery1.Params.Items[0].Value := 1;
+  FDQuery1.Params.Items[1].Value := 2;
+  FDQuery1.Params.Items[2].Value := 3;
 end;
 
 procedure TForm1.ButtonOpenBrowserClick(Sender: TObject);

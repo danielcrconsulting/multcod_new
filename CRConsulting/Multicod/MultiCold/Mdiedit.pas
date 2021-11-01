@@ -6,7 +6,11 @@ Uses WinTypes, WinProcs, Classes, Graphics, Forms, Controls, Printers,
   Dialogs, Menus, Clipbrd, StdCtrls, GridQue, Grids, Analisador, SuTypGer,
   ExtCtrls, Buttons, SuGeral, DB, AvisoI, Zlib,
   ComCtrls, DBClient, dfcontrols, dfclasses, Variants, OleCtrls, SHDocVw,
-  AnotaTextoU, GraphWin, ADODB, dfPdf, SOAPConn, IMulticoldServer1, MIDASLIB, DBTables;
+  AnotaTextoU, GraphWin, ADODB, dfPdf, SOAPConn, IMulticoldServer1, MIDASLIB, DBTables,
+  UMetodosServer,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect;
 //  adsdata, adsfunc, adstable, adscnnct;
 
 Type
@@ -66,7 +70,8 @@ Type
       MousePos: TPoint; var Handled: Boolean);
     procedure PrintPageBMP1Click(Sender: TObject);
     procedure DFActiveDisplay1Click(Sender: TObject);
-
+  Private
+    OMetodosServer : clsMetodosServer;
   Public
 
     LastScale: TObject;
@@ -2140,6 +2145,7 @@ AnotaForm := TAnotaForm.Create(Self);
 AnotaTextoForm := TAnotaTextoForm.Create(Self);
 DfActiveDisplay1.Left := 0;
 DfActiveDisplay1.Top := 0;
+  OMetodosServer := clsMetodosServer.Create(Self);
 End;
 
 Procedure TEditForm.FormActivate(Sender: TObject);

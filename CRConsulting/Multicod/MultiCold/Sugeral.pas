@@ -8,7 +8,10 @@ Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Db, IniFiles, SuTypGer, StdCtrls, SuTypMultiCold,
   ADODB, InvokeRegistry, Rio, SOAPHTTPClient, System.Net.URLClient,
-  Datasnap.Provider, Datasnap.DBClient, IMulticoldServer1, UMetodosServer;
+  Datasnap.Provider, Datasnap.DBClient, IMulticoldServer1, UMetodosServer,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect;
 
 Type
 
@@ -60,10 +63,13 @@ Type
     ADOCmdInsertPesq: TADOCommand;
     ADOQryGetIdDescomp: TADOQuery;
     ADOCmdInsertExecutionDescomp: TADOCommand;
+    Memtb: TFDMemTable;
     Procedure FormCreate(Sender: TObject);
     procedure CDSProcessadorTemplateCalcFields(DataSet: TDataSet);
   Private
     { Private declarations }
+    OMetodosServer : clsMetodosServer;
+
     procedure ConfigurarConnect;
 
   Public
@@ -79,7 +85,8 @@ Type
 //  Procedure CriarAliasEventos;
 //  Procedure CriarAliasLog;     //   'S' = substituir; '+' = somar
   Procedure InsereAtualizaCompila(Operacao, CodRel : AnsiString; CodSis, CodGrupo, CodSubGrupo, Cont : Integer);
-
+    procedure ImportarDados( StrSql : String; StgParam : TFDParams);
+    procedure Persistir( StrSql : String; StgParam : TFDParams);
   End;
 
 
@@ -610,8 +617,12 @@ StrFil.FilStr := Copy(CharFiltro,2,Length(CharFiltro)-2);
 End;
 
 Procedure TFormGeral.InsereLog(Arquivo,Mensagem : AnsiString);
+var
+  strlst : TStringlist;
+  strPar : TFDParams;
+  Param  : TFDParam;
 Begin
-
+ {
 if not DatabaseLog.Connected then
   DatabaseLog.Open;
 
@@ -635,6 +646,34 @@ try
 except
 end; // Try
 
+  }
+  strPar := TFDParams.Create;
+  strLst := TStringList.Create;
+  strlst.Add('insert into logproc (dtLote,  hrLote, dtProc, hrProc, arquivo, mensagem) ');
+  strlst.Add('values (:a, :b, :c, :d, :e, :f) ');
+
+  Param := strPar.Add;
+  Param.Name := ':a';
+  Param.Value := Agora;
+  Param := strPar.Add;
+  Param.Name := ':b';
+  Param.Value := Agora;
+  Param := strPar.Add;
+  Param.Name := ':c';
+  Param.Value := Now;
+  Param := strPar.Add;
+  Param.Name := ':d';
+  Param.Value := Now;
+  Param := strPar.Add;
+  Param.Name := ':e';
+  Param.Value := copy(Arquivo,1,255);
+  Param := strPar.Add;
+  Param.Name := ':f';
+  Param.Value := copy(Mensagem,1,512);
+  Persistir(strLst.Text, strPar);
+  Freeandnil(strlst);
+  Freeandnil(strPar);
+  Freeandnil(Param);
 End;
 
 {Procedure TFormGeral.Conecta;
@@ -689,11 +728,12 @@ end;
 
 procedure TFormGeral.ConfigurarConnect;
 var
-  OMetodosServer : clsMetodosServer;
+  {OMetodosServer : clsMetodosServer;}
   servidor, driverservidor, porta,
   banco, usuario, senha, NomeEstacao: string;
 begin
   try
+    {
     OMetodosServer := clsMetodosServer.Create(Self);
     OMetodosServer.Configurar;
     OMetodosServer.ServerMethodsPrincipalClient.RetornarParametrosConn(servidor,
@@ -708,6 +748,7 @@ begin
                                           'Packet Size=4096;'+
                                           'Workstation ID='+NomeEstacao+';'+
                                           'Network Library=DBMSSOCN';
+    }
     //DatabaseMultiCold.Connected := True;
     //ShowMessage('Conexão Ativa');
   except
@@ -723,6 +764,7 @@ end;
 
 procedure TFormGeral.FormCreate(Sender: TObject);
 Begin
+{
   if not fileExists(extractFilePath(ParamStr(0))+'Multicold.udl') then
   begin
     ConfigurarConnect;
@@ -734,6 +776,10 @@ Begin
       exit;
     end;
   end;
+}
+
+  OMetodosServer := clsMetodosServer.Create(Self);
+  OMetodosServer.Configurar;
 FormGeral.Visible := false;
 ControleFiltro := ' ';
 Exportar := False;
@@ -748,6 +794,7 @@ SetLength(ArInc,0);
 SetLength(ArExc,0);
 
 iMaxRegQueryFacil := 1000;
+exit;
 
 if fileExists(extractFilePath(ParamStr(0))+'Multicold.udl') then
   begin
@@ -787,83 +834,109 @@ if fileExists(extractFilePath(ParamStr(0))+'MultiColdLog.udl') then
       //application.Terminate;
     end;
   end;
+
 End;
 
+procedure TFormGeral.ImportarDados( StrSql : String; StgParam : TFDParams);
+var
+  LDataSetList: TFDJSONDataSets;
+begin
+    MemTb.Close;
+    LDataSetList := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql, StgParam);
+    MemTb.AppendData(
+      TFDJSONDataSetsReader.GetListValue(LDataSetList, 0));
+    MemTb.Open;
+end;
+
+procedure TFormGeral.Persistir( StrSql : String; StgParam : TFDParams);
+begin
+  OMetodosServer.ServerMethodsPrincipalClient.PersistirBanco(StrSql, StgParam);
+end;
+
 Procedure TFormGeral.LerIni;
+  var strlst : TStringList;
 Begin
 
-QueryAux1.SQL.Clear;
-QueryAux1.SQL.Add('SELECT B.nomeCampo, A.valorCampo, A.campoID, A.codUsuario');
-QueryAux1.SQL.Add('FROM CONFIGURACAO A INNER JOIN NOMECAMPO B ON A.campoID = B.campoID');
-QueryAux1.SQL.Add('WHERE (A.codUsuario = ''ADM'') ');
-QueryAux1.SQL.Add('ORDER BY A.campoID');
-QueryAux1.Open;
+  //QueryAux1.SQL.Clear;
+  //QueryAux1.SQL.Add('SELECT B.nomeCampo, A.valorCampo, A.campoID, A.codUsuario');
+  //QueryAux1.SQL.Add('FROM CONFIGURACAO A INNER JOIN NOMECAMPO B ON A.campoID = B.campoID');
+  //QueryAux1.SQL.Add('WHERE (A.codUsuario = ''ADM'') ');
+  //QueryAux1.SQL.Add('ORDER BY A.campoID');
+  //QueryAux1.Open;
 
-While Not QueryAux1.Eof Do
-  Begin
-  If QueryAux1.Fields[0].AsString = 'DIASPERMANENCIA' Then
-    viNDiasPerm := stringReplace(QueryAux1.Fields[1].AsString, '/', '', [rfReplaceAll])
-  Else
-  If QueryAux1.Fields[0].AsString = 'DIRETORIOTRABALHO' Then
-    viDirTrabApl := IncludeTrailingPathDelimiter(QueryAux1.Fields[1].AsString)
-  Else
-  If QueryAux1.Fields[0].AsString = 'DIRENTRA' Then
-    viDirEntraFil := IncludeTrailingPathDelimiter(QueryAux1.Fields[1].AsString)
-  Else
-  If QueryAux1.Fields[0].AsString = 'DIRSAI' Then
-    viDirSaiFil := IncludeTrailingPathDelimiter(QueryAux1.Fields[1].AsString)
-  Else
-  If QueryAux1.Fields[0].AsString = 'BACKUPAUTOMATICO' Then
-    viBackAutoSN := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'DIRETORIOBACKUP' Then
-    viDirBackAuto := IncludeTrailingPathDelimiter(QueryAux1.Fields[1].AsString)
-  Else
-  If QueryAux1.Fields[0].AsString = 'REMOVERS1' Then
-    viRemoveS1SN := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'EXECUCAOAUTOMATICA' Then
-    viExecAutoSN := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'INTERVALO' Then
-    viInterExecSeg := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'EXTENSAOAUTOMATICA' Then
-    viExtAutoSN := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'FORMATOEXTENSAO' Then
-    viFormExtAuto := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'SEPARACAOAUTOMATICA' Then
-    viSeparacaoAutoSN := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'DECIMALCARACTEREQUEBRA' Then
-    viDecDoCarac := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'COLUNACARACTEREQUEBRA' Then
-    viColDoCarac := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'LIMPEZAAUTOMATICA' Then
-    viLimpaAutoSN := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'GRUPO' Then
-    viGrupo := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'SUBGRUPO' Then
-    viSubGrupo := QueryAux1.Fields[1].AsString
-  Else
-  If QueryAux1.Fields[0].AsString = 'DIRETORIOENTRADA' Then
-    viLimpEntra := IncludeTrailingPathDelimiter(QueryAux1.Fields[1].AsString)
-  Else
-  If QueryAux1.Fields[0].AsString = 'DIRETORIOSAIDA' Then
-    viLimpSai := IncludeTrailingPathDelimiter(QueryAux1.Fields[1].AsString)
-  Else
-  If QueryAux1.Fields[0].AsString = 'DIRETORIOGRAVACAO' Then
-    viDirGravCd := IncludeTrailingPathDelimiter(QueryAux1.Fields[1].AsString);
-  QueryAux1.Next;
+  strlst.Add('SELECT B.nomeCampo, A.valorCampo, A.campoID, A.codUsuario');
+  strlst.Add('FROM CONFIGURACAO A INNER JOIN NOMECAMPO B ON A.campoID = B.campoID');
+  strlst.Add('WHERE (A.codUsuario = ''ADM'') ');
+  strlst.Add('ORDER BY A.campoID');
+  ImportarDados(strlst.Text, nil);
+  memtb.Open;
+
+
+  While Not memtb.Eof Do
+    Begin
+    If memtb.Fields[0].AsString = 'DIASPERMANENCIA' Then
+      viNDiasPerm := stringReplace(memtb.Fields[1].AsString, '/', '', [rfReplaceAll])
+    Else
+    If memtb.Fields[0].AsString = 'DIRETORIOTRABALHO' Then
+      viDirTrabApl := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+    Else
+    If memtb.Fields[0].AsString = 'DIRENTRA' Then
+      viDirEntraFil := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+    Else
+    If memtb.Fields[0].AsString = 'DIRSAI' Then
+      viDirSaiFil := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+    Else
+    If memtb.Fields[0].AsString = 'BACKUPAUTOMATICO' Then
+      viBackAutoSN := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'DIRETORIOBACKUP' Then
+      viDirBackAuto := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+    Else
+    If memtb.Fields[0].AsString = 'REMOVERS1' Then
+      viRemoveS1SN := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'EXECUCAOAUTOMATICA' Then
+      viExecAutoSN := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'INTERVALO' Then
+      viInterExecSeg := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'EXTENSAOAUTOMATICA' Then
+      viExtAutoSN := memtb.Fields[1].AsString
+    Else
+    If QueryAux1.Fields[0].AsString = 'FORMATOEXTENSAO' Then
+      viFormExtAuto := QueryAux1.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'SEPARACAOAUTOMATICA' Then
+      viSeparacaoAutoSN := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'DECIMALCARACTEREQUEBRA' Then
+      viDecDoCarac := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'COLUNACARACTEREQUEBRA' Then
+      viColDoCarac := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'LIMPEZAAUTOMATICA' Then
+      viLimpaAutoSN := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'GRUPO' Then
+      viGrupo := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'SUBGRUPO' Then
+      viSubGrupo := memtb.Fields[1].AsString
+    Else
+    If memtb.Fields[0].AsString = 'DIRETORIOENTRADA' Then
+      viLimpEntra := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+    Else
+    If QueryAux1.Fields[0].AsString = 'DIRETORIOSAIDA' Then
+      viLimpSai := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+    Else
+    If memtb.Fields[0].AsString = 'DIRETORIOGRAVACAO' Then
+      viDirGravCd := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString);
+    memtb.Next;
   End;
 
-QueryAux1.Close;
+  memtb.Close;
 
 If (UpperCase(ExtractFileName(ParamStr(0))) = 'MULTICOLDADM.EXE') Or
    (UpperCase(ExtractFileName(ParamStr(0))) = 'MULTICOLDINDEXA.EXE') Then
@@ -878,67 +951,101 @@ If (UpperCase(ExtractFileName(ParamStr(0))) = 'MULTICOLDADM.EXE') Or
     End;
   End;
 
-FormGeral.DatabaseMulticold.Close;
-FormGeral.DatabaseEventos.Close;
-FormGeral.DatabaseLog.Close;
+//FormGeral.DatabaseMulticold.Close;
+//FormGeral.DatabaseEventos.Close;
+//FormGeral.DatabaseLog.Close;
 
 End;
 
 Procedure TFormGeral.LerMapa;
+  var strlst : TStringList;
 Begin
-QueryAux1.SQL.Clear;
-QueryAux1.SQL.Add('SELECT * ');
-QueryAux1.SQL.Add('FROM MAPACARACTERE A');
-QueryAux1.SQL.Add('WHERE (A.CODUSUARIO = ''ADM'') ');
-QueryAux1.SQL.Add('ORDER BY A.CODCARACTEREENTRA');
-QueryAux1.Open;
+//QueryAux1.SQL.Clear;
+//QueryAux1.SQL.Add('SELECT * ');
+//QueryAux1.SQL.Add('FROM MAPACARACTERE A');
+//QueryAux1.SQL.Add('WHERE (A.CODUSUARIO = ''ADM'') ');
+//QueryAux1.SQL.Add('ORDER BY A.CODCARACTEREENTRA');
+//QueryAux1.Open;
 
-While Not QueryAux1.Eof Do
-  Begin
-  RegMapa[QueryAux1.Fields[1].AsInteger] := QueryAux1.Fields[2].AsInteger;
-  QueryAux1.Next;
-  End;
+  strlst.Add('SELECT * ');
+  strlst.Add('FROM MAPACARACTERE A');
+  strlst.Add('WHERE (A.CODUSUARIO = ''ADM'') ');
+  strlst.Add('ORDER BY A.CODCARACTEREENTRA');
 
-QueryAux1.Close;
+  ImportarDados(strlst.Text, nil);
+  memtb.Open;
+
+  While Not memtb.Eof Do
+    Begin
+      RegMapa[memtb.Fields[1].AsInteger] := memtb.Fields[2].AsInteger;
+      memtb.Next;
+    End;
+
+  memtb.Close;
 End;
 
 Procedure TFormGeral.InsereAtualizaCompila;
+var
+  strlst : TStringlist;
+  strPar : TFDParams;
+  Param  : TFDParam;
 Begin
+  strPar := TFDParams.Create;
+  strLst := TStringList.Create;
+  strlst.Add('SELECT QTDCOMPIL FROM COMPILA WHERE ');
+  strlst.Add('CODREL = :a AND                     ');
+  strlst.Add('CODSIS = :b AND                     ');
+  strlst.Add('CODGRUPO = :c AND                   ');
+  strlst.Add('CODSUBGRUPO = :d                    ');
+
+  Param := strPar.Add;
+  Param.Name := ':a';
+  Param.Value := CodRel;
+  Param := strPar.Add;
+  Param.Name := ':b';
+  Param.Value := CodSis;
+  Param := strPar.Add;
+  Param.Name := ':c';
+  Param.Value := CodGrupo;
+  Param := strPar.Add;
+  Param.Name := ':d';
+  Param.Value := CodSubGrupo;
+
+
   If Operacao = '+' Then
     Begin
-      SelectCompilaQuery.Parameters[0].Value := CodRel;
-      SelectCompilaQuery.Parameters[1].Value := CodSis;
-      SelectCompilaQuery.Parameters[2].Value := CodGrupo;
-      SelectCompilaQuery.Parameters[3].Value := CodSubGrupo;
 
+      ImportarDados(strlst.Text, strPar);
       Try
-        SelectCompilaQuery.Open;
-        Inc(Cont,SelectCompilaQuery.Fields[0].AsInteger);
+        Memtb.Open;
+        Inc(Cont,Memtb.Fields[0].AsInteger);
       Except
       End; // Try
 
-      SelectCompilaQuery.Close;
+      Memtb.Close;
     End;
+  Param := strPar.Add;
+  Param.Name := ':e';
+  Param.Value := Cont;
 
-  InsereCompilaQuery.Parameters[0].Value := CodRel;
-  InsereCompilaQuery.Parameters[1].Value := CodSis;
-  InsereCompilaQuery.Parameters[2].Value := CodGrupo;
-  InsereCompilaQuery.Parameters[3].Value := CodSubGrupo;
-  InsereCompilaQuery.Parameters[4].Value := Cont;
-
+  strlst.Clear;
+  strlst.add(' INSERT INTO COMPILA (CODREL, CODSIS, CODGRUPO, CODSUBGRUPO, QTDCOMPIL)  ');
+  strlst.add(' VALUES (:a,:b,:c,:d,:e)                                                 ');
   Try
-    InsereCompilaQuery.ExecSQL;
+    Persistir(strlst.Text, strPar);
     Exit;
   Except
   End;
 
-  UpdateCompilaQuery.Parameters[0].Value := Cont;
-  UpdateCompilaQuery.Parameters[1].Value := CodRel;
-  UpdateCompilaQuery.Parameters[2].Value := CodSis;
-  UpdateCompilaQuery.Parameters[3].Value := CodGrupo;
-  UpdateCompilaQuery.Parameters[4].Value := CodSubGrupo;
-  UpdateCompilaQuery.ExecSQL;
-
+  //UpdateCompilaQuery.Parameters[0].Value := Cont;
+  //UpdateCompilaQuery.Parameters[1].Value := CodRel;
+  //UpdateCompilaQuery.Parameters[2].Value := CodSis;
+  //UpdateCompilaQuery.Parameters[3].Value := CodGrupo;
+  //UpdateCompilaQuery.Parameters[4].Value := CodSubGrupo;
+  //UpdateCompilaQuery.ExecSQL;
+  Freeandnil(strlst);
+  Freeandnil(strPar);
+  Freeandnil(Param);
 End;
 
 Procedure Verifica(iI : Integer; Carac : AnsiChar; Lim1, Lim2 : Integer; Mens : AnsiString; Var AuxStr : AnsiString);
@@ -968,9 +1075,14 @@ Procedure TFormGeral.InsereEventosVisu(Arquivo, Diretorio, CodRel, CodUsuario, N
                                        Grupo, SubGrupo, CodMens : Integer);
 Var
   Agora : TDateTime;
+  strLst : TStringList;
+  strPar : TFDParams;
+  Param  : TFDParam;
 Begin
 If UpperCase(ExtractFileName(ParamStr(0))) = 'MULTICOLDINDEXA.EXE' Then
   Exit;
+
+{
 If DatabaseEventos.Connected = False Then
   Begin
   Try
@@ -983,9 +1095,41 @@ If DatabaseEventos.Connected = False Then
 If DatabaseEventos.InTransaction Then
   DatabaseEventos.CommitTrans;
 DatabaseEventos.BeginTrans;
+}
 
 Agora := Now;
 Try
+  strLst := TStringList.Create;
+  strLst.Add('INSERT INTO EVENTOS_VISU (DT, HR, ARQUIVO, DIRETORIO, CODREL, GRUPO, SUBGRUPO, CODUSUARIO, NOMEGRUPOUSUARIO, CODMENSAGEM) ');
+  strLst.Add('VALUES (:a, :b, :c, :d, :e, :f, :g, :h, :i, :j)');
+  Param := strPar.Add;
+  Param.Name := ':a';
+  Param.Value := Agora;
+  Param := strPar.Add;
+  Param.Name := ':b';
+  Param.Value := Copy(Arquivo, 1, 70);
+  Param := strPar.Add;
+  Param.Name := ':c';
+  Param.Value := Copy(Diretorio, 1, 70);
+  Param := strPar.Add;
+  Param.Name := ':d';
+  Param.Value := CodRel;
+  Param := strPar.Add;
+  Param.Name := ':e';
+  Param.Value := Grupo;
+  Param := strPar.Add;
+  Param.Name := ':f';
+  Param.Value := SubGrupo;
+  Param := strPar.Add;
+  Param.Name := ':g';
+  Param.Value := CodUsuario;
+  Param := strPar.Add;
+  Param.Name := ':h';
+  Param.Value := CodUsuario;
+  Param.Name := ':i';
+  Param.Value := CodMens;
+
+  {
   EventosQuery1.Close;
   EventosQuery1.Sql.Clear;
   EventosQuery1.Sql.Add('INSERT INTO EVENTOS_VISU (DT, HR, ARQUIVO, DIRETORIO, CODREL, GRUPO, SUBGRUPO, CODUSUARIO, NOMEGRUPOUSUARIO, CODMENSAGEM) ');
@@ -998,21 +1142,32 @@ Try
   EventosQuery1.Parameters[5].Value := Grupo;
   EventosQuery1.Parameters[6].Value := SubGrupo;
   EventosQuery1.Parameters[7].Value := CodUsuario;
-  EventosQuery1.Parameters[8].Value := NomeGrupoUsuario;
+  EventosQuery1.Parameters[8].Value := CodUsuario;
   EventosQuery1.Parameters[9].Value := CodMens;
   EventosQuery1.ExecSql;
   DatabaseEventos.CommitTrans;
+  }
+  Persistir(strLst.Text, strPar);
 Except
-  DatabaseEventos.RollbackTrans;
+  //DatabaseEventos.RollbackTrans;
   End; // Try
+
+  Freeandnil(strlst);
+  Freeandnil(strPar);
+  Freeandnil(Param);
 End;
 
 Procedure TFormGeral.InsereEventos(V1, V2, V3 : AnsiString; V4 : Integer; Const Reg : AnsiString);
 Var
   Agora : TDateTime;
+  strLst : TStringList;
+  strPar : TFDParams;
+  Param  : TFDParam;
 Begin
 If UpperCase(ExtractFileName(ParamStr(0))) = 'MULTICOLDINDEXA.EXE' Then
   Exit;
+
+{
 If DatabaseEventos.Connected = False Then
   Begin
   Try
@@ -1025,7 +1180,7 @@ If DatabaseEventos.Connected = False Then
 If DatabaseEventos.InTransaction Then
   DatabaseEventos.CommitTrans;
 DatabaseEventos.BeginTrans;
-
+}
 If Length(V1) > 60 Then
   SetLength(V1,60);
 If Length(V2) > 60 Then
@@ -1036,6 +1191,29 @@ If Length(V3) > 20 Then
 Agora := Now;
 
 Try
+  strLst := TStringList.Create;
+  strLst.Add('INSERT INTO EVENTOS (DT, HR, OBJETO, ITEM, CODUSUARIO, CODMENSAGEM) VALUES (:a, :b, :c, :d, :e, :f)');
+  Param := strPar.Add;
+  Param.Name := ':a';
+  Param.Value := Agora;
+  Param := strPar.Add;
+  Param.Name := ':b';
+  Param.Value := Agora;
+  Param := strPar.Add;
+  Param.Name := ':c';
+  Param.Value := V1;
+  Param := strPar.Add;
+  Param.Name := ':d';
+  Param.Value := V2;
+  Param := strPar.Add;
+  Param.Name := ':e';
+  Param.Value := V3;
+  Param := strPar.Add;
+  Param.Name := ':f';
+  Param.Value := V4;
+  Persistir(strLst.Text, strPar);
+
+  {
   EventosQuery1.Close;
   EventosQuery1.Sql.Clear;
   EventosQuery1.Sql.Add('INSERT INTO EVENTOS (DT, HR, OBJETO, ITEM, CODUSUARIO, CODMENSAGEM) VALUES (:a, :b, :c, :d, :e, :f)');
@@ -1047,8 +1225,23 @@ Try
   EventosQuery1.Parameters[5].Value := V4;
   EventosQuery1.ExecSql;
   DatabaseEventos.CommitTrans;
+  }
   If Reg <> '' Then
     Begin
+      strPar.Clear;
+      strLst.Clear;
+      strLst.Add('INSERT INTO REGISTROS (DT, HR, CONTEUDO) VALUES (:A,:B,:C) ');
+      Param := strPar.Add;
+      Param.Name := ':a';
+      Param.Value := Agora;
+      Param := strPar.Add;
+      Param.Name := ':b';
+      Param.Value := Agora;
+      Param := strPar.Add;
+      Param.Name := ':c';
+      Param.Value := Reg;
+      Persistir(strLst.Text, strPar);
+      {
     DatabaseEventos.BeginTrans;
     EventosQuery1.Close;
     EventosQuery1.Sql.Clear;
@@ -1066,10 +1259,14 @@ Try
     Except
       DatabaseEventos.RollbackTrans;
       End; // Try
+      }
     End;
-Except
-  DatabaseEventos.RollbackTrans;
+    Except
+  //DatabaseEventos.RollbackTrans;
   End; // Try
+  Freeandnil(strlst);
+  Freeandnil(strPar);
+  Freeandnil(Param);
 End;
 
 Procedure TFormGeral.MostraMensagem;

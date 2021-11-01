@@ -4,7 +4,11 @@ Interface
 
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Db, DBTables, ComCtrls, ExtCtrls;
+  StdCtrls, Db, DBTables, ComCtrls, UMetodosServer,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect,
+  Vcl.ExtCtrls;
 
 Type
   TAssisAbreForm = Class(TForm)
@@ -19,6 +23,7 @@ Type
     Panel4: TPanel;
     Button2: TButton;
     Button3: TButton;
+    Memtb: TFDMemTable;
     Procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -28,6 +33,7 @@ Type
     procedure FormShow(Sender: TObject);
   Private
     { Private declarations }
+    OMetodosServer : clsMetodosServer;
   Public
     { Public declarations }
   End;
@@ -60,6 +66,10 @@ Var
   SubGrupo,
   OldFileMode : Integer;
   SearchRec : TSearchRec;
+
+  strlst : TStringlist;
+  strPar : TFDParams;
+  Param  : TFDParam;
 
   Function PegaInfo(Path : String) : String;
 
@@ -218,6 +228,15 @@ Else
 
   FullPaths.Clear;
 
+    strPar := TFDParams.Create;
+    strLst := TStringList.Create;
+    strlst.Add('SELECT * FROM DESTINOSDFN A ');
+    strlst.Add('WHERE A.CODREL = '''+TreeView1.Selected.Parent.Text+'''');
+    strlst.Add('AND A.TIPODESTINO = ''Dir''');
+    strlst.Add('AND A.SEGURANCA = ''S''');
+
+    FormGeral.ImportarDados(strLst.Text, nil);
+  {
   FormGeral.QueryLocal1.Close;
   FormGeral.QueryLocal1.Sql.Clear;
   FormGeral.QueryLocal1.Sql.Add('SELECT * FROM DESTINOSDFN A ');
@@ -226,7 +245,10 @@ Else
   FormGeral.QueryLocal1.Sql.Add('AND A.SEGURANCA = ''S''');
 
   FormGeral.QueryLocal1.Open;
-  If FormGeral.QueryLocal1.RecordCount <> 0 Then
+  }
+
+  FormGeral.Memtb.Open;
+  If FormGeral.Memtb.RecordCount <> 0 Then
     Begin
 
     Sistema := 0;
@@ -324,12 +346,15 @@ End;
 Procedure TAssisAbreForm.FormClose(Sender: TObject;
   Var Action: TCloseAction);
 Begin
-Avisop.Close;
+  Avisop.Close;
+  FreeAndNil(OMetodosServer);
 End;
 
 Procedure TAssisAbreForm.FormCreate(Sender: TObject);
 Begin
-AssisAbreFlg := False;
+  AssisAbreFlg := False;
+  OMetodosServer := clsMetodosServer.Create(Self);
+  OMetodosServer.Configurar;
 End;
 
 Procedure TAssisAbreForm.FiltradoCheckBoxClick(Sender: TObject);

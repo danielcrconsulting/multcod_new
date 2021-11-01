@@ -1,24 +1,23 @@
 object AnotaTextoForm: TAnotaTextoForm
   Left = 238
   Top = 165
-  Width = 540
-  Height = 480
   Caption = 'Anota'#231#245'es de Texto'
+  ClientHeight = 441
+  ClientWidth = 524
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Label1: TLabel
     Left = 240
     Top = 384
     Width = 32
-    Height = 13
+    Height = 14
     Caption = 'Label1'
     Color = clYellow
     ParentColor = False
@@ -26,8 +25,8 @@ object AnotaTextoForm: TAnotaTextoForm
   object Label5: TLabel
     Left = 240
     Top = 352
-    Width = 49
-    Height = 13
+    Width = 50
+    Height = 14
     Caption = 'Anota'#231#227'o:'
   end
   object SairBut: TButton
@@ -108,5 +107,20 @@ object AnotaTextoForm: TAnotaTextoForm
     Parameters = <>
     Left = 488
     Top = 352
+  end
+  object FDQuery1: TFDQuery
+    Left = 384
+    Top = 360
+  end
+  object Memtb: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 296
+    Top = 400
   end
 end

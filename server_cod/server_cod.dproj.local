@@ -5,9 +5,9 @@
     <Transaction>2021/07/05 08:13:59.000.237,=C:\delphi\server_cod\ServerMethodsUnit1.pas</Transaction>
     <Transaction>2021/07/05 08:14:10.000.288,=C:\delphi\server_cod\ServerContainerUnit1.pas</Transaction>
     <Transaction>2021/07/05 08:14:15.000.611,=C:\delphi\server_cod\WebModuleUnit1.pas</Transaction>
-    <Transaction>2021/07/05 08:14:20.000.587,=C:\delphi\server_cod\js\serverfunctioninvoker.js</Transaction>
-    <Transaction>2021/07/05 08:14:20.000.769,=C:\delphi\server_cod\templates\reversestring.html</Transaction>
     <Transaction>2021/07/05 08:14:20.000.365,=C:\delphi\server_cod\js\base64-min.js</Transaction>
+    <Transaction>2021/07/05 08:14:20.000.769,=C:\delphi\server_cod\templates\reversestring.html</Transaction>
+    <Transaction>2021/07/05 08:14:20.000.587,=C:\delphi\server_cod\js\serverfunctioninvoker.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.540,=C:\delphi\server_cod\js\connection.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.332,=C:\delphi\server_cod\js\serverfunctions.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.450,=C:\delphi\server_cod\js\serverfunctionexecutor-min.js</Transaction>
@@ -22,9 +22,45 @@
     <Transaction>2021/07/05 08:14:20.000.982,=C:\delphi\server_cod\images\collapse.png</Transaction>
     <Transaction>2021/07/05 08:14:20.000.206,=C:\delphi\server_cod\js\base64.js</Transaction>
     <Transaction>2021/07/05 08:14:21.000.041,=C:\delphi\server_cod\images\expand.png</Transaction>
-    <Transaction>2021/07/05 18:14:21.257,=C:\delphi\server_cod\ClientClassesUnit1.pas</Transaction>
-    <Transaction>2021/07/05 18:14:23.495,=C:\delphi\server_cod\ClientModuleUnit1.pas</Transaction>
-    <Transaction>2021/07/05 18:28:13.701,=C:\delphi\server_cod\ClientClassesUnit2.pas</Transaction>
-    <Transaction>2021/07/05 18:32:02.911,=C:\delphi\server_cod\UMetodosServer.pas</Transaction>
+    <Transaction>2021/07/05 18:14:21.000.257,=C:\delphi\server_cod\ClientClassesUnit1.pas</Transaction>
+    <Transaction>2021/07/05 18:14:23.000.495,=C:\delphi\server_cod\ClientModuleUnit1.pas</Transaction>
+    <Transaction>2021/07/05 18:28:13.000.701,=C:\delphi\server_cod\ClientClassesUnit2.pas</Transaction>
+    <Transaction>2021/07/05 18:32:02.000.911,=C:\delphi\server_cod\UMetodosServer.pas</Transaction>
   </Transactions>
+	<ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="css"/>
+    <File Path="css\main.css"/>
+    <File Path="css\serverfunctioninvoker.css"/>
+    <File Path="images"/>
+    <File Path="images\collapse.png"/>
+    <File Path="images\expand.png"/>
+    <File Path="js"/>
+    <File Path="js\base64-min.js"/>
+    <File Path="js\base64.js"/>
+    <File Path="js\callbackframework-min.js"/>
+    <File Path="js\callbackframework.js"/>
+    <File Path="js\connection.js"/>
+    <File Path="js\json2-min.js"/>
+    <File Path="js\json2.js"/>
+    <File Path="js\serverfunctionexecutor-min.js"/>
+    <File Path="js\serverfunctionexecutor.js"/>
+    <File Path="js\serverfunctioninvoker.js"/>
+    <File Path="js\serverfunctions.js"/>
+    <File Path="templates"/>
+    <File Path="templates\reversestring.html"/>
+    <File Path="templates\serverfunctioninvoker.html"/>
+    <File Path="ClientClassesUnit1.pas"/>
+    <File Path="ClientClassesUnit2.pas"/>
+    <File Path="ClientModuleUnit1.pas"/>
+    <File Path="ClientModuleUnit1.dfm"/>
+    <File Path="FormUnit1.pas"/>
+    <File Path="FormUnit1.dfm"/>
+    <File Path="ServerContainerUnit1.pas"/>
+    <File Path="ServerContainerUnit1.dfm"/>
+    <File Path="ServerMethodsUnit1.pas"/>
+    <File Path="ServerMethodsUnit1.dfm"/>
+    <File Path="UMetodosServer.pas"/>
+    <File Path="WebModuleUnit1.pas"/>
+    <File Path="WebModuleUnit1.dfm"/>
+  </ProjectSortOrder>
 </BorlandProject>

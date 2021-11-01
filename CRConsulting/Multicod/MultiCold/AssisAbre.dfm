@@ -11,13 +11,12 @@ object AssisAbreForm: TAssisAbreForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   WindowMenu = FrameForm.AbrirRemoto1
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Panel1: TPanel
     Left = 0
     Top = 0
@@ -81,7 +80,7 @@ object AssisAbreForm: TAssisAbreForm
       Width = 293
       Height = 339
       Align = alClient
-      ItemHeight = 13
+      ItemHeight = 14
       TabOrder = 0
       OnDblClick = Button2Click
     end
@@ -120,5 +119,16 @@ object AssisAbreForm: TAssisAbreForm
   object Table1: TTable
     Left = 64
     Top = 360
+  end
+  object Memtb: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 297
+    Top = 128
   end
 end
