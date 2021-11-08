@@ -1210,6 +1210,7 @@ Begin
 End;
 
 Procedure TEditForm.VerificaAnotacao;
+var strlst : TStringlist;
 Begin
 
 AnotaForm.Label1.Caption := '0 de 0';
@@ -1227,6 +1228,35 @@ FrameForm.Animate2.Visible := False;
 TemAnotacaoGrafica := False;
 TemAnotacaoDeTexto := False;
 
+  strlst := TStringList.Create;
+  strlst.Clear;
+  strlst.Add('SELECT * FROM COMENTARIOSBIN WHERE CODREL = '''+RegDFN.CODREL+'''');
+  strlst.Add('AND PATHREL = '''+ExtractFileName(Filename)+'''');
+  strlst.Add('AND PAGINA = '+IntToStr(PaginaAtu));
+  strlst.Add('AND ((CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''')');
+  strlst.Add('OR   (FLAGPUBLICO = ''T''))');
+  FormGeral.ImportarDados(strlst.Text, nil);
+  FormGeral.memtb.FetchAll;
+  Try
+    FormGeral.memtb.Open;
+  Except
+    Exit;
+  End;
+  If FormGeral.memtb.RecordCount <> 0 Then
+  Begin
+    FrameForm.Animate2.Visible := True;
+    TemAnotacaoGrafica := True;
+
+    LoadImage2;
+
+    Image2.Visible := False;
+    Image2.BringToFront;
+    AnotaForm.Label1.Caption := '1 de '+IntToStr(FormGeral.memtb.RecordCount);
+    AnotaForm.ScrollBar1.Max := AnotaForm.ADOQuery1.RecordCount;
+    AnotaForm.ScrollBar1.Position := 1;
+    AnotaForm.ScrollBar1.Min := 1;
+  End;
+{
 AnotaForm.ADOQuery1.Close;
 AnotaForm.ADOQuery1.SQL.Clear;
 AnotaForm.ADOQuery1.SQL.Add('SELECT * FROM COMENTARIOSBIN WHERE CODREL = '''+RegDFN.CODREL+'''');
@@ -1253,7 +1283,36 @@ If AnotaForm.ADOQuery1.RecordCount <> 0 Then
   AnotaForm.ScrollBar1.Position := 1;
   AnotaForm.ScrollBar1.Min := 1;
   End;
-
+}
+  strlst.Clear;
+  strlst.Add('SELECT * FROM COMENTARIOSTXT WHERE CODREL = '''+RegDFN.CODREL+'''');
+  strlst.Add('AND PATHREL = '''+ExtractFileName(Filename)+'''');
+  strlst.Add('AND PAGINA = '+IntToStr(PaginaAtu));
+  strlst.Add('AND ((CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''')');
+  strlst.Add('OR   (FLAGPUBLICO = ''T''))');
+  FormGeral.ImportarDados(strlst.Text, nil);
+  Try
+    FormGeral.memtb.Open;
+    FormGeral.memtb.FetchAll
+  Except
+    Exit;
+  End;
+  If FormGeral.memtb.RecordCount <> 0 Then
+  Begin
+    FrameForm.Animate1.Visible := True;
+    TemAnotacaoDeTexto := True;
+    AnotaTextoForm.Memo1.Text := FormGeral.memtb.FieldByName('COMENTARIOTXT').AsString;
+    AnotaTextoForm.Label1.Caption := '1 de '+IntToStr(FormGeral.memtb.RecordCount);
+    AnotaTextoForm.ScrollBar1.Max := FormGeral.memtb.RecordCount;
+    AnotaTextoForm.ScrollBar1.Position := 1;
+    AnotaTextoForm.ScrollBar1.Min := 1;
+    If FormGeral.memtb.FieldByName('FLAGPUBLICO').AsString = 'T' Then
+      AnotaTextoForm.PublicaRadioButton.Checked := True
+    Else
+      AnotaTextoForm.PrivadaRadioButton.Checked := True;
+  End;
+//FormGeral.QueryLocal1.Close;
+{
 AnotaTextoForm.ADOQuery1.Close;
 AnotaTextoForm.ADOQuery1.SQL.Clear;
 AnotaTextoForm.ADOQuery1.SQL.Add('SELECT * FROM COMENTARIOSTXT WHERE CODREL = '''+RegDFN.CODREL+'''');
@@ -1281,7 +1340,7 @@ If AnotaTextoForm.ADOQuery1.RecordCount <> 0 Then
     AnotaTextoForm.PrivadaRadioButton.Checked := True;
   End;
 //FormGeral.QueryLocal1.Close;
-
+}
 End;
 
 Procedure TEditForm.CarregaImagem;

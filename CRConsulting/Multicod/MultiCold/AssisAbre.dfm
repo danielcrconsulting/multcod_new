@@ -117,8 +117,8 @@ object AssisAbreForm: TAssisAbreForm
     end
   end
   object Table1: TTable
-    Left = 64
-    Top = 360
+    Left = 80
+    Top = 248
   end
   object Memtb: TFDMemTable
     FetchOptions.AssignedValues = [evMode]

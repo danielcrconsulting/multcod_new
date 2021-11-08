@@ -314,7 +314,8 @@ Else
     ListBox2.Items.Text := StrSrt.Text;
     FullPaths.CustomSort(SortCompareDesc); // Coloca os nomes de arquivo no mesma ordem
     End;
-  FormGeral.QueryLocal1.Close;
+  //FormGeral.QueryLocal1.Close;
+    FormGeral.Memtb.Close;
   End;
 End;
 

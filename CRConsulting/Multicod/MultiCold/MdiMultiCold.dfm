@@ -807,4 +807,8 @@ object FrameForm: TFrameForm
       OnClick = Help1Click
     end
   end
+  object FDQuery1: TFDQuery
+    Left = 248
+    Top = 384
+  end
 end

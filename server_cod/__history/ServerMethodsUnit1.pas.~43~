@@ -34,8 +34,8 @@ type
                                     var porta : String ; var banco : String;
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
-    function RetornarDadosBanco(SQL : String) : TFDJSONDataSets;
-    procedure PersistirBanco(SQL : String, StrParam : TParam);
+    function RetornarDadosBanco(SQL : String;  StrParam : TFDParams) : TFDJSONDataSets;
+    procedure PersistirBanco(SQL : String; StrParam : TFDParams);
 
   end;
 
@@ -53,6 +53,7 @@ var
   senha, NomeEstacao : String;
 begin
   RetornarParametrosConn(servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao);
+  {
   FdCon.ConnectionString := 'Provider='+DriverServidor+';'+
                                           'Persist Security Info=True;'+
                                           'User ID='+usuario+';'+
@@ -62,7 +63,15 @@ begin
                                           'Auto Translate=True;'+
                                           'Packet Size=4096;'+
                                           'Workstation ID='+NomeEstacao+';'+
-                                          'Network Library=DBMSSOCN';
+                                          'Network Library=DBMSSOCN'+';'+
+                                          'DriverID=MSSQL';
+  }
+  FdCon.Params.Clear;
+  FdCon.Params.Values['DriverID']  := 'MSSQL';
+  FdCon.Params.Values['Server'] := servidor;
+  FdCon.Params.Values['Database'] := banco;
+  FdCon.Params.Values['User_name'] := usuario;
+  FdCon.Params.Values['Password'] := senha;
   FdCon.Open;
 end;
 
@@ -81,13 +90,23 @@ begin
   Result := Value;
 end;
 
-procedure TServerMethods1.PersistirBanco(SQL : String; StrParam : TParam);
+procedure TServerMethods1.PersistirBanco(SQL : String; StrParam : TFDParams);
 begin
-  ConectarBanco;
-  FdQry.SQL.Text := SQL;
-  FdQry.Params := StrParam;
-  FdQry.ExecSQL;
-  DesconectarBanco;
+  try
+    try
+      ConectarBanco;
+      FdQry.SQL.Text := SQL;
+      FdQry.Params := StrParam;
+      FdQry.ExecSQL;
+    except
+      on e:exception do
+      begin
+        raise Exception.Create('Erro na persistência de Dados');
+      end;
+    end;
+  finally
+    DesconectarBanco;
+  end;
 end;
 
 function TServerMethods1.ReverseString(Value: string): string;
@@ -95,12 +114,24 @@ begin
   Result := System.StrUtils.ReverseString(Value);
 end;
 
-function TServerMethods1.RetornarDadosBanco(SQL: String): TFDJSONDataSets;
+function TServerMethods1.RetornarDadosBanco(SQL: String;  StrParam : TFDParams): TFDJSONDataSets;
 begin
-  FdQry.Active := False;
-  Result := TFDJSONDataSets.Create;
-  FdQry.SQL.Text := SQL;
-  TFDJSONDataSetsWriter.ListAdd(Result, FdQry);
+  try
+    Result := TFDJSONDataSets.Create;
+    try
+      ConectarBanco;
+      FdQry.Active := False;
+      FdQry.SQL.Text := SQL;
+      FdQry.Params := StrParam;
+      TFDJSONDataSetsWriter.ListAdd(Result, FdQry);
+    except
+      on e:exception do
+      begin
+        raise Exception.Create('Erro na persistência de Dados');
+      end;
+    end;
+  finally
+  end;
 end;
 
 function TServerMethods1.RetornarParametrosConn(var servidor : String; var driverservidor: String;

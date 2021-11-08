@@ -7,7 +7,10 @@ Uses
   OleCtrls, ComCtrls, Db, StdCtrls, Buttons, ExtCtrls,
   Menus, DBClient, MConnect, SConnect, ComObj, OleServer, {Word97,}
   IMulticoldServer1, ADODB, SutypGer, InvokeRegistry, System.UITypes,
-  Pilha, Vcl.FileCtrl, DBTables, dfcontrols;
+  Pilha, Vcl.FileCtrl, DBTables, dfcontrols, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 //  adsdata, adsfunc, adstable;
 
 
@@ -343,6 +346,7 @@ Type
     Memo2: TMemo;
     ScrollBar1: TScrollBar;
     ScrollBar2: TScrollBar;
+    FDQuery1: TFDQuery;
     Procedure AbreRelButClick(Sender: TObject);
     Procedure Exit1Click(Sender: TObject);
     Procedure Tile1Click(Sender: TObject);
@@ -502,6 +506,7 @@ End;
 Function TFrameForm.CarregaDadosDfnIncExc : Boolean;
 Var
   I : Integer;
+  strlst : TStringlist;
 Begin
 Result := True;
 
@@ -512,6 +517,7 @@ Avisop.Label1.Caption := 'Carregando dados...';
 Avisop.Show;
 Application.ProcessMessages;
 
+{
 if not FormGeral.DatabaseMultiCold.Connected then // Se não conectou tenta mais uma vez
   try
     FormGeral.DatabaseMultiCold.ConnectionTimeout := 15;
@@ -524,7 +530,14 @@ if not FormGeral.DatabaseMultiCold.Connected then // Se não conectou tenta mais 
     exit;
     end;
   end;
+}
 
+  strlst := TStringlist.Create;
+  strlst.Add(' SELECT * FROM DFN A');
+  strlst.Add('ORDER BY A.CODREL   ');
+  FormGeral.ImportarDados(strlst.Text,nil);
+
+{
 FormGeral.QueryLocal1.Close;
 FormGeral.QueryLocal1.Sql.Clear;
 FormGeral.QueryLocal1.Sql.Add('SELECT * FROM DFN A');
@@ -537,7 +550,28 @@ Except
   Avisop.Close;
   Exit;
   End; // Try
+}
+  While Not FormGeral.memtb.Eof Do
+    FormGeral.memtb.Next;   // Estabelecer o recordcount correto
 
+  SetLength(ArDFN, FormGeral.memtb.RecordCount);
+
+  FormGeral.memtb.First;
+  I := 0;
+  While Not FormGeral.memtb.Eof Do
+  Begin
+    ArDFN[I].CodRel := FormGeral.memtb.FieldByName('CodRel').AsString;
+    ArDFN[I].CodSis := FormGeral.memtb.FieldByName('CodSis').AsInteger;
+    ArDFN[I].CodGrupo := FormGeral.memtb.FieldByName('CodGrupo').AsInteger;
+    ArDFN[I].CodSubGrupo := FormGeral.memtb.FieldByName('CodSubGrupo').AsInteger;
+    ArDFN[I].GrupoAuto := (FormGeral.memtb.FieldByName('CodGrupAuto').AsString = 'T') Or
+                          (FormGeral.memtb.FieldByName('SubDirAuto').AsString = 'T');
+    ArDFN[i].SisAuto := (FormGeral.memtb.FieldByName('SISAUTO').AsString = 'T');
+    Inc(I);
+    FormGeral.memtb.Next;
+  End;
+
+{
 While Not FormGeral.QueryLocal1.Eof Do
   FormGeral.QueryLocal1.Next;   // Estabelecer o recordcount correto
 
@@ -558,7 +592,42 @@ While Not FormGeral.QueryLocal1.Eof Do
   Inc(I);
   FormGeral.QueryLocal1.Next;
   End;
+}
 
+  Try
+    strlst.Clear;
+    FormGeral.memtb.Close;
+    strlst.Add('SELECT * FROM USUREL A');
+    strlst.Add('WHERE (A.CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''') AND ');
+    strlst.Add('      (A.TIPO = ''INC'') ');
+    FormGeral.ImportarDados(strlst.Text,nil);
+    FormGeral.memtb.Open;
+  Except
+    FormGeral.MostraMensagem('Erro ao tentar carregar dados de USUREL INC');
+    Result := False;
+    Avisop.Close;
+    Exit;
+  End; // Try
+
+  While Not FormGeral.memtb.Eof Do
+    FormGeral.memtb.Next;   // Estabelecer o recordcount correto
+
+  SetLength(ArINC, FormGeral.memtb.RecordCount);
+
+  FormGeral.memtb.First;
+  I := 0;
+  While Not FormGeral.memtb.Eof Do
+  Begin
+    ArINC[I].CodUsu := FormGeral.memtb.FieldByName('CodUsuario').AsString;
+    ArINC[I].CodSis := FormGeral.memtb.FieldByName('CodSis').AsInteger;
+    ArINC[I].CodGrupo := FormGeral.memtb.FieldByName('CodGrupo').AsInteger;
+    ArINC[I].CodSubGrupo := FormGeral.memtb.FieldByName('CodSubGrupo').AsInteger;
+    ArINC[I].CodRel := FormGeral.memtb.FieldByName('CodRel').AsString;
+    Inc(I);
+    FormGeral.memtb.Next;
+  End;
+
+{
 Try
   FormGeral.QueryLocal1.Close;
   FormGeral.QueryLocal1.Sql.Clear;
@@ -591,7 +660,42 @@ While Not FormGeral.QueryLocal1.Eof Do
   Inc(I);
   FormGeral.QueryLocal1.Next;
   End;
+}
 
+  strlst.Clear;
+  FormGeral.memtb.Close;
+  strlst.Add('SELECT * FROM USUREL A');
+  strlst.Add('WHERE (A.CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''') AND ');
+  strlst.Add('      (A.TIPO = ''EXC'') ');
+  FormGeral.ImportarDados(strlst.Text,nil);
+  Try
+    FormGeral.memtb.Open;
+  Except
+    FormGeral.MostraMensagem('Erro ao tentar carregar dados de USUREL EXC');
+    Result := False;
+    Avisop.Close;
+    Exit;
+  End; // Try
+
+  While Not FormGeral.memtb.Eof Do
+    FormGeral.memtb.Next;   // Estabelecer o recordcount correto
+
+  SetLength(ArEXC, FormGeral.memtb.RecordCount);
+
+  FormGeral.memtb.First;
+  I := 0;
+  While Not FormGeral.memtb.Eof Do
+  Begin
+    ArEXC[I].CodUsu := FormGeral.memtb.FieldByName('CodUsuario').AsString;
+    ArEXC[I].CodSis := FormGeral.memtb.FieldByName('CodSis').AsInteger;
+    ArEXC[I].CodGrupo := FormGeral.memtb.FieldByName('CodGrupo').AsInteger;
+    ArEXC[I].CodSubGrupo := FormGeral.memtb.FieldByName('CodSubGrupo').AsInteger;
+    ArEXC[I].CodRel := FormGeral.memtb.FieldByName('CodRel').AsString;
+    Inc(I);
+    FormGeral.memtb.Next;
+  End;
+
+{
 FormGeral.QueryLocal1.Close;
 FormGeral.QueryLocal1.Sql.Clear;
 FormGeral.QueryLocal1.Sql.Add('SELECT * FROM USUREL A');
@@ -624,7 +728,36 @@ While Not FormGeral.QueryLocal1.Eof Do
   Inc(I);
   FormGeral.QueryLocal1.Next;
   End;
+}
 
+  strlst.Clear;
+  strlst.Add('SELECT * FROM SISTEMA ');
+  FormGeral.ImportarDados(strlst.Text, nil);
+  Try
+    FormGeral.memtb.Open;
+  Except
+    FormGeral.MostraMensagem('Erro ao tentar carregar dados de SISTEMA');
+    Result := False;
+    Avisop.Close;
+    Exit;
+  End; // Try
+
+  While Not FormGeral.memtb.Eof Do
+    FormGeral.memtb.Next;   // Estabelecer o recordcount correto
+
+  SetLength(ArSis, FormGeral.memtb.RecordCount);
+
+  FormGeral.memtb.First;
+  I := 0;
+  While Not FormGeral.memtb.Eof Do
+  Begin
+    ArSis[I].CodSis := FormGeral.memtb.FieldByName('CodSis').AsInteger;
+    ArSis[I].NomeSis := FormGeral.memtb.FieldByName('NomeSis').AsString;
+    Inc(I);
+    FormGeral.memtb.Next;
+  End;
+
+{
 FormGeral.QueryLocal1.Close;
 FormGeral.QueryLocal1.Sql.Clear;
 FormGeral.QueryLocal1.Sql.Add('SELECT * FROM SISTEMA ');
@@ -652,7 +785,41 @@ While Not FormGeral.QueryLocal1.Eof Do
   Inc(I);
   FormGeral.QueryLocal1.Next;
   End;
+}
 
+  strlst.Clear;
+  strlst.Add('SELECT * FROM COMPILA ');
+  FormGeral.ImportarDados(strlst.Text, nil);
+  Try
+    FormGeral.memtb.Open;
+  Except
+    On e: Exception Do Begin
+      FormGeral.MostraMensagem(e.Message + #13#10 + 'Erro ao tentar carregar dados de COMPILA');
+      Result := False;
+      Avisop.Close;
+      Exit;
+    End;
+  End;// Try
+
+  While Not FormGeral.memtb.Eof Do
+    FormGeral.memtb.Next;   // Estabelecer o recordcount correto
+
+  SetLength(ArCompila, FormGeral.memtb.RecordCount);
+
+  FormGeral.memtb.First;
+  I := 0;
+  While Not FormGeral.memtb.Eof Do
+  Begin
+    ArCompila[I].CodRel := FormGeral.memtb.FieldByName('CodRel').AsString;
+    ArCompila[I].CodSis := FormGeral.memtb.FieldByName('CodSis').AsInteger;
+    ArCompila[I].CodGrupo := FormGeral.memtb.FieldByName('CodGrupo').AsInteger;
+    ArCompila[I].CodSubGrupo := FormGeral.memtb.FieldByName('CodSubGrupo').AsInteger;
+    Inc(I);
+    FormGeral.memtb.Next;
+  End;
+  FormGeral.memtb.Close;
+
+{
 FormGeral.SelectCompilaQuery.Close;
 FormGeral.SelectCompilaQuery.Sql.Clear;
 FormGeral.SelectCompilaQuery.Sql.Add('SELECT * FROM COMPILA ');
@@ -686,7 +853,36 @@ While Not FormGeral.SelectCompilaQuery.Eof Do
   FormGeral.SelectCompilaQuery.Next;
   End;
 FormGeral.SelectCompilaQuery.Close;
+}
+  strlst.Clear;
+  FormGeral.memtb.Close;
+  strlst.Add('SELECT * FROM GRUPOSDFN ');
+  FormGeral.ImportarDados(strlst.Text, nil);
+  Try
+    FormGeral.memtb.Open;
+  Except
+    FormGeral.MostraMensagem('Erro ao tentar carregar dados de '+viGrupo);
+    Result := False;
+    Avisop.Close;
+    Exit;
+  End; // Try
 
+  While Not FormGeral.memtb.Eof Do
+    FormGeral.memtb.Next;   // Estabelecer o recordcount correto
+
+  SetLength(ArGrupo, FormGeral.memtb.RecordCount);
+
+  FormGeral.memtb.First;
+  I := 0;
+  While Not FormGeral.QueryLocal1.Eof Do
+  Begin
+    ArGrupo[I].CodSis := FormGeral.memtb.FieldByName('CodSis').AsInteger;
+    ArGrupo[I].CodGrupo := FormGeral.memtb.FieldByName('CodGrupo').AsInteger;
+    ArGrupo[I].NomeGrupo := FormGeral.memtb.FieldByName('NomeGrupo').AsString;
+    Inc(I);
+    FormGeral.QueryLocal1.Next;
+  End;
+{
 FormGeral.QueryLocal1.Close;
 FormGeral.QueryLocal1.Sql.Clear;
 FormGeral.QueryLocal1.Sql.Add('SELECT * FROM GRUPOSDFN ');
@@ -715,7 +911,36 @@ While Not FormGeral.QueryLocal1.Eof Do
   Inc(I);
   FormGeral.QueryLocal1.Next;
   End;
+}
+  strlst.Clear;
+  strlst.Add('SELECT * FROM SUBGRUPOSDFN A');
+  FormGeral.ImportarDados(strlst.Text, nil);
+  Try
+    FormGeral.memtb.Open;
+  Except
+    FormGeral.MostraMensagem('Erro ao tentar carregar dados de '+viSubGrupo);
+    Result := False;
+    Avisop.Close;
+    Exit;
+  End; // Try
 
+  While Not FormGeral.memtb.Eof Do
+    FormGeral.memtb.Next;   // Estabelecer o recordcount correto
+
+  SetLength(ArSubGrupo, FormGeral.memtb.RecordCount);
+
+  FormGeral.memtb.First;
+  I := 0;
+  While Not FormGeral.memtb.Eof Do
+  Begin
+    ArSubGrupo[I].CodSis := FormGeral.memtb.FieldByName('CodSis').AsInteger;
+    ArSubGrupo[I].CodGrupo := FormGeral.memtb.FieldByName('CodGrupo').AsInteger;
+    ArSubGrupo[I].CodSubGrupo := FormGeral.memtb.FieldByName('CodSubGrupo').AsInteger;
+    ArSubGrupo[I].NomeSubGrupo := FormGeral.memtb.FieldByName('NomeSubGrupo').AsString;
+    Inc(I);
+    FormGeral.memtb.Next;
+  End;
+{
 FormGeral.QueryLocal1.Close;
 FormGeral.QueryLocal1.Sql.Clear;
 FormGeral.QueryLocal1.Sql.Add('SELECT * FROM SUBGRUPOSDFN A');
@@ -745,7 +970,50 @@ While Not FormGeral.QueryLocal1.Eof Do
   Inc(I);
   FormGeral.QueryLocal1.Next;
   End;
+}
+  strlst.Clear;
+  strlst.Add('SELECT * FROM SISAUXDFN ');
+  strlst.Add('ORDER BY CODSIS, CODGRUPO, CODREL ');
+  FormGeral.ImportarDados(strlst.Text, nil);
+  FormGeral.memtb.Open;              // RecordCount só é setado após a varrida integral da tabela;
+  Formgeral.Memtb.FetchAll;
+  SetLength(ArrSisAux, FormGeral.memtb.RecordCount);
 
+  I := 0;
+  While Not FormGeral.memtb.Eof Do
+  Begin
+    ArrSisAux[I].CodRel := FormGeral.memtb.FieldByName('CodRel').AsString;
+    ArrSisAux[I].CodSis := FormGeral.memtb.FieldByName('CodSis').AsInteger;
+    ArrSisAux[I].CodGrupo := FormGeral.memtb.FieldByName('CodGrupo').AsInteger;
+    ArrSisAux[I].LinI := FormGeral.memtb.FieldByName('LinI').AsInteger;
+    ArrSisAux[I].LinF := FormGeral.memtb.FieldByName('LinF').AsInteger;
+    ArrSisAux[I].Col := FormGeral.memtb.FieldByName('Col').AsInteger;
+    ArrSisAux[I].Tipo := FormGeral.memtb.FieldByName('Tipo').AsString;
+    ArrSisAux[I].CodAux := FormGeral.memtb.FieldByName('CodAux').AsString;
+
+    FormGeral.memtb.Next;
+    Inc(I);
+  End;
+
+  strlst.Clear;
+  strlst.Add('SELECT DISTINCT CODREL, CODSIS, CODGRUPO FROM SISAUXDFN ');
+  strlst.Add('ORDER BY CODSIS, CODGRUPO, CODREL ');
+  FormGeral.ImportarDados(strlst.Text, nil);
+  FormGeral.memtb.Open;              // RecordCount só é setado após a varrida integral da tabela;
+  Formgeral.Memtb.FetchAll;
+  SetLength(ArrSisAux2, FormGeral.memtb.RecordCount);
+  I := 0;
+  While Not FormGeral.memtb.Eof Do
+  Begin
+    ArrSisAux2[I].CodRel := FormGeral.memtb.FieldByName('CodRel').AsString;
+    ArrSisAux2[I].CodSis := FormGeral.memtb.FieldByName('CodSis').AsInteger;
+    ArrSisAux2[I].CodGrupo := FormGeral.memtb.FieldByName('CodGrupo').AsInteger;
+
+    FormGeral.memtb.Next;
+    Inc(I);
+  End;
+  FormGeral.memtb.Close;
+{
 FormGeral.QueryLocal1.Close;
 
 FormGeral.QueryLocal1.CursorLocation := clUseClient; // Retorna o número correto de registros para recordCount
@@ -791,6 +1059,7 @@ While Not FormGeral.QueryLocal1.Eof Do
   Inc(I);
   End;
 FormGeral.QueryLocal1.Close;
+}
 
 Avisop.Close;
 
@@ -3736,7 +4005,9 @@ Begin
         Exit;
 
       FaiouAbrAssistidoLocal := True;
-
+      AbrirRemoto1.Click;
+      FaiouAbrAssistidoLocal := false;
+      {
       Try
         if FormGeral.DatabaseMultiCold.Connected then
           begin
@@ -3750,6 +4021,7 @@ Begin
       Except
 
       End; // Try
+      }
     end;
 
   JaAbriu := True;

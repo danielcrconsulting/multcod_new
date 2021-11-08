@@ -4,7 +4,11 @@ Interface
 
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ComCtrls, ComObj, OleServer, IMulticoldServer1;
+  StdCtrls, ComCtrls, ComObj, OleServer, IMulticoldServer1,
+  UMetodosServer,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect;
 
 Type
   TFrmDescom = Class(TForm)
@@ -44,7 +48,9 @@ Type
     Procedure RadioPesqClick(Sender: TObject);
     Procedure RadioPagClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   Private
+    OMetodosServer : clsMetodosServer;
     function SalvarDescompactacaoNoBanco: Boolean;
   Public
     { Public declarations }
@@ -66,11 +72,18 @@ Const
 Var
   Filtros : TFiltro;
 
+procedure TFrmDescom.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Freeandnil(OMetodosServer);
+end;
+
 Procedure TFrmDescom.FormCreate(Sender: TObject);
 Begin
 Filtros := TFiltro.Create;
 RadioPagAtu.Checked := True;
 OpenDialog1.InitialDir := 'C:\ColdCfg';
+  OMetodosServer := clsMetodosServer.Create(Self);
+  OMetodosServer.Configurar;
 End;
 
 procedure TFrmDescom.FormShow(Sender: TObject);
@@ -1238,7 +1251,69 @@ var
   procedure SaveToDatabase;
   var
     I: Integer;
+    strlst : TStringlist;
+    strPar : TFDParams;
+    Param  : TFDParam;
   begin
+    strlst := TStringList.Create;
+    strlst.Add(' insert into ParametroDescompactador  ');
+    strlst.Add(' (                                    ');
+    strlst.Add(' CODUSUARIO,                          ');
+    strlst.Add(' TipoDescompactacao,                  ');
+    strlst.Add(' RemoverBrancos,                      ');
+    strlst.Add(' Orig,                                ');
+    strlst.Add(' IntervaloIni,                        ');
+    strlst.Add(' IntervaloFin,                        ');
+    strlst.Add(' IndexPaginaAtual,                    ');
+    strlst.Add(' ApenasLinhasPesquisa,                ');
+    strlst.Add(' PesquisaMensagem                     ');
+    strlst.Add(' )                                    ');
+    strlst.Add(' values                               ');
+    strlst.Add(' (                                    ');
+    strlst.Add(' :CODUSUARIO,                         ');
+    strlst.Add(' :TipoDescompactacao,                 ');
+    strlst.Add(' :RemoverBrancos,                     ');
+    strlst.Add(' :Orig,                               ');
+    strlst.Add(' :IntervaloIni,                       ');
+    strlst.Add(' :IntervaloFin,                       ');
+    strlst.Add(' :IndexPaginaAtual,                   ');
+    strlst.Add(' :ApenasLinhasPesquisa,               ');
+    strlst.Add(' :PesquisaMensagem                    ');
+    strlst.Add(' ))                                   ');
+
+    Param := strPar.Add;
+    Param.Name := ':CODUSUARIO';
+    Param.Value := LogInRemotoForm.UsuEdit.Text;
+    Param := strPar.Add;
+    Param.Name := ':TipoDescompactacao';
+    Param.Value := TipoDescompactacao;
+    Param := strPar.Add;
+    Param.Name := ':RemoverBrancos';
+    Param.Value := RemoverBrancos;
+    Param := strPar.Add;
+    Param.Name := ':Orig';
+    Param.Value := Orig;
+    Param := strPar.Add;
+    Param.Name := ':IntervaloIni';
+    Param.Value := IntervaloIni;
+    Param := strPar.Add;
+    Param.Name := ':IntervaloFin';
+    Param.Value := IntervaloFin;
+    Param := strPar.Add;
+    Param.Name := ':IndexPaginaAtual';
+    Param.Value := IndexPaginaAtual;
+    Param := strPar.Add;
+    Param.Name := ':ApenasLinhasPesquisa';
+    Param.Value := ApenasLinnhaPesquisa;
+    Param := strPar.Add;
+    Param.Name := ':PesquisaMensagem';
+    Param.Value := PesquisaMensagem;
+    Try
+      FormGeral.Persistir(strlst.Text, strPar);
+    Except
+    End;
+
+    {
     FormGeral.ADOCmdInsertDescomp.Parameters.ParamValues['CODUSUARIO'] := LogInRemotoForm.UsuEdit.Text;
     FormGeral.ADOCmdInsertDescomp.Parameters.ParamValues['TipoDescompactacao'] := TipoDescompactacao;
     FormGeral.ADOCmdInsertDescomp.Parameters.ParamValues['RemoverBrancos'] := RemoverBrancos;
@@ -1250,16 +1325,66 @@ var
     FormGeral.ADOCmdInsertDescomp.Parameters.ParamValues['PesquisaMensagem'] := PesquisaMensagem;
 
     FormGeral.ADOCmdInsertDescomp.Execute;
+    }
 
+    strlst.Clear;
+    strlst.Add(' select max(Id) Id from ParametroDescompactador ');
+    FormGeral.ImportarDados(strlst.Text,nil);
+    FormGeral.memtb.Open;
+    DescompId := FormGeral.memtb.FieldByName('Id').AsInteger;
+    FormGeral.memtb.Close;
+
+    {
     FormGeral.ADOQryGetIdDescomp.Open;
     DescompId := FormGeral.ADOQryGetIdDescomp.FieldByName('Id').AsInteger;
     FormGeral.ADOQryGetIdDescomp.Close;
+    }
 
     if TipoDescompactacao = 2 then
     begin // Se for pesquisa, tem que inserir a pesquisa tb.
 
       for I := 0 to length(ArrayPesquisa)-1 do
       begin
+        strlst.Clear;
+        strlst.Add(' insert into ParametroPesquisa    ');
+        strlst.Add(' (                                ');
+        strlst.Add(' IdParametroDescompactador,       ');
+        strlst.Add(' IndexPesq,                       ');
+        strlst.Add(' Campo,                           ');
+        strlst.Add(' Operador,                        ');
+        strlst.Add(' Valor,                           ');
+        strlst.Add(' Conector                         ');
+        strlst.Add(' )                                ');
+        strlst.Add(' values                           ');
+        strlst.Add(' (                                ');
+        strlst.Add(' :IdParametroDescompactador,      ');
+        strlst.Add(' :IndexPesq,                      ');
+        strlst.Add(' :Campo,                          ');
+        strlst.Add(' :Operador,                       ');
+        strlst.Add(' :Valor,                          ');
+        strlst.Add(' :Conector                        ');
+        strlst.Add(' )                                ');
+        Freeandnil(Param);
+        Param := strPar.Add;
+        Param.Name := ':IdParametroDescompactador';
+        Param.Value := descompId;
+        Param := strPar.Add;
+        Param.Name := ':IndexPesq';
+        Param.Value := ArrayPesquisa[I].Index_;
+        Param := strPar.Add;
+        Param.Name := ':Campo';
+        Param.Value := ArrayPesquisa[I].Campo;
+        Param := strPar.Add;
+        Param.Name := ':Operador';
+        Param.Value := ArrayPesquisa[I].Operador;
+        Param := strPar.Add;
+        Param.Name := ':Conector';
+        Param.Value := ArrayPesquisa[I].Conector;
+        Try
+          FormGeral.Persistir(strlst.Text, strPar);
+        Except
+        End;
+        {
         FormGeral.ADOCmdInsertPesq.Parameters.ParamValues['IdParametroDescompactador'] := descompId;
         FormGeral.ADOCmdInsertPesq.Parameters.ParamValues['IndexPesq'] := ArrayPesquisa[I].Index_;
         FormGeral.ADOCmdInsertPesq.Parameters.ParamValues['Campo'] := ArrayPesquisa[I].Campo;
@@ -1268,16 +1393,47 @@ var
         FormGeral.ADOCmdInsertPesq.Parameters.ParamValues['Conector'] := ArrayPesquisa[I].Conector;
 
         FormGeral.ADOCmdInsertPesq.Execute;
+        }
       end;
 
     end;
+    strlst.Clear;
+    strlst.Add(' insert into ProcessadorExtracao   ');
+    strlst.Add(' (                                 ');
+    strlst.Add(' IdParametroDescompactador,        ');
+    strlst.Add(' TipoProcessamento,                ');
+    strlst.Add(' PathRelatorio                     ');
+    strlst.Add(' )                                 ');
+    strlst.Add(' values                            ');
+    strlst.Add(' (                                 ');
+    strlst.Add(' :IdParametroDescompactador,       ');
+    strlst.Add(' :TipoProcessamento,               ');
+    strlst.Add(' :PathRelatorio                    ');
+    strlst.Add(' )                                 ');
+    Freeandnil(Param);
+    Param := strPar.Add;
+    Param.Name := ':IdParametroDescompactador';
+    Param.Value := descompId;
+    Param := strPar.Add;
+    Param.Name := ':TipoProcessamento';
+    Param.Value := 2;
+    Param := strPar.Add;
+    Param.Name := ':PathRelatorio';
+    Param.Value := TEditForm(FrameForm.ActiveMdiChild).Filename;
+    Try
+      FormGeral.Persistir(strlst.Text, strPar);
+    Except
+    End;
 
-
+    {
     FormGeral.ADOCmdInsertExecutionDescomp.Parameters.ParamValues['IdParametroDescompactador'] := DescompId;
     FormGeral.ADOCmdInsertExecutionDescomp.Parameters.ParamValues['TipoProcessamento'] := 2;
     FormGeral.ADOCmdInsertExecutionDescomp.Parameters.ParamValues['PathRelatorio'] := TEditForm(FrameForm.ActiveMdiChild).Filename;
     FormGeral.ADOCmdInsertExecutionDescomp.Execute;
-
+    }
+    Freeandnil(strlst);
+    Freeandnil(strPar);
+    Freeandnil(Param);
   end;
 
 begin

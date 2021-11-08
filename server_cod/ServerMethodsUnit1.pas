@@ -53,6 +53,7 @@ var
   senha, NomeEstacao : String;
 begin
   RetornarParametrosConn(servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao);
+  {
   FdCon.ConnectionString := 'Provider='+DriverServidor+';'+
                                           'Persist Security Info=True;'+
                                           'User ID='+usuario+';'+
@@ -62,7 +63,15 @@ begin
                                           'Auto Translate=True;'+
                                           'Packet Size=4096;'+
                                           'Workstation ID='+NomeEstacao+';'+
-                                          'Network Library=DBMSSOCN';
+                                          'Network Library=DBMSSOCN'+';'+
+                                          'DriverID=MSSQL';
+  }
+  FdCon.Params.Clear;
+  FdCon.Params.Values['DriverID']  := 'MSSQL';
+  FdCon.Params.Values['Server'] := servidor;
+  FdCon.Params.Values['Database'] := banco;
+  FdCon.Params.Values['User_name'] := usuario;
+  FdCon.Params.Values['Password'] := senha;
   FdCon.Open;
 end;
 
@@ -113,7 +122,8 @@ begin
       ConectarBanco;
       FdQry.Active := False;
       FdQry.SQL.Text := SQL;
-      FdQry.Params := StrParam;
+      if Assigned(StrParam) then
+        FdQry.Params := StrParam;
       TFDJSONDataSetsWriter.ListAdd(Result, FdQry);
     except
       on e:exception do
