@@ -1,7 +1,7 @@
 object ServerContainer1: TServerContainer1
-  OldCreateOrder = False
   Height = 271
   Width = 415
+  PixelsPerInch = 96
   object DSServer1: TDSServer
     Left = 96
     Top = 11

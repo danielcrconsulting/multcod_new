@@ -11,7 +11,8 @@ Uses
   Datasnap.Provider, Datasnap.DBClient, IMulticoldServer1, UMetodosServer,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect,
+  REST.Response.Adapter, System.JSON;
 
 Type
 
@@ -85,8 +86,9 @@ Type
 //  Procedure CriarAliasEventos;
 //  Procedure CriarAliasLog;     //   'S' = substituir; '+' = somar
   Procedure InsereAtualizaCompila(Operacao, CodRel : AnsiString; CodSis, CodGrupo, CodSubGrupo, Cont : Integer);
-    procedure ImportarDados( StrSql : String; StgParam : TFDParams);
+    procedure ImportarDados( StrSql : String; strPar : TFDParams);
     procedure Persistir( StrSql : String; StgParam : TFDParams);
+    procedure JsonToDataset(aDataset : TDataSet; aJSON : string);
   End;
 
 
@@ -837,15 +839,44 @@ if fileExists(extractFilePath(ParamStr(0))+'MultiColdLog.udl') then
 
 End;
 
-procedure TFormGeral.ImportarDados( StrSql : String; StgParam : TFDParams);
+procedure TFormGeral.JsonToDataset(aDataset : TDataSet; aJSON : string);
+var
+  JObj: TJSONArray;
+  vConv : TCustomJSONDataSetAdapter;
+begin
+  if (aJSON = EmptyStr) then
+  begin
+    Exit;
+  end;
+
+  JObj := TJSONObject.ParseJSONValue(aJSON) as TJSONArray;
+  vConv := TCustomJSONDataSetAdapter.Create(Nil);
+
+  try
+    vConv.Dataset := aDataset;
+    vConv.UpdateDataSet(JObj);
+  finally
+    vConv.Free;
+    JObj.Free;
+  end;
+end;
+
+procedure TFormGeral.ImportarDados( StrSql : String; strPar : TFDParams);
 var
   LDataSetList: TFDJSONDataSets;
+  json : String;
 begin
     MemTb.Close;
-    LDataSetList := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql, StgParam);
-    MemTb.AppendData(
-      TFDJSONDataSetsReader.GetListValue(LDataSetList, 0));
-    MemTb.Open;
+    //LDataSetList := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql);
+    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql, strPar);
+    if json = ']' then
+      json := '[]';
+    JsonToDataset(MemTb, json);
+
+    //MemTb.AppendData(
+    //  TFDJSONDataSetsReader.GetListValue(LDataSetList, 0));
+    if json <> '[]' then
+      MemTb.Open;
 end;
 
 procedure TFormGeral.Persistir( StrSql : String; StgParam : TFDParams);

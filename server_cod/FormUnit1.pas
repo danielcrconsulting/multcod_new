@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, inifiles;
 
 type
   TForm1 = class(TForm)
@@ -21,6 +21,7 @@ type
     ButtonOpenBrowser: TButton;
     Button1: TButton;
     FDQuery1: TFDQuery;
+    Label2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
     procedure ButtonStartClick(Sender: TObject);
@@ -49,7 +50,7 @@ procedure TForm1.ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
 begin
   ButtonStart.Enabled := not FServer.Active;
   ButtonStop.Enabled := FServer.Active;
-  EditPort.Enabled := not FServer.Active;
+  //EditPort.Enabled := not FServer.Active;
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -93,8 +94,11 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
+var arqIni : TiniFile;
 begin
   FServer := TIdHTTPWebBrokerBridge.Create(Self);
+  arqIni         := TIniFile.Create(GetCurrentDir+'/confserver.ini');
+  EditPort.Text  := arqIni.ReadString('configuracoes', 'port',        '');
 end;
 
 procedure TForm1.StartServer;

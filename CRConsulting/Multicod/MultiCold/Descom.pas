@@ -1329,7 +1329,7 @@ var
 
     strlst.Clear;
     strlst.Add(' select max(Id) Id from ParametroDescompactador ');
-    FormGeral.ImportarDados(strlst.Text,nil);
+    FormGeral.ImportarDados(strlst.Text, strPar);
     FormGeral.memtb.Open;
     DescompId := FormGeral.memtb.FieldByName('Id').AsInteger;
     FormGeral.memtb.Close;

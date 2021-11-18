@@ -1,5 +1,4 @@
 object WebModule1: TWebModule1
-  OldCreateOrder = False
   OnCreate = WebModuleCreate
   Actions = <
     item
@@ -21,8 +20,10 @@ object WebModule1: TWebModule1
   BeforeDispatch = WebModuleBeforeDispatch
   Height = 333
   Width = 414
+  PixelsPerInch = 96
   object DSHTTPWebDispatcher1: TDSHTTPWebDispatcher
     Filters = <>
+    AuthenticationManager = ServerContainer1.DSAuthenticationManager1
     WebDispatch.PathInfo = 'datasnap*'
     Left = 96
     Top = 75

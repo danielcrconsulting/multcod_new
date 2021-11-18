@@ -1,0 +1,203 @@
+unit ServerMethodsUnit1;
+
+interface
+
+uses System.SysUtils, System.Classes, System.Json,
+    DataSnap.DSProviderDataModuleAdapter,
+    Datasnap.DSServer, Datasnap.DSAuth, inifiles, Data.DB, Data.Win.ADODB,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  FireDAC.Stan.StorageJSON, Data.FireDACJSONReflect,
+  FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys,
+  FireDAC.VCLUI.Wait, FireDAC.Phys.MSSQLDef, FireDAC.Phys.ODBCBase,
+  FireDAC.Phys.MSSQL, FireDAC.Stan.StorageBin, FireDAC.Comp.UI;
+
+type
+  TServerMethods1 = class(TDSServerModule)
+    FDStanStorageJSONLink1: TFDStanStorageJSONLink;
+    FDCon: TFDConnection;
+    FDQry: TFDQuery;
+    FDPhysMSSQLDriverLink1: TFDPhysMSSQLDriverLink;
+    FDStanStorageBinLink1: TFDStanStorageBinLink;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    procedure DSServerModuleDestroy(Sender: TObject);
+  private
+    { Private declarations }
+    procedure ConectarBanco;
+    procedure DesconectarBanco;
+    function RetornaRegistros(query:String): String;
+
+  public
+    { Public declarations }
+    function EchoString(Value: string): string;
+    function ReverseString(Value: string): string;
+    function RetornarParametrosConn(var servidor : String; var driverservidor: String;
+                                    var porta : String ; var banco : String;
+                                    var usuario : String ; var senha : String;
+                                    var NomeEstacao : String ) : Boolean;
+    function RetornarDadosBanco(SQL : String) : TFDJSONDataSets;
+    procedure PersistirBanco(SQL : String; StrParam : TFDParams);
+
+  end;
+
+implementation
+
+
+{$R *.dfm}
+
+
+uses System.StrUtils;
+
+procedure TServerMethods1.ConectarBanco;
+var
+  servidor, driverservidor, porta, banco, usuario,
+  senha, NomeEstacao : String;
+begin
+  RetornarParametrosConn(servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao);
+  {
+  FdCon.ConnectionString := 'Provider='+DriverServidor+';'+
+                                          'Persist Security Info=True;'+
+                                          'User ID='+usuario+';'+
+                                          'Password='+senha+';'+
+                                          'Initial Catalog='+banco+';'+
+                                          'Data Source='+servidor+';'+
+                                          'Auto Translate=True;'+
+                                          'Packet Size=4096;'+
+                                          'Workstation ID='+NomeEstacao+';'+
+                                          'Network Library=DBMSSOCN'+';'+
+                                          'DriverID=MSSQL';
+  }
+  FdCon.Params.Clear;
+  FdCon.Params.Values['DriverID']  := 'MSSQL';
+  FdCon.Params.Values['Server'] := servidor;
+  FdCon.Params.Values['Database'] := banco;
+  FdCon.Params.Values['User_name'] := usuario;
+  FdCon.Params.Values['Password'] := senha;
+  FdCon.Open;
+end;
+
+procedure TServerMethods1.DesconectarBanco;
+begin
+  FdCon.Close;
+end;
+
+procedure TServerMethods1.DSServerModuleDestroy(Sender: TObject);
+begin
+  DesconectarBanco;
+end;
+
+function TServerMethods1.EchoString(Value: string): string;
+begin
+  Result := Value;
+end;
+
+procedure TServerMethods1.PersistirBanco(SQL : String; StrParam : TFDParams);
+begin
+  try
+    try
+      ConectarBanco;
+      FdQry.SQL.Text := SQL;
+      FdQry.Params := StrParam;
+      FdQry.ExecSQL;
+    except
+      on e:exception do
+      begin
+        raise Exception.Create('Erro na persistência de Dados');
+      end;
+    end;
+  finally
+    DesconectarBanco;
+  end;
+end;
+
+function TServerMethods1.ReverseString(Value: string): string;
+begin
+  Result := System.StrUtils.ReverseString(Value);
+end;
+
+function TServerMethods1.RetornarDadosBanco(SQL: String): TFDJSONDataSets;
+var
+  qry : Tfdquery;
+begin
+  try
+    Result := TFDJSONDataSets.Create;
+    try
+      ConectarBanco;
+      //qry := TFDQuery.Create(nil);
+      //qry.Connection := FdCon;
+      //qry.SQL.Text := SQL;
+      FdQry.Active := False;
+      FdQry.SQL.Text := SQL;
+      //FdQry.SQL.savetofile('c:\rom\sql.txt');
+      //FdQry.Open;
+      TFDJSONDataSetsWriter.ListAdd(Result, Fdqry);
+    except
+      on e:exception do
+      begin
+        raise Exception.Create('Erro na persistência de Dados');
+      end;
+    end;
+  finally
+  end;
+end;
+
+function TServerMethods1.RetornaRegistros(query:String): String;
+var
+  FDQuery : TFDQuery;
+  field_name,nomeDaColuna,valorDaColuna : String;
+  I: Integer;
+begin
+    FDQuery := TFDQuery.Create(nil);
+    try
+      FDQuery.Connection := FDCon;
+      FDQuery.SQL.Text := query;
+      FDQuery.Active := True;
+      FDQuery.First;
+
+      result := '[';
+      while (not FDQuery.EOF) do
+      begin
+
+        result := result+'{';
+        for I := 0 to FDQuery.FieldDefs.Count-1 do
+        begin
+          nomeDaColuna  := FDQuery.FieldDefs[I].Name;
+          valorDaColuna := FDQuery.FieldByName(nomeDaColuna).AsString;
+          result := result+'"'+nomeDaColuna+'":"'+valorDaColuna+'",';
+        end;
+        Delete(result, Length(Result), 1);
+        result := result+'},';
+
+        FDQuery.Next;
+      end;
+      FDQuery.Refresh;
+
+      Delete(result, Length(Result), 1);
+      result := result+']';
+
+    finally
+      FDQuery.Free;
+    end;
+end;
+
+function TServerMethods1.RetornarParametrosConn(var servidor : String; var driverservidor: String;
+                                                var porta : String ; var banco : String;
+                                                var usuario : String ; var senha : String;
+                                                var NomeEstacao : String ) : Boolean;
+var arqIni : TiniFile;
+begin
+  arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
+  servidor       := arqIni.ReadString('configuracoes', 'servidor',    '');
+  driverservidor := arqIni.ReadString('configuracoes', 'driver',      '');
+  porta          := arqIni.ReadString('configuracoes', 'port',        '');
+  banco          := arqIni.ReadString('configuracoes', 'database',    '');
+  usuario        := arqIni.ReadString('configuracoes', 'user',        '');
+  senha          := arqIni.ReadString('configuracoes', 'password',    '');
+  NomeEstacao    := arqIni.ReadString('configuracoes', 'WorkStation', '');
+  result := True;
+end;
+
+
+end.
+

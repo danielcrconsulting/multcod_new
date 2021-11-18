@@ -535,7 +535,7 @@ if not FormGeral.DatabaseMultiCold.Connected then // Se não conectou tenta mais 
   strlst := TStringlist.Create;
   strlst.Add(' SELECT * FROM DFN A');
   strlst.Add('ORDER BY A.CODREL   ');
-  FormGeral.ImportarDados(strlst.Text,nil);
+  FormGeral.ImportarDados(strlst.Text, nil);
 
 {
 FormGeral.QueryLocal1.Close;
@@ -600,7 +600,7 @@ While Not FormGeral.QueryLocal1.Eof Do
     strlst.Add('SELECT * FROM USUREL A');
     strlst.Add('WHERE (A.CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''') AND ');
     strlst.Add('      (A.TIPO = ''INC'') ');
-    FormGeral.ImportarDados(strlst.Text,nil);
+    FormGeral.ImportarDados(strlst.Text, nil);
     FormGeral.memtb.Open;
   Except
     FormGeral.MostraMensagem('Erro ao tentar carregar dados de USUREL INC');
@@ -667,7 +667,7 @@ While Not FormGeral.QueryLocal1.Eof Do
   strlst.Add('SELECT * FROM USUREL A');
   strlst.Add('WHERE (A.CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''') AND ');
   strlst.Add('      (A.TIPO = ''EXC'') ');
-  FormGeral.ImportarDados(strlst.Text,nil);
+  FormGeral.ImportarDados(strlst.Text, nil);
   Try
     FormGeral.memtb.Open;
   Except

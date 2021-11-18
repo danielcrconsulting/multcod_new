@@ -235,7 +235,7 @@ Else
     strlst.Add('AND A.TIPODESTINO = ''Dir''');
     strlst.Add('AND A.SEGURANCA = ''S''');
 
-    FormGeral.ImportarDados(strLst.Text, nil);
+    FormGeral.ImportarDados(strLst.Text, strPar);
   {
   FormGeral.QueryLocal1.Close;
   FormGeral.QueryLocal1.Sql.Clear;

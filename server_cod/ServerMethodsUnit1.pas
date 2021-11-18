@@ -8,23 +8,25 @@ uses System.SysUtils, System.Classes, System.Json,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  FireDAC.Stan.StorageBin, FireDAC.Stan.StorageJSON, Data.FireDACJSONReflect,
+  FireDAC.Stan.StorageJSON, Data.FireDACJSONReflect,
   FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys,
   FireDAC.VCLUI.Wait, FireDAC.Phys.MSSQLDef, FireDAC.Phys.ODBCBase,
-  FireDAC.Phys.MSSQL;
+  FireDAC.Phys.MSSQL, FireDAC.Stan.StorageBin, FireDAC.Comp.UI;
 
 type
   TServerMethods1 = class(TDSServerModule)
     FDStanStorageJSONLink1: TFDStanStorageJSONLink;
-    FDStanStorageBinLink1: TFDStanStorageBinLink;
     FDCon: TFDConnection;
     FDQry: TFDQuery;
     FDPhysMSSQLDriverLink1: TFDPhysMSSQLDriverLink;
+    FDStanStorageBinLink1: TFDStanStorageBinLink;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
     procedure DSServerModuleDestroy(Sender: TObject);
   private
     { Private declarations }
     procedure ConectarBanco;
     procedure DesconectarBanco;
+    function RetornaRegistros(query:String; Tran : TFDParams): String;
 
   public
     { Public declarations }
@@ -34,7 +36,7 @@ type
                                     var porta : String ; var banco : String;
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
-    function RetornarDadosBanco(SQL : String;  StrParam : TFDParams) : TFDJSONDataSets;
+    function RetornarDadosBanco(SQL : String; Tran : TFDParams) : String;
     procedure PersistirBanco(SQL : String; StrParam : TFDParams);
 
   end;
@@ -96,7 +98,8 @@ begin
     try
       ConectarBanco;
       FdQry.SQL.Text := SQL;
-      FdQry.Params := StrParam;
+      if not Assigned(StrParam) then
+        FdQry.Params := StrParam;
       FdQry.ExecSQL;
     except
       on e:exception do
@@ -114,25 +117,62 @@ begin
   Result := System.StrUtils.ReverseString(Value);
 end;
 
-function TServerMethods1.RetornarDadosBanco(SQL: String;  StrParam : TFDParams): TFDJSONDataSets;
+function TServerMethods1.RetornarDadosBanco(SQL: String; Tran : TFDParams): String;
 begin
   try
-    Result := TFDJSONDataSets.Create;
     try
       ConectarBanco;
-      FdQry.Active := False;
-      FdQry.SQL.Text := SQL;
-      if Assigned(StrParam) then
-        FdQry.Params := StrParam;
-      TFDJSONDataSetsWriter.ListAdd(Result, FdQry);
+      Result := RetornaRegistros(SQL, Tran);
+      DesconectarBanco;
     except
       on e:exception do
       begin
-        raise Exception.Create('Erro na persistência de Dados');
+        raise Exception.Create('Erro no Retorno dos dados');
       end;
     end;
   finally
   end;
+end;
+
+function TServerMethods1.RetornaRegistros(query:String; Tran : TFDParams): String;
+var
+  FDQuery : TFDQuery;
+  field_name,nomeDaColuna,valorDaColuna : String;
+  I: Integer;
+begin
+    FDQuery := TFDQuery.Create(nil);
+    try
+      FDQuery.Connection := FDCon;
+      FDQuery.SQL.Text := query;
+      if not Assigned(Tran) then
+        FDQuery.Params := Tran;
+      FDQuery.Active := True;
+      FDQuery.First;
+
+      result := '[';
+      while (not FDQuery.EOF) do
+      begin
+
+        result := result+'{';
+        for I := 0 to FDQuery.FieldDefs.Count-1 do
+        begin
+          nomeDaColuna  := FDQuery.FieldDefs[I].Name;
+          valorDaColuna := FDQuery.FieldByName(nomeDaColuna).AsString;
+          result := result+'"'+nomeDaColuna+'":"'+valorDaColuna+'",';
+        end;
+        Delete(result, Length(Result), 1);
+        result := result+'},';
+
+        FDQuery.Next;
+      end;
+      FDQuery.Refresh;
+
+      Delete(result, Length(Result), 1);
+      result := result+']';
+
+    finally
+      FDQuery.Free;
+    end;
 end;
 
 function TServerMethods1.RetornarParametrosConn(var servidor : String; var driverservidor: String;

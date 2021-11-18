@@ -1211,6 +1211,7 @@ End;
 
 Procedure TEditForm.VerificaAnotacao;
 var strlst : TStringlist;
+    strPar : TFDParams;
 Begin
 
 AnotaForm.Label1.Caption := '0 de 0';
@@ -1229,30 +1230,35 @@ TemAnotacaoGrafica := False;
 TemAnotacaoDeTexto := False;
 
   strlst := TStringList.Create;
+  strPar := TFDParams.Create;
   strlst.Clear;
-  strlst.Add('SELECT * FROM COMENTARIOSBIN WHERE CODREL = '''+RegDFN.CODREL+'''');
+  strlst.Add(' SELECT  COMENTARIOid, ');
+  strlst.Add(' codusuario,     ');
+	strlst.Add(' codrel,         ');
+	strlst.Add(' pathrel,        ');
+	strlst.Add(' flagpublico,    ');
+	strlst.Add(' pagina          ');
+  strlst.Add(' FROM COMENTARIOSBIN WHERE CODREL = '''+RegDFN.CODREL+'''');
   strlst.Add('AND PATHREL = '''+ExtractFileName(Filename)+'''');
   strlst.Add('AND PAGINA = '+IntToStr(PaginaAtu));
   strlst.Add('AND ((CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''')');
   strlst.Add('OR   (FLAGPUBLICO = ''T''))');
-  FormGeral.ImportarDados(strlst.Text, nil);
-  FormGeral.memtb.FetchAll;
-  Try
-    FormGeral.memtb.Open;
-  Except
-    Exit;
-  End;
+
+  FormGeral.ImportarDados(strlst.Text, strPar);
+  if FormGeral.memtb.Active then
+    FormGeral.memtb.FetchAll;
+ 
   If FormGeral.memtb.RecordCount <> 0 Then
   Begin
     FrameForm.Animate2.Visible := True;
     TemAnotacaoGrafica := True;
 
-    LoadImage2;
+    //LoadImage2;
 
     Image2.Visible := False;
     Image2.BringToFront;
     AnotaForm.Label1.Caption := '1 de '+IntToStr(FormGeral.memtb.RecordCount);
-    AnotaForm.ScrollBar1.Max := AnotaForm.ADOQuery1.RecordCount;
+    AnotaForm.ScrollBar1.Max := FormGeral.memtb.RecordCount;
     AnotaForm.ScrollBar1.Position := 1;
     AnotaForm.ScrollBar1.Min := 1;
   End;
@@ -1285,15 +1291,16 @@ If AnotaForm.ADOQuery1.RecordCount <> 0 Then
   End;
 }
   strlst.Clear;
+  strPar := TFDParams.Create;
   strlst.Add('SELECT * FROM COMENTARIOSTXT WHERE CODREL = '''+RegDFN.CODREL+'''');
   strlst.Add('AND PATHREL = '''+ExtractFileName(Filename)+'''');
   strlst.Add('AND PAGINA = '+IntToStr(PaginaAtu));
   strlst.Add('AND ((CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''')');
   strlst.Add('OR   (FLAGPUBLICO = ''T''))');
-  FormGeral.ImportarDados(strlst.Text, nil);
+  FormGeral.ImportarDados(strlst.Text, strPar);
   Try
-    FormGeral.memtb.Open;
-    FormGeral.memtb.FetchAll
+    if FormGeral.memtb.Active then
+      FormGeral.memtb.FetchAll
   Except
     Exit;
   End;

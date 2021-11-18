@@ -77,7 +77,9 @@ procedure TServerContainer1.DSAuthenticationManager1UserAuthenticate(
 begin
   { TODO : Validate the client user and password.
     If role-based authorization is needed, add role names to the UserRoles parameter  }
-  valid := True;
+  valid := False;
+  if (User = 'multicoldserver') and (Password = 'server@#2021') then
+    valid := true;
 end;
 
 procedure TServerContainer1.DSAuthenticationManager1UserAuthorize(

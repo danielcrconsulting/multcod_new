@@ -7,10 +7,6 @@ object ServerMethods1: TServerMethods1
     Left = 128
     Top = 144
   end
-  object FDStanStorageBinLink1: TFDStanStorageBinLink
-    Left = 56
-    Top = 16
-  end
   object FDCon: TFDConnection
     Params.Strings = (
       'DriverID=MSSQL')
@@ -19,11 +15,23 @@ object ServerMethods1: TServerMethods1
   end
   object FDQry: TFDQuery
     Connection = FDCon
+    FormatOptions.AssignedValues = [fvDataSnapCompatibility, fvADOCompatibility]
+    FormatOptions.DataSnapCompatibility = True
+    FormatOptions.ADOCompatibility = True
     Left = 144
     Top = 72
   end
   object FDPhysMSSQLDriverLink1: TFDPhysMSSQLDriverLink
     Left = 192
     Top = 16
+  end
+  object FDStanStorageBinLink1: TFDStanStorageBinLink
+    Left = 48
+    Top = 32
+  end
+  object FDGUIxWaitCursor1: TFDGUIxWaitCursor
+    Provider = 'Forms'
+    Left = 224
+    Top = 104
   end
 end

@@ -17,7 +17,7 @@ object FormGeral: TFormGeral
   object DatabaseMultiCold: TADOConnection
     ConnectionString = 'FILE NAME=C:\ROM\MULTICOLD\Multicold.udl'
     LoginPrompt = False
-    Provider = 'SQLOLEDB.1'
+    Provider = 'C:\ROM\MULTICOLD\Multicold.udl'
     Left = 40
     Top = 8
   end
