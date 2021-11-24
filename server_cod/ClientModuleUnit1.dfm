@@ -1,7 +1,7 @@
 object ClientModule1: TClientModule1
-  OldCreateOrder = False
-  Height = 271
-  Width = 415
+  Height = 251
+  Width = 486
+  PixelsPerInch = 120
   object SQLConnection1: TSQLConnection
     DriverName = 'DataSnap'
     LoginPrompt = False
@@ -15,6 +15,8 @@ object ClientModule1: TClientModule1
   object DSRestConnection1: TDSRestConnection
     Host = 'localhost'
     Port = 8080
+    UserName = 'multicoldserver'
+    Password = 'server@#2021'
     LoginPrompt = False
     Left = 248
     Top = 104

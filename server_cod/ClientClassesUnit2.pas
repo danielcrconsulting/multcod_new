@@ -1,13 +1,13 @@
 //
 // Created by the DataSnap proxy generator.
-// 17/11/2021 09:13:27
+// 22/11/2021 12:43:27
 //
 
 unit ClientClassesUnit2;
 
 interface
 
-uses System.JSON, Datasnap.DSProxyRest, Datasnap.DSClientRest, Data.DBXCommon, Data.DBXClient, Data.DBXDataSnap, Data.DBXJSON, Datasnap.DSProxy, System.Classes, System.SysUtils, Data.DB, Data.SqlExpr, Data.DBXDBReaders, Data.DBXCDSReaders, FireDAC.Stan.Param, Data.DBXJSONReflect;
+uses System.JSON, Datasnap.DSProxyRest, Datasnap.DSClientRest, Data.DBXCommon, Data.DBXClient, Data.DBXDataSnap, Data.DBXJSON, Datasnap.DSProxy, System.Classes, System.SysUtils, Data.DB, Data.SqlExpr, Data.DBXDBReaders, Data.DBXCDSReaders, Data.DBXJSONReflect;
 
 type
   TServerMethods1Client = class(TDSAdminRestClient)
@@ -26,8 +26,8 @@ type
     function EchoString(Value: string; const ARequestFilter: string = ''): string;
     function ReverseString(Value: string; const ARequestFilter: string = ''): string;
     function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
-    function RetornarDadosBanco(SQL: string; Tran: TFDParams; const ARequestFilter: string = ''): string;
-    procedure PersistirBanco(SQL: string; StrParam: TFDParams);
+    function RetornarDadosBanco(SQL: string; const ARequestFilter: string = ''): string;
+    procedure PersistirBanco(SQL: string);
   end;
 
 const
@@ -60,17 +60,15 @@ const
     (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
   );
 
-  TServerMethods1_RetornarDadosBanco: array [0..2] of TDSRestParameterMetaData =
+  TServerMethods1_RetornarDadosBanco: array [0..1] of TDSRestParameterMetaData =
   (
     (Name: 'SQL'; Direction: 1; DBXType: 26; TypeName: 'string'),
-    (Name: 'Tran'; Direction: 1; DBXType: 37; TypeName: 'TFDParams'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
-  TServerMethods1_PersistirBanco: array [0..1] of TDSRestParameterMetaData =
+  TServerMethods1_PersistirBanco: array [0..0] of TDSRestParameterMetaData =
   (
-    (Name: 'SQL'; Direction: 1; DBXType: 26; TypeName: 'string'),
-    (Name: 'StrParam'; Direction: 1; DBXType: 37; TypeName: 'TFDParams')
+    (Name: 'SQL'; Direction: 1; DBXType: 26; TypeName: 'string')
   );
 
 implementation
@@ -155,56 +153,30 @@ begin
   Result := FRetornarParametrosConnCommand.Parameters[7].Value.GetBoolean;
 end;
 
-function TServerMethods1Client.RetornarDadosBanco(SQL: string; Tran: TFDParams; const ARequestFilter: string): string;
+function TServerMethods1Client.RetornarDadosBanco(SQL: string; const ARequestFilter: string): string;
 begin
   if FRetornarDadosBancoCommand = nil then
   begin
     FRetornarDadosBancoCommand := FConnection.CreateCommand;
-    FRetornarDadosBancoCommand.RequestType := 'POST';
-    FRetornarDadosBancoCommand.Text := 'TServerMethods1."RetornarDadosBanco"';
+    FRetornarDadosBancoCommand.RequestType := 'GET';
+    FRetornarDadosBancoCommand.Text := 'TServerMethods1.RetornarDadosBanco';
     FRetornarDadosBancoCommand.Prepare(TServerMethods1_RetornarDadosBanco);
   end;
   FRetornarDadosBancoCommand.Parameters[0].Value.SetWideString(SQL);
-  if not Assigned(Tran) then
-    FRetornarDadosBancoCommand.Parameters[1].Value.SetNull
-  else
-  begin
-    FMarshal := TDSRestCommand(FRetornarDadosBancoCommand.Parameters[1].ConnectionHandler).GetJSONMarshaler;
-    try
-      FRetornarDadosBancoCommand.Parameters[1].Value.SetJSONValue(FMarshal.Marshal(Tran), True);
-      if FInstanceOwner then
-        Tran.Free
-    finally
-      FreeAndNil(FMarshal)
-    end
-    end;
   FRetornarDadosBancoCommand.Execute(ARequestFilter);
-  Result := FRetornarDadosBancoCommand.Parameters[2].Value.GetWideString;
+  Result := FRetornarDadosBancoCommand.Parameters[1].Value.GetWideString;
 end;
 
-procedure TServerMethods1Client.PersistirBanco(SQL: string; StrParam: TFDParams);
+procedure TServerMethods1Client.PersistirBanco(SQL: string);
 begin
   if FPersistirBancoCommand = nil then
   begin
     FPersistirBancoCommand := FConnection.CreateCommand;
-    FPersistirBancoCommand.RequestType := 'POST';
-    FPersistirBancoCommand.Text := 'TServerMethods1."PersistirBanco"';
+    FPersistirBancoCommand.RequestType := 'GET';
+    FPersistirBancoCommand.Text := 'TServerMethods1.PersistirBanco';
     FPersistirBancoCommand.Prepare(TServerMethods1_PersistirBanco);
   end;
   FPersistirBancoCommand.Parameters[0].Value.SetWideString(SQL);
-  if not Assigned(StrParam) then
-    FPersistirBancoCommand.Parameters[1].Value.SetNull
-  else
-  begin
-    FMarshal := TDSRestCommand(FPersistirBancoCommand.Parameters[1].ConnectionHandler).GetJSONMarshaler;
-    try
-      FPersistirBancoCommand.Parameters[1].Value.SetJSONValue(FMarshal.Marshal(StrParam), True);
-      if FInstanceOwner then
-        StrParam.Free
-    finally
-      FreeAndNil(FMarshal)
-    end
-    end;
   FPersistirBancoCommand.Execute;
 end;
 

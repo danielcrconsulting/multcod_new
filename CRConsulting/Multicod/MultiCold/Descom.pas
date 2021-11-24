@@ -8,7 +8,8 @@ Uses
   UMetodosServer,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect,
+  FireDAC.Stan.Async, FireDAC.DApt, Data.DB;
 
 Type
   TFrmDescom = Class(TForm)
@@ -38,6 +39,7 @@ Type
     ButtonPdf: TButton;
     Memo1: TMemo;
     iCRLF: TCheckBox;
+    FDQuery1: TFDQuery;
     Procedure FormCreate(Sender: TObject);
     Procedure ButtonArquivoClick(Sender: TObject);
     Procedure SairButClick(Sender: TObject);
@@ -1270,46 +1272,19 @@ var
     strlst.Add(' )                                    ');
     strlst.Add(' values                               ');
     strlst.Add(' (                                    ');
-    strlst.Add(' :CODUSUARIO,                         ');
-    strlst.Add(' :TipoDescompactacao,                 ');
-    strlst.Add(' :RemoverBrancos,                     ');
-    strlst.Add(' :Orig,                               ');
-    strlst.Add(' :IntervaloIni,                       ');
-    strlst.Add(' :IntervaloFin,                       ');
-    strlst.Add(' :IndexPaginaAtual,                   ');
-    strlst.Add(' :ApenasLinhasPesquisa,               ');
-    strlst.Add(' :PesquisaMensagem                    ');
-    strlst.Add(' ))                                   ');
-
-    Param := strPar.Add;
-    Param.Name := ':CODUSUARIO';
-    Param.Value := LogInRemotoForm.UsuEdit.Text;
-    Param := strPar.Add;
-    Param.Name := ':TipoDescompactacao';
-    Param.Value := TipoDescompactacao;
-    Param := strPar.Add;
-    Param.Name := ':RemoverBrancos';
-    Param.Value := RemoverBrancos;
-    Param := strPar.Add;
-    Param.Name := ':Orig';
-    Param.Value := Orig;
-    Param := strPar.Add;
-    Param.Name := ':IntervaloIni';
-    Param.Value := IntervaloIni;
-    Param := strPar.Add;
-    Param.Name := ':IntervaloFin';
-    Param.Value := IntervaloFin;
-    Param := strPar.Add;
-    Param.Name := ':IndexPaginaAtual';
-    Param.Value := IndexPaginaAtual;
-    Param := strPar.Add;
-    Param.Name := ':ApenasLinhasPesquisa';
-    Param.Value := ApenasLinnhaPesquisa;
-    Param := strPar.Add;
-    Param.Name := ':PesquisaMensagem';
-    Param.Value := PesquisaMensagem;
+    strlst.Add(quotedStr(LogInRemotoForm.UsuEdit.Text) + ','      );
+    strlst.Add(IntToStr(TipoDescompactacao) + ','      );
+    strlst.Add(BoolToStr(RemoverBrancos)+ ',');
+    strlst.Add(BoolToStr(Orig) + ','        );
+    strlst.Add(IntToStr(IntervaloIni)     + ','        );
+    strlst.Add(IntToStr(IntervaloFin)     + ','        );
+    strlst.Add(IntToStr(IndexPaginaAtual) + ','        );
+    strlst.Add(BoolToStr(ApenasLinnhaPesquisa) + ','        );
+    strlst.Add(quotedStr(PesquisaMensagem)                    );
+    strlst.Add(' )                                    ');
+    //strPar := TFDParams.Create;
     Try
-      FormGeral.Persistir(strlst.Text, strPar);
+      FormGeral.Persistir(strlst.Text, nil);
     Except
     End;
 
@@ -1329,7 +1304,7 @@ var
 
     strlst.Clear;
     strlst.Add(' select max(Id) Id from ParametroDescompactador ');
-    FormGeral.ImportarDados(strlst.Text, strPar);
+    FormGeral.ImportarDados(strlst.Text, nil);
     FormGeral.memtb.Open;
     DescompId := FormGeral.memtb.FieldByName('Id').AsInteger;
     FormGeral.memtb.Close;
@@ -1357,31 +1332,15 @@ var
         strlst.Add(' )                                ');
         strlst.Add(' values                           ');
         strlst.Add(' (                                ');
-        strlst.Add(' :IdParametroDescompactador,      ');
-        strlst.Add(' :IndexPesq,                      ');
-        strlst.Add(' :Campo,                          ');
-        strlst.Add(' :Operador,                       ');
-        strlst.Add(' :Valor,                          ');
-        strlst.Add(' :Conector                        ');
+        strlst.Add(IntToStr(descompId)                +',');
+        strlst.Add(QuotedStr(ArrayPesquisa[I].Index_) +',');
+        strlst.Add(QuotedStr(ArrayPesquisa[I].Campo)         +',');
+        strlst.Add(IntToStr(ArrayPesquisa[I].Operador)       +',');
+        strlst.Add(QuotedStr(ArrayPesquisa[I].Valor)         +',');
+        strlst.Add(IntToStr(ArrayPesquisa[I].Conector)           );
         strlst.Add(' )                                ');
-        Freeandnil(Param);
-        Param := strPar.Add;
-        Param.Name := ':IdParametroDescompactador';
-        Param.Value := descompId;
-        Param := strPar.Add;
-        Param.Name := ':IndexPesq';
-        Param.Value := ArrayPesquisa[I].Index_;
-        Param := strPar.Add;
-        Param.Name := ':Campo';
-        Param.Value := ArrayPesquisa[I].Campo;
-        Param := strPar.Add;
-        Param.Name := ':Operador';
-        Param.Value := ArrayPesquisa[I].Operador;
-        Param := strPar.Add;
-        Param.Name := ':Conector';
-        Param.Value := ArrayPesquisa[I].Conector;
         Try
-          FormGeral.Persistir(strlst.Text, strPar);
+          FormGeral.Persistir(strlst.Text, nil);
         Except
         End;
         {
@@ -1406,22 +1365,12 @@ var
     strlst.Add(' )                                 ');
     strlst.Add(' values                            ');
     strlst.Add(' (                                 ');
-    strlst.Add(' :IdParametroDescompactador,       ');
-    strlst.Add(' :TipoProcessamento,               ');
-    strlst.Add(' :PathRelatorio                    ');
+    strlst.Add(IntToStr(descompId)  +                               ',');
+    strlst.Add('2,'                                                    );
+    strlst.Add(QuotedStr(TEditForm(FrameForm.ActiveMdiChild).Filename) );
     strlst.Add(' )                                 ');
-    Freeandnil(Param);
-    Param := strPar.Add;
-    Param.Name := ':IdParametroDescompactador';
-    Param.Value := descompId;
-    Param := strPar.Add;
-    Param.Name := ':TipoProcessamento';
-    Param.Value := 2;
-    Param := strPar.Add;
-    Param.Name := ':PathRelatorio';
-    Param.Value := TEditForm(FrameForm.ActiveMdiChild).Filename;
     Try
-      FormGeral.Persistir(strlst.Text, strPar);
+      FormGeral.Persistir(strlst.Text, nil);
     Except
     End;
 

@@ -26,7 +26,7 @@ type
     { Private declarations }
     procedure ConectarBanco;
     procedure DesconectarBanco;
-    function RetornaRegistros(query:String; Tran : TFDParams): String;
+    function RetornaRegistros(query:String): String;
 
   public
     { Public declarations }
@@ -36,8 +36,8 @@ type
                                     var porta : String ; var banco : String;
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
-    function RetornarDadosBanco(SQL : String; Tran : TFDParams) : String;
-    procedure PersistirBanco(SQL : String; StrParam : TFDParams);
+    function RetornarDadosBanco(SQL : String) : String;
+    procedure PersistirBanco(SQL : String);
 
   end;
 
@@ -92,14 +92,15 @@ begin
   Result := Value;
 end;
 
-procedure TServerMethods1.PersistirBanco(SQL : String; StrParam : TFDParams);
+procedure TServerMethods1.PersistirBanco(SQL : String);
 begin
   try
     try
       ConectarBanco;
       FdQry.SQL.Text := SQL;
-      if not Assigned(StrParam) then
-        FdQry.Params := StrParam;
+      FdQry.SQL.SaveToFile('c:\rom\sql.sql');
+      //if not Assigned(StrParam) then
+      //  FdQry.Params := StrParam;
       FdQry.ExecSQL;
     except
       on e:exception do
@@ -117,12 +118,12 @@ begin
   Result := System.StrUtils.ReverseString(Value);
 end;
 
-function TServerMethods1.RetornarDadosBanco(SQL: String; Tran : TFDParams): String;
+function TServerMethods1.RetornarDadosBanco(SQL: String): String;
 begin
   try
     try
       ConectarBanco;
-      Result := RetornaRegistros(SQL, Tran);
+      Result := RetornaRegistros(SQL);
       DesconectarBanco;
     except
       on e:exception do
@@ -134,7 +135,7 @@ begin
   end;
 end;
 
-function TServerMethods1.RetornaRegistros(query:String; Tran : TFDParams): String;
+function TServerMethods1.RetornaRegistros(query:String): String;
 var
   FDQuery : TFDQuery;
   field_name,nomeDaColuna,valorDaColuna : String;
@@ -144,8 +145,6 @@ begin
     try
       FDQuery.Connection := FDCon;
       FDQuery.SQL.Text := query;
-      if not Assigned(Tran) then
-        FDQuery.Params := Tran;
       FDQuery.Active := True;
       FDQuery.First;
 

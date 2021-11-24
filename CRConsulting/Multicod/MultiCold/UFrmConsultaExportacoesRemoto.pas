@@ -112,20 +112,22 @@ begin
     exit;
   end;
 
-  FormGeral.ADOQueryTemplate.Close;
-  FormGeral.ADOQueryTemplate.SQL.Clear;
+  //FormGeral.ADOQueryTemplate.Close;
+  //FormGeral.ADOQueryTemplate.SQL.Clear;
 
   sql := 'select 	ArquivoTemplateComp from TemplateExportacao ' +
-    ' where Id = :Id' ;
+    //' where Id = :Id' ;
+         ' where Id = ' + TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('IdReferencia').AsString;
+  //FormGeral.ADOQueryTemplate.SQL.Clear;
+  //FormGeral.ADOQueryTemplate.SQL.Add(sql);
 
-  FormGeral.ADOQueryTemplate.SQL.Clear;
-  FormGeral.ADOQueryTemplate.SQL.Add(sql);
+  //FormGeral.ADOQueryTemplate.Parameters.ParamValues['Id'] := TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('IdReferencia').AsInteger;
 
-  FormGeral.ADOQueryTemplate.Parameters.ParamValues['Id'] := TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('IdReferencia').AsInteger;
+  //FormGeral.ADOQueryTemplate.Open;
+  //templateCompactado := FormGeral.ADOQueryTemplate.FieldByName('ArquivoTemplateComp').AsString;
+  //FormGeral.ADOQueryTemplate.Close;
 
-  FormGeral.ADOQueryTemplate.Open;
-  templateCompactado := FormGeral.ADOQueryTemplate.FieldByName('ArquivoTemplateComp').AsString;
-  FormGeral.ADOQueryTemplate.Close;
+  templateCompactado := FormGeral.memtb.FieldByName('ArquivoTemplateComp').AsString;
 
   FrmExtract.AbrirTemplateCompactado(templateCompactado);
   FrmExtract.Show;
@@ -156,10 +158,16 @@ end;
 
 procedure TFrmConsultaExportacoesRemoto.BtnPesquisarClick(Sender: TObject);
 var
-  sql: String;
+  sql, strstatus: String;
   dataFinal: TDatetime;
 begin
   DSProcessadorTemplate.DataSet.Close;
+  case ComboBoxStatus.ItemIndex of
+    0: strstatus := 'P';
+    1: strstatus := 'E';
+    2: strstatus := 'S';
+    3: strstatus := 'R';
+  end;
 
   if CheckBoxData.Checked then
   begin
@@ -167,24 +175,27 @@ begin
     ReplaceTime(dataFinal, EncodeTime(23, 59, 59, 0));
     sql := 'select top 100 Id,	IdReferencia, PathArquivoExportacao, TipoProcessamento, NomeTemplate, DataCriacao, StatusProcessamento, ' +
       '	CODUSUARIO from ConsultaProcessamento ' +
-      ' where CODUSUARIO = :CODUSUARIO and StatusProcessamento = :STATUS ' +
+      //' where CODUSUARIO = :CODUSUARIO and StatusProcessamento = :STATUS ' +
+      ' where CODUSUARIO = ' + QuotedStr(FCodUsuario) + ' and StatusProcessamento = ' + QuotedStr(strstatus) +
       ' and DataCriacao between ' + QuotedStr(FormatDateTime('yyyy-mm-dd', DateTimePickerIni.Date)) + ' and ' +
       QuotedStr(FormatDateTime('yyyy-mm-dd hh:nn:ss', dataFinal))+
       ' order by 1 desc ';
-
-      FormGeral.ADOQueryProcessadorTemplate.SQL.Clear;
-      FormGeral.ADOQueryProcessadorTemplate.SQL.Add(sql);
+      FormGeral.ImportarDados(sql,nil);
+      //FormGeral.ADOQueryProcessadorTemplate.SQL.Clear;
+      //FormGeral.ADOQueryProcessadorTemplate.SQL.Add(sql);
   end else
   begin
     sql := 'select top 100 Id,	IdReferencia, PathArquivoExportacao, TipoProcessamento, NomeTemplate, DataCriacao, StatusProcessamento, ' +
       '	CODUSUARIO from ConsultaProcessamento ' +
-      ' where CODUSUARIO = :CODUSUARIO and StatusProcessamento = :STATUS ' +
+      //' where CODUSUARIO = ' + QuotedStr(FCodUsuario) + ' and StatusProcessamento = :STATUS ' +
+      ' where CODUSUARIO = ' + QuotedStr(FCodUsuario) + ' and StatusProcessamento = ' + QuotedStr(strstatus) +
       ' order by 1 desc ';
-
-      FormGeral.ADOQueryProcessadorTemplate.SQL.Clear;
-      FormGeral.ADOQueryProcessadorTemplate.SQL.Add(sql);
+      FormGeral.ImportarDados(sql,nil);
+      //FormGeral.ADOQueryProcessadorTemplate.SQL.Clear;
+      //FormGeral.ADOQueryProcessadorTemplate.SQL.Add(sql);
   end;
 
+  {
   TClientDataSet(DSProcessadorTemplate.DataSet).ParamByName('CODUSUARIO').AsString := FCodUsuario;
 
   case ComboBoxStatus.ItemIndex of
@@ -193,7 +204,7 @@ begin
     2: TClientDataSet(DSProcessadorTemplate.DataSet).ParamByName('STATUS').AsString := 'S';
     3: TClientDataSet(DSProcessadorTemplate.DataSet).ParamByName('STATUS').AsString := 'R';
   end;
-
+  }
   DSProcessadorTemplate.DataSet.Open;
 
 end;

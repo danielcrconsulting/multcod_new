@@ -652,30 +652,16 @@ end; // Try
   strPar := TFDParams.Create;
   strLst := TStringList.Create;
   strlst.Add('insert into logproc (dtLote,  hrLote, dtProc, hrProc, arquivo, mensagem) ');
-  strlst.Add('values (:a, :b, :c, :d, :e, :f) ');
+  strlst.Add('values ( ');
+  strlst.Add(QuotedStr(FormatDateTime('YYYY/MM/DD hh:mm:ss',Agora)) + ',');
+  strlst.Add(QuotedStr(FormatDateTime('YYYY/MM/DD hh:mm:ss',Agora)) + ',');
+  strlst.Add(QuotedStr(FormatDateTime('YYYY/MM/DD hh:mm:ss',Now)) + ',');
+  strlst.Add(QuotedStr(FormatDateTime('YYYY/MM/DD hh:mm:ss',Now)) + ',');
+  strlst.Add(QuotedStr(copy(Arquivo,1,255)) + ',');
+  strlst.Add(QuotedStr(copy(Mensagem,1,512)));
 
-  Param := strPar.Add;
-  Param.Name := ':a';
-  Param.Value := Agora;
-  Param := strPar.Add;
-  Param.Name := ':b';
-  Param.Value := Agora;
-  Param := strPar.Add;
-  Param.Name := ':c';
-  Param.Value := Now;
-  Param := strPar.Add;
-  Param.Name := ':d';
-  Param.Value := Now;
-  Param := strPar.Add;
-  Param.Name := ':e';
-  Param.Value := copy(Arquivo,1,255);
-  Param := strPar.Add;
-  Param.Name := ':f';
-  Param.Value := copy(Mensagem,1,512);
-  Persistir(strLst.Text, strPar);
+  Persistir(strLst.Text, nil);
   Freeandnil(strlst);
-  Freeandnil(strPar);
-  Freeandnil(Param);
 End;
 
 {Procedure TFormGeral.Conecta;
@@ -868,7 +854,7 @@ var
 begin
     MemTb.Close;
     //LDataSetList := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql);
-    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql, strPar);
+    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql);
     if json = ']' then
       json := '[]';
     JsonToDataset(MemTb, json);
@@ -881,7 +867,7 @@ end;
 
 procedure TFormGeral.Persistir( StrSql : String; StgParam : TFDParams);
 begin
-  OMetodosServer.ServerMethodsPrincipalClient.PersistirBanco(StrSql, StgParam);
+  OMetodosServer.ServerMethodsPrincipalClient.PersistirBanco(StrSql);
 end;
 
 Procedure TFormGeral.LerIni;
@@ -900,8 +886,6 @@ Begin
   strlst.Add('WHERE (A.codUsuario = ''ADM'') ');
   strlst.Add('ORDER BY A.campoID');
   ImportarDados(strlst.Text, nil);
-  memtb.Open;
-
 
   While Not memtb.Eof Do
     Begin
@@ -1004,7 +988,6 @@ Begin
   strlst.Add('ORDER BY A.CODCARACTEREENTRA');
 
   ImportarDados(strlst.Text, nil);
-  memtb.Open;
 
   While Not memtb.Eof Do
     Begin
@@ -1024,32 +1007,18 @@ Begin
   strPar := TFDParams.Create;
   strLst := TStringList.Create;
   strlst.Add('SELECT QTDCOMPIL FROM COMPILA WHERE ');
-  strlst.Add('CODREL = :a AND                     ');
-  strlst.Add('CODSIS = :b AND                     ');
-  strlst.Add('CODGRUPO = :c AND                   ');
-  strlst.Add('CODSUBGRUPO = :d                    ');
-
-  Param := strPar.Add;
-  Param.Name := ':a';
-  Param.Value := CodRel;
-  Param := strPar.Add;
-  Param.Name := ':b';
-  Param.Value := CodSis;
-  Param := strPar.Add;
-  Param.Name := ':c';
-  Param.Value := CodGrupo;
-  Param := strPar.Add;
-  Param.Name := ':d';
-  Param.Value := CodSubGrupo;
-
+  strlst.Add('CODREL = ' + QuotedStr(CodRel) + ' AND ');
+  strlst.Add('CODSIS = ' + IntToStr(CodSis) + ' AND  ');
+  strlst.Add('CODGRUPO = ' + IntToStr(CodGrupo) + ' AND ');
+  strlst.Add('CODSUBGRUPO = ' + IntToStr(CodSubGrupo) );
 
   If Operacao = '+' Then
     Begin
 
-      ImportarDados(strlst.Text, strPar);
+      ImportarDados(strlst.Text, nil);
       Try
-        Memtb.Open;
-        Inc(Cont,Memtb.Fields[0].AsInteger);
+        if Memtb.Active then
+          Inc(Cont,Memtb.Fields[0].AsInteger);
       Except
       End; // Try
 
@@ -1061,9 +1030,14 @@ Begin
 
   strlst.Clear;
   strlst.add(' INSERT INTO COMPILA (CODREL, CODSIS, CODGRUPO, CODSUBGRUPO, QTDCOMPIL)  ');
-  strlst.add(' VALUES (:a,:b,:c,:d,:e)                                                 ');
+  strlst.add(' VALUES (' );
+  strlst.add(QuotedStr(CodRel) + ',');
+  strlst.add(IntToStr(CodSis)  + ',');
+  strlst.add(IntToStr(CodGrupo) + ',');
+  strlst.add(IntToStr(CodSubGrupo)+ ',');
+  strlst.add(IntToStr(Cont) + ')');
   Try
-    Persistir(strlst.Text, strPar);
+    Persistir(strlst.Text, nil);
     Exit;
   Except
   End;
@@ -1132,33 +1106,17 @@ Agora := Now;
 Try
   strLst := TStringList.Create;
   strLst.Add('INSERT INTO EVENTOS_VISU (DT, HR, ARQUIVO, DIRETORIO, CODREL, GRUPO, SUBGRUPO, CODUSUARIO, NOMEGRUPOUSUARIO, CODMENSAGEM) ');
-  strLst.Add('VALUES (:a, :b, :c, :d, :e, :f, :g, :h, :i, :j)');
-  Param := strPar.Add;
-  Param.Name := ':a';
-  Param.Value := Agora;
-  Param := strPar.Add;
-  Param.Name := ':b';
-  Param.Value := Copy(Arquivo, 1, 70);
-  Param := strPar.Add;
-  Param.Name := ':c';
-  Param.Value := Copy(Diretorio, 1, 70);
-  Param := strPar.Add;
-  Param.Name := ':d';
-  Param.Value := CodRel;
-  Param := strPar.Add;
-  Param.Name := ':e';
-  Param.Value := Grupo;
-  Param := strPar.Add;
-  Param.Name := ':f';
-  Param.Value := SubGrupo;
-  Param := strPar.Add;
-  Param.Name := ':g';
-  Param.Value := CodUsuario;
-  Param := strPar.Add;
-  Param.Name := ':h';
-  Param.Value := CodUsuario;
-  Param.Name := ':i';
-  Param.Value := CodMens;
+  strLst.Add('VALUES (');
+  strLst.Add(QuotedStr(FormatDateTime('yyyy/mm/dd hh:mm:ss', agora)) + ',');
+  strLst.Add(QuotedStr(FormatDateTime('yyyy/mm/dd hh:mm:ss', agora)) + ',');
+  strLst.Add(QuotedStr(Copy(Arquivo, 1, 70)) + ',');
+  strLst.Add(QuotedStr(Copy(Diretorio, 1, 70)) + ',');
+  strLst.Add(QuotedStr(codrel) + ',');
+  strLst.Add(IntToStr(Grupo) + ',');
+  strLst.Add(IntToStr(SubGrupo) + ',');
+  strLst.Add(QuotedStr(CodUsuario) + ',');
+  strLst.Add(QuotedStr(CodUsuario) + ',');
+  strLst.Add(IntToStr(CodMens) + ')');
 
   {
   EventosQuery1.Close;
@@ -1178,14 +1136,12 @@ Try
   EventosQuery1.ExecSql;
   DatabaseEventos.CommitTrans;
   }
-  Persistir(strLst.Text, strPar);
+  Persistir(strLst.Text, nil);
 Except
   //DatabaseEventos.RollbackTrans;
   End; // Try
 
   Freeandnil(strlst);
-  Freeandnil(strPar);
-  Freeandnil(Param);
 End;
 
 Procedure TFormGeral.InsereEventos(V1, V2, V3 : AnsiString; V4 : Integer; Const Reg : AnsiString);
@@ -1223,26 +1179,14 @@ Agora := Now;
 
 Try
   strLst := TStringList.Create;
-  strLst.Add('INSERT INTO EVENTOS (DT, HR, OBJETO, ITEM, CODUSUARIO, CODMENSAGEM) VALUES (:a, :b, :c, :d, :e, :f)');
-  Param := strPar.Add;
-  Param.Name := ':a';
-  Param.Value := Agora;
-  Param := strPar.Add;
-  Param.Name := ':b';
-  Param.Value := Agora;
-  Param := strPar.Add;
-  Param.Name := ':c';
-  Param.Value := V1;
-  Param := strPar.Add;
-  Param.Name := ':d';
-  Param.Value := V2;
-  Param := strPar.Add;
-  Param.Name := ':e';
-  Param.Value := V3;
-  Param := strPar.Add;
-  Param.Name := ':f';
-  Param.Value := V4;
-  Persistir(strLst.Text, strPar);
+  strLst.Add('INSERT INTO EVENTOS (DT, HR, OBJETO, ITEM, CODUSUARIO, CODMENSAGEM) VALUES ( ');
+  strLst.Add(QuotedStr(FormatDateTime('yyyy/mm/dd hh:mm:ss', agora)) + ',');
+  strLst.Add(QuotedStr(FormatDateTime('yyyy/mm/dd hh:mm:ss', agora)) + ',');
+  strLst.Add(QuotedStr(V1) + ',');
+  strLst.Add(QuotedStr(V2) + ',');
+  strLst.Add(QuotedStr(V3) + ',');
+  strLst.Add(IntToStr(V4) + ')');
+  Persistir(strLst.Text, nil);
 
   {
   EventosQuery1.Close;
@@ -1261,17 +1205,11 @@ Try
     Begin
       strPar.Clear;
       strLst.Clear;
-      strLst.Add('INSERT INTO REGISTROS (DT, HR, CONTEUDO) VALUES (:A,:B,:C) ');
-      Param := strPar.Add;
-      Param.Name := ':a';
-      Param.Value := Agora;
-      Param := strPar.Add;
-      Param.Name := ':b';
-      Param.Value := Agora;
-      Param := strPar.Add;
-      Param.Name := ':c';
-      Param.Value := Reg;
-      Persistir(strLst.Text, strPar);
+      strLst.Add('INSERT INTO REGISTROS (DT, HR, CONTEUDO) VALUES (');
+      strLst.Add(QuotedStr(FormatDateTime('yyyy/mm/dd hh:mm:ss', agora)) + ',');
+      strLst.Add(QuotedStr(FormatDateTime('yyyy/mm/dd hh:mm:ss', agora)) + ',');
+      strLst.Add(QuotedStr(Reg) + ')');
+      Persistir(strLst.Text, nil);
       {
     DatabaseEventos.BeginTrans;
     EventosQuery1.Close;
@@ -1295,8 +1233,6 @@ Try
     Except
   //DatabaseEventos.RollbackTrans;
   End; // Try
-  Freeandnil(strlst);
-  Freeandnil(strPar);
   Freeandnil(Param);
 End;
 

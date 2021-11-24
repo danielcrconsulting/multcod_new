@@ -213,25 +213,59 @@ procedure TFrmExtract.SalvarExtracaoNoBanco;
 var
   arquivo: TStringList;
   I, J: Integer;
-  arqComp: String;
+  arqComp, sql: String;
   templateId: Integer;
 
   procedure SaveToDatabase;
   begin
-    FormGeral.ADOCmdInsert.Parameters.ParamValues['CODUSUARIO'] := LogInRemotoForm.UsuEdit.Text;
-    FormGeral.ADOCmdInsert.Parameters.ParamValues['NomeTemplate'] := Edit5.Text;
-    FormGeral.ADOCmdInsert.Parameters.ParamValues['ArquivoTemplateComp'] := arqComp;
+    sql := ' INSERT INTO TemplateExportacao   ' +
+           ' (                                ' +
+           ' CODUSUARIO,                      ' +
+           ' NomeTemplate,                    ' +
+           ' ArquivoTemplateComp              ' +
+           ' )                                ' +
+           ' VALUES                           ' +
+           ' (                                ' +
+           QuotedStr(LogInRemotoForm.UsuEdit.Text) + ', ' +
+           QuotedStr(Edit5.Text) + ', ' +
+           QuotedStr(arqComp)           +
+           ' )';
 
-    FormGeral.ADOCmdInsert.Execute;
+    FormGeral.Persistir(sql, nil);
+    //FormGeral.ADOCmdInsert.Parameters.ParamValues['CODUSUARIO'] := LogInRemotoForm.UsuEdit.Text;
+    //FormGeral.ADOCmdInsert.Parameters.ParamValues['NomeTemplate'] := Edit5.Text;
+    //FormGeral.ADOCmdInsert.Parameters.ParamValues['ArquivoTemplateComp'] := arqComp;
 
-    FormGeral.ADOQryGetId.Open;
-    templateId := FormGeral.ADOQryGetId.FieldByName('Id').AsInteger;
-    FormGeral.ADOQryGetId.Close;
+    //FormGeral.ADOCmdInsert.Execute;
 
-    FormGeral.ADOCmdInsertExection.Parameters.ParamValues['IdTemplateExportacao'] := templateId;
-    FormGeral.ADOCmdInsertExection.Parameters.ParamValues['TipoProcessamento'] := 1;
-    FormGeral.ADOCmdInsertExection.Parameters.ParamValues['PathRelatorio'] := TEditForm(FrameForm.ActiveMdiChild).Filename;
-    FormGeral.ADOCmdInsertExection.Execute;
+    sql := 'select max(Id) Id from TemplateExportacao';
+    //FormGeral.ADOQryGetId.Open;
+    FormGeral.ImportarDados(sql,nil);
+    if FormGeral.memtb.Active then
+    begin
+      templateId := FormGeral.memtb.FieldByName('Id').AsInteger;
+      FormGeral.memtb.Close;
+    end;
+    //templateId := FormGeral.ADOQryGetId.FieldByName('Id').AsInteger;
+    //FormGeral.ADOQryGetId.Close;
+
+    sql := ' insert into ProcessadorExtracao  ' +
+           ' (                                             ' +
+           ' IdTemplateExportacao,                         ' +
+           ' TipoProcessamento,                            ' +
+           ' PathRelatorio                                 ' +
+           ' )                                             ' +
+           ' values                                        ' +
+           ' (                                             ' +
+            IntToStr(templateId)                       + ',' +
+           ' 1,'                                             +
+           QuotedStr(TEditForm(FrameForm.ActiveMdiChild).Filename) +
+           ')' ;
+    //FormGeral.ADOCmdInsertExection.Parameters.ParamValues['IdTemplateExportacao'] := templateId;
+    //FormGeral.ADOCmdInsertExection.Parameters.ParamValues['TipoProcessamento'] := 1;
+    //FormGeral.ADOCmdInsertExection.Parameters.ParamValues['PathRelatorio'] := TEditForm(FrameForm.ActiveMdiChild).Filename;
+    //FormGeral.ADOCmdInsertExection.Execute;
+    FormGeral.Persistir(sql, nil);
   end;
 
 begin

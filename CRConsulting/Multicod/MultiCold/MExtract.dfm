@@ -10,82 +10,81 @@ object FrmExtract: TFrmExtract
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
+  PixelsPerInch = 96
   DesignSize = (
     1044
     672)
-  PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Label1: TLabel
     Left = 7
     Top = 166
-    Width = 63
-    Height = 13
+    Width = 61
+    Height = 14
     Caption = 'P'#225'gina Inicial'
   end
   object Label2: TLabel
     Left = 135
     Top = 166
     Width = 55
-    Height = 13
+    Height = 14
     Caption = 'P'#225'gina final'
   end
   object Label3: TLabel
     Left = 7
     Top = 54
-    Width = 84
-    Height = 13
+    Width = 85
+    Height = 14
     Caption = 'Regras de p'#225'gina'
   end
   object Label4: TLabel
     Left = 533
     Top = 166
     Width = 55
-    Height = 13
+    Height = 14
     Caption = 'Linha inicial'
   end
   object Label5: TLabel
     Left = 661
     Top = 166
-    Width = 48
-    Height = 13
+    Width = 49
+    Height = 14
     Caption = 'Linha final'
   end
   object Label6: TLabel
     Left = 533
     Top = 51
-    Width = 74
-    Height = 13
+    Width = 75
+    Height = 14
     Caption = 'Regras de linha'
   end
   object Label7: TLabel
     Left = 7
     Top = 214
-    Width = 38
-    Height = 13
+    Width = 39
+    Height = 14
     Caption = 'Campos'
   end
   object Label8: TLabel
     Left = 7
     Top = 358
-    Width = 89
-    Height = 13
+    Width = 91
+    Height = 14
     Caption = 'Regras de campos'
   end
   object Label9: TLabel
     Left = 7
     Top = 6
-    Width = 48
-    Height = 13
+    Width = 49
+    Height = 14
     Caption = 'Descri'#231#227'o'
   end
   object Edit1: TEdit
     Left = 7
     Top = 182
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 2
     OnDblClick = Edit1DblClick
   end
@@ -93,7 +92,7 @@ object FrmExtract: TFrmExtract
     Left = 135
     Top = 182
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 3
     OnDblClick = Edit2DblClick
   end
@@ -116,7 +115,7 @@ object FrmExtract: TFrmExtract
     Left = 533
     Top = 182
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 5
     OnDblClick = Edit3DblClick
   end
@@ -124,7 +123,7 @@ object FrmExtract: TFrmExtract
     Left = 661
     Top = 182
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 6
     OnDblClick = Edit4DblClick
   end
@@ -241,7 +240,7 @@ object FrmExtract: TFrmExtract
     Left = 7
     Top = 22
     Width = 1026
-    Height = 21
+    Height = 22
     TabOrder = 0
     OnDblClick = Edit5DblClick
   end
@@ -268,7 +267,7 @@ object FrmExtract: TFrmExtract
     Left = 830
     Top = 436
     Width = 203
-    Height = 21
+    Height = 22
     Anchors = [akLeft, akBottom]
     TabOrder = 11
     Visible = False

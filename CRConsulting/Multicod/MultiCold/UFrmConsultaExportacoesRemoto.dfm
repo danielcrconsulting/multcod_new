@@ -11,7 +11,6 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
@@ -245,7 +244,7 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
     end
   end
   object DSProcessadorTemplate: TDataSource
-    DataSet = FormGeral.CDSProcessadorTemplate
+    DataSet = FormGeral.Memtb
     Left = 48
     Top = 312
   end
