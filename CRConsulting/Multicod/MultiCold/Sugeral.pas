@@ -784,6 +784,7 @@ SetLength(ArExc,0);
 iMaxRegQueryFacil := 1000;
 exit;
 
+
 if fileExists(extractFilePath(ParamStr(0))+'Multicold.udl') then
   begin
     DataBaseMultiCold.ConnectionString := 'FILE NAME=MultiCold.udl';
@@ -791,7 +792,7 @@ if fileExists(extractFilePath(ParamStr(0))+'Multicold.udl') then
     DataBaseMultiCold.ConnectionString := 'FILE NAME=C:\ROM\MULTICOLD\MultiCold.udl';
     {$ENDIF}
     try
-      DatabaseMulticold.Open;
+      //DatabaseMulticold.Open;
     except
       //application.Terminate;
     end;
@@ -804,7 +805,7 @@ if fileExists(extractFilePath(ParamStr(0))+'MultiColdEventos.udl') then
     DataBaseEventos.ConnectionString := 'FILE NAME=C:\ROM\MULTICOLD\MultiColdEventos.udl';
     {$ENDIF}
     try
-      DatabaseEventos.Open;
+      //DatabaseEventos.Open;
     except
       //application.Terminate;
     end;
@@ -817,7 +818,7 @@ if fileExists(extractFilePath(ParamStr(0))+'MultiColdLog.udl') then
     DataBaseLog.ConnectionString := 'FILE NAME=C:\ROM\MULTICOLD\MultiColdLog.udl';
     {$ENDIF}
     try
-      DatabaseLog.Open;
+      //DatabaseLog.Open;
     except
       //application.Terminate;
     end;

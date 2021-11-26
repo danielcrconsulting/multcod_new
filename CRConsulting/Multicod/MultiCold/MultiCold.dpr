@@ -34,12 +34,15 @@ uses
   UFrmConsultaExportacoesRemoto in 'UFrmConsultaExportacoesRemoto.pas' {FrmConsultaExportacoesRemoto},
   UFrmDownloadManager in 'UFrmDownloadManager.pas' {FrmDownloadManager},
   ClientClassesUnit2 in '..\..\..\server_cod\ClientClassesUnit2.pas',
-  UMetodosServer in '..\..\..\server_cod\UMetodosServer.pas';
+  UMetodosServer in '..\..\..\server_cod\UMetodosServer.pas',
+  Vcl.Themes,
+  Vcl.Styles;
 
 {$R *.RES}
 
 Begin
   Application.Initialize;
+  TStyleManager.TrySetStyle('Luna');
   Application.CreateForm(TFrameForm, FrameForm);
   Application.CreateForm(TAssisAbreRemotoForm, AssisAbreRemotoForm);
   Application.CreateForm(TAvisoP, AvisoP);

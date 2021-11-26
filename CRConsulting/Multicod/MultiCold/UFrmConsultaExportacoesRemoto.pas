@@ -50,6 +50,7 @@ type
   public
     { Public declarations }
     procedure SetParameters(codUsuario, urlBase: String);
+    procedure DimensionarGrid(dbg: TDBGrid);
   end;
 
   TMyThreadPathResultEvent = procedure(const APath: string; AResult: Boolean; AStream: TStream) of object;
@@ -126,7 +127,7 @@ begin
   //FormGeral.ADOQueryTemplate.Open;
   //templateCompactado := FormGeral.ADOQueryTemplate.FieldByName('ArquivoTemplateComp').AsString;
   //FormGeral.ADOQueryTemplate.Close;
-
+  FormGeral.ImportarDados(sql,nil);
   templateCompactado := FormGeral.memtb.FieldByName('ArquivoTemplateComp').AsString;
 
   FrmExtract.AbrirTemplateCompactado(templateCompactado);
@@ -144,6 +145,7 @@ begin
   if TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('StatusProcessamento').AsString = 'S' then
   begin
     fullFileName := TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('PathArquivoExportacao').AsString;
+    fullFileName := StringReplace(fullFileName, '/', '\', [rfIgnoreCase, rfReplaceAll]);
     fileName := ExtractFileName(fullFileName);
     DownloadFile(fileName);
   end else
@@ -168,12 +170,11 @@ begin
     2: strstatus := 'S';
     3: strstatus := 'R';
   end;
-
   if CheckBoxData.Checked then
   begin
     dataFinal :=  DateTimePickerFin.Date;
     ReplaceTime(dataFinal, EncodeTime(23, 59, 59, 0));
-    sql := 'select top 100 Id,	IdReferencia, PathArquivoExportacao, TipoProcessamento, NomeTemplate, DataCriacao, StatusProcessamento, ' +
+    sql := 'select top 100 Id,	IdReferencia, replace(PathArquivoExportacao,' + quotedStr('\') + ',' + QuotedStr('/') + ') PathArquivoExportacao, TipoProcessamento, NomeTemplate, DataCriacao, StatusProcessamento, ' +
       '	CODUSUARIO from ConsultaProcessamento ' +
       //' where CODUSUARIO = :CODUSUARIO and StatusProcessamento = :STATUS ' +
       ' where CODUSUARIO = ' + QuotedStr(FCodUsuario) + ' and StatusProcessamento = ' + QuotedStr(strstatus) +
@@ -185,7 +186,7 @@ begin
       //FormGeral.ADOQueryProcessadorTemplate.SQL.Add(sql);
   end else
   begin
-    sql := 'select top 100 Id,	IdReferencia, PathArquivoExportacao, TipoProcessamento, NomeTemplate, DataCriacao, StatusProcessamento, ' +
+    sql := 'select top 100 Id,	IdReferencia, replace(PathArquivoExportacao,' + quotedStr('\') + ',' + QuotedStr('/') + ') PathArquivoExportacao, TipoProcessamento, NomeTemplate, DataCriacao, StatusProcessamento, ' +
       '	CODUSUARIO from ConsultaProcessamento ' +
       //' where CODUSUARIO = ' + QuotedStr(FCodUsuario) + ' and StatusProcessamento = :STATUS ' +
       ' where CODUSUARIO = ' + QuotedStr(FCodUsuario) + ' and StatusProcessamento = ' + QuotedStr(strstatus) +
@@ -205,10 +206,70 @@ begin
     3: TClientDataSet(DSProcessadorTemplate.DataSet).ParamByName('STATUS').AsString := 'R';
   end;
   }
-  DSProcessadorTemplate.DataSet.Open;
+  if FormGeral.Memtb.Active then
+  begin
+    DSProcessadorTemplate.DataSet.Open;
+    DimensionarGrid(DBGridConsultaExportacao);
+  end;
 
 end;
 
+
+procedure TFrmConsultaExportacoesRemoto.DimensionarGrid(dbg: TDBGrid);
+type
+  TArray = Array of Integer;
+  procedure AjustarColumns(Swidth, TSize: Integer; Asize: TArray);
+  var
+    idx: Integer;
+  begin
+    if TSize = 0 then
+    begin
+      TSize := dbg.Columns.count;
+      for idx := 0 to dbg.Columns.count - 1 do
+        dbg.Columns[idx].Width := (dbg.Width - dbg.Canvas.TextWidth('AAAAAA')
+          ) div TSize
+    end
+    else
+      for idx := 0 to dbg.Columns.count - 1 do
+        dbg.Columns[idx].Width := dbg.Columns[idx].Width +
+          (Swidth * Asize[idx] div TSize);
+  end;
+
+var
+  idx, Twidth, TSize, Swidth: Integer;
+  AWidth: TArray;
+  Asize: TArray;
+  NomeColuna: String;
+begin
+  SetLength(AWidth, dbg.Columns.count);
+  SetLength(Asize, dbg.Columns.count);
+  Twidth := 0;
+  TSize := 0;
+  for idx := 0 to dbg.Columns.count - 1 do
+  begin
+    NomeColuna := dbg.Columns[idx].Title.Caption;
+    dbg.Columns[idx].Width := dbg.Canvas.TextWidth
+      (dbg.Columns[idx].Title.Caption + 'A');
+    AWidth[idx] := dbg.Columns[idx].Width;
+    Twidth := Twidth + AWidth[idx];
+
+    if Assigned(dbg.Columns[idx].Field) then
+      Asize[idx] := dbg.Columns[idx].Field.Size
+    else
+      Asize[idx] := 1;
+
+    TSize := TSize + Asize[idx];
+  end;
+  if TDBGridOption.dgColLines in dbg.Options then
+    Twidth := Twidth + dbg.Columns.count;
+
+  // adiciona a largura da coluna indicada do cursor
+  if TDBGridOption.dgIndicator in dbg.Options then
+    Twidth := Twidth + IndicatorWidth;
+
+  Swidth := dbg.ClientWidth - Twidth;
+  AjustarColumns(Swidth, TSize, Asize);
+end;
 
 procedure TFrmConsultaExportacoesRemoto.DownloadFile(aFileName: String);
 var

@@ -1,13 +1,13 @@
 object FrameForm: TFrameForm
   Left = 246
   Top = 159
-  Caption = 'MultiCold - Viewer V8.8.0.3 - 07/07/2021'
-  ClientHeight = 362
-  ClientWidth = 662
+  Caption = 'MultiCold - Viewer V9.0.0 - 01/12/2021'
+  ClientHeight = 232
+  ClientWidth = 424
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -9
+  Font.Height = -6
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   FormStyle = fsMDIForm
@@ -18,7 +18,7 @@ object FrameForm: TFrameForm
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 12
+  TextHeight = 6
   object MemoAux: TMemo
     Left = 536
     Top = 56
@@ -34,7 +34,7 @@ object FrameForm: TFrameForm
     Top = 240
     Width = 145
     Height = 97
-    ItemHeight = 12
+    ItemHeight = 6
     Mask = 
       'C:\Rom\MultiCold\Destino\VISIONPLUS\BRADESCO\TELE-SAQUE\0REL\*.d' +
       'fn'
@@ -54,7 +54,7 @@ object FrameForm: TFrameForm
   object SpeedPanel: TPanel
     Left = 0
     Top = 0
-    Width = 662
+    Width = 424
     Height = 49
     Align = alTop
     ParentShowHint = False
@@ -181,15 +181,15 @@ object FrameForm: TFrameForm
     object Label5: TLabel
       Left = 224
       Top = 0
-      Width = 41
-      Height = 12
+      Width = 25
+      Height = 6
       Caption = 'Pesquisa:'
     end
     object Label1: TLabel
       Left = 224
       Top = 32
-      Width = 27
-      Height = 12
+      Width = 16
+      Height = 6
       Caption = 'Label1'
       Color = clYellow
       ParentColor = False
@@ -197,8 +197,8 @@ object FrameForm: TFrameForm
     object Label7: TLabel
       Left = 384
       Top = 0
-      Width = 37
-      Height = 12
+      Width = 23
+      Height = 6
       Caption = 'P'#225'gina : '
     end
     object AbreRelBut: TSpeedButton
@@ -292,8 +292,8 @@ object FrameForm: TFrameForm
     object Label3: TLabel
       Left = 600
       Top = 32
-      Width = 27
-      Height = 12
+      Width = 16
+      Height = 6
       Caption = 'Label3'
     end
     object ExtrairSpeedButton: TSpeedButton
@@ -363,8 +363,8 @@ object FrameForm: TFrameForm
       OnClick = AnotarGraphSpeedButtonClick
     end
     object AnotarTextoSpeedButton: TSpeedButton
-      Left = 127
-      Top = -7
+      Left = 120
+      Top = 0
       Width = 25
       Height = 25
       Hint = 'Anota'#231#227'o de Texto'
@@ -433,8 +433,8 @@ object FrameForm: TFrameForm
     object Label2: TLabel
       Left = 384
       Top = 32
-      Width = 27
-      Height = 12
+      Width = 16
+      Height = 6
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
@@ -445,7 +445,7 @@ object FrameForm: TFrameForm
       Left = 176
       Top = 0
       Width = 49
-      Height = 20
+      Height = 14
       TabOrder = 0
       OnChange = EditPesChange
     end
@@ -465,7 +465,7 @@ object FrameForm: TFrameForm
       Left = 336
       Top = 0
       Width = 49
-      Height = 20
+      Height = 14
       TabOrder = 1
       OnChange = EditPagChange
     end
