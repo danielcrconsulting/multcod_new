@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Datasnap.DBClient, Vcl.Grids,
   Vcl.DBGrids, Datasnap.Provider, Vcl.StdCtrls, Vcl.Menus, Vcl.ExtCtrls, ADODB,
   Vcl.ComCtrls, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  IdSSLOpenSSL;
+  IdSSLOpenSSL, uMetodosServer, System.Json;
 
 type
   TFrmConsultaExportacoesRemoto = class(TForm)
@@ -51,6 +51,7 @@ type
     { Public declarations }
     procedure SetParameters(codUsuario, urlBase: String);
     procedure DimensionarGrid(dbg: TDBGrid);
+    procedure ConverterJSONParaArquivo(pArquivoJSON: TJSONArray; pDir: string);
   end;
 
   TMyThreadPathResultEvent = procedure(const APath: string; AResult: Boolean; AStream: TStream) of object;
@@ -271,6 +272,52 @@ begin
   AjustarColumns(Swidth, TSize, Asize);
 end;
 
+procedure TFrmConsultaExportacoesRemoto.ConverterJSONParaArquivo(pArquivoJSON: TJSONArray;
+  pDir: string);
+var
+  SSArquivoStream: TStringStream;
+  sArquivoString, sNomeArquivo, sDir: String;
+  iTamanhoArquivo, iCont: Integer;
+  SLArrayStringsArquivo: TStringList;
+  byArquivoBytes: Tbytes;
+begin
+  try
+    sArquivoString := pArquivoJSON.Get(0).ToString;  // Pega a posição 0 do array que contem os bytes do arquivo
+    Delete(sArquivoString, Length(sArquivoString), 1); // Deleta a última aspas da string
+    Delete(sArquivoString, 1, 1); // Deleta a primeira aspas da string
+
+    //sNomeArquivo := pArquivoJSON.Get(2).ToString;  // Pega o nome do arquivo que está na posição 2
+    sNomeArquivo := ExtractFileName(pdir);
+    Delete(sNomeArquivo, Length(sNomeArquivo), 1); // Deleta a última aspas da string
+    Delete(sNomeArquivo, 1, 1); // Deleta a primeira aspas da string
+
+    iTamanhoArquivo := TJSONNumber(pArquivoJSON.Get(1)).AsInt; // Pega na posição 1 o tamanho do arquivo
+
+    SLArrayStringsArquivo := TStringList.Create; // Cria um obje do tipo TStringList para emparelhar os bytes
+    ExtractStrings([','], [' '], PChar(sArquivoString), SLArrayStringsArquivo); // Coloca cada byte em uma linha no objeto TStringList
+
+    SetLength(byArquivoBytes, iTamanhoArquivo); // Seta o tamanho do array de bytes igual ao tamanho do arquivo
+
+    // Faz um laço para pegar os bytes do objeto TStringList
+    for iCont := 0 to iTamanhoArquivo - 1 do
+    begin
+      //Pega os bytes do TStringList e adiciona no array de bytes
+      byArquivoBytes[iCont] := StrToInt(SLArrayStringsArquivo[iCont]);
+    end;
+    SSArquivoStream := TStringStream.Create(byArquivoBytes); // Instancia o objeto TStringStream para salvar o arquivo
+
+    // Verifica se o diretório passado por parâmetro não existe
+    sDir := ExtractFileDir(pDir);
+    if not DirectoryExists(sDir) then
+      ForceDirectories(sDir); // Se não existir o diretório vai ser criado
+
+    SSArquivoStream.SaveToFile(sDir + '/' + sNomeArquivo); // Salvar o arquivo no hd
+  finally
+    SSArquivoStream.Free;
+    SLArrayStringsArquivo.Free;
+  end;
+end;
+
 procedure TFrmConsultaExportacoesRemoto.DownloadFile(aFileName: String);
 var
   IdHTTP1: TIdHTTP;
@@ -279,10 +326,20 @@ var
   i: Integer;
   Thread: TMyThread;
   download: TDownload;
+  OMetodoServer : clsMetodosServer;
+  oArquivoJSON : TJSONArray;
 begin
-  Url := FUrlBase + aFileName;
+  OMetodoServer := clsMetodosServer.Create(nil);
+  OMetodoServer.Configurar;
+  //Url := FUrlBase + aFileName;
+  Url := 'C:\ROM\MULTICOLD\Destino\Extracoes\' + aFileName;
   Filename := aFileName;
 
+  oArquivoJSON := OMetodoServer.ServerMethodsPrincipalClient.BaixarArquivo(Filename);
+  SaveDialog1.FileName := fileName;
+  if SaveDialog1.Execute then
+    ConverterJSONParaArquivo(oArquivoJSON, SaveDialog1.FileName);
+  {
   // DEBUG => Para Testes.
   // ShowMessage(Url);
 
@@ -311,10 +368,11 @@ begin
   finally
     Cursor := crDefault;
   end;
-
+  }
+  FreeAndNil(OMetodoServer);
   Close;
-  FrmDownloadManager.Show;
-  FrmDownloadManager.RefreshList;
+  //FrmDownloadManager.Show;
+  //FrmDownloadManager.RefreshList;
 end;
 
 procedure TFrmConsultaExportacoesRemoto.FormActivate(Sender: TObject);

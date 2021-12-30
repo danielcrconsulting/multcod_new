@@ -27,7 +27,8 @@ type
     procedure ConectarBanco;
     procedure DesconectarBanco;
     function RetornaRegistros(query:String): String;
-
+    function ConverterArquivoParaJSON(pDirArquivo : string) : TJSONArray;
+    function RetornarCaminhoArq : String;
   public
     { Public declarations }
     function EchoString(Value: string): string;
@@ -38,6 +39,7 @@ type
                                     var NomeEstacao : String ) : Boolean;
     function RetornarDadosBanco(SQL : String) : String;
     procedure PersistirBanco(SQL : String);
+    function BaixarArquivo( arq : String) : TJSONArray;
 
   end;
 
@@ -48,6 +50,18 @@ implementation
 
 
 uses System.StrUtils;
+
+function TServerMethods1.BaixarArquivo(arq: String): TJSONArray;
+  var oArquivoJSON : TJSONArray;
+begin
+  try
+    // Envia o arquivo em JOSN para o servidor
+    oArquivoJSON := ConverterArquivoParaJSON( RetornarCaminhoArq + arq);
+    result := oArquivoJSON;
+  finally
+  end;
+end;
+
 
 procedure TServerMethods1.ConectarBanco;
 var
@@ -75,6 +89,49 @@ begin
   FdCon.Params.Values['User_name'] := usuario;
   FdCon.Params.Values['Password'] := senha;
   FdCon.Open;
+end;
+
+function TServerMethods1.ConverterArquivoParaJSON(
+  pDirArquivo: string): TJSONArray;
+var
+  sBytesArquivo, sNomeArquivo: string;
+  oSSArquivoStream: TStringStream;
+  iTamanhoArquivo, iCont: Integer;
+begin
+  try
+    Result := TJSONArray.Create; // Instanciando o objeto JSON que conterá o arquivo serializado
+
+    oSSArquivoStream := TStringStream.Create; // Instanciando o objeto stream que carregará o arquivo para memoria
+    oSSArquivoStream.LoadFromFile(pDirArquivo);  // Carregando o arquivo para memoria
+    iTamanhoArquivo := oSSArquivoStream.Size; // pegando o tamanho do arquivo
+
+    sBytesArquivo := '';
+
+    // Fazendo um lanço no arquivo que está na memoria para pegar os bytes do mesmo
+    for iCont := 0 to iTamanhoArquivo - 1 do
+    begin
+      // A medida que está fazendo o laço para pegar os bytes, os mesmos são jogados para
+      // uma variável do tipo string separado por ","
+      sBytesArquivo := sBytesArquivo + IntToStr(oSSArquivoStream.Bytes[iCont]) + ', ';
+    end;
+
+    // Como é colocado uma vírgula após o byte, fica sempre sobrando uma vígugula, que é deletada
+    Delete(sBytesArquivo, Length(sBytesArquivo)-1, 2);
+
+    // Adiciona a string que contém os bytes para o array JSON
+    Result.Add(sBytesArquivo);
+
+    // Adiciona para o array JSON o tamanho do arquivo
+    Result.AddElement(TJSONNumber.Create(iTamanhoArquivo));
+
+    // Extrai o nome do arquivo
+	  sNomeArquivo := ExtractFileName(pDirArquivo);
+
+    // Adiciona na terceira posição do array JSON o nome do arquivo
+    Result.AddElement(TJSONString.Create(sNomeArquivo));
+  finally
+    oSSArquivoStream.Free;
+  end;
 end;
 
 procedure TServerMethods1.DesconectarBanco;
@@ -189,6 +246,13 @@ begin
   senha          := arqIni.ReadString('configuracoes', 'password',    '');
   NomeEstacao    := arqIni.ReadString('configuracoes', 'WorkStation', '');
   result := True;
+end;
+
+function TServerMethods1.RetornarCaminhoArq : String;
+var arqIni : TiniFile;
+begin
+  arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
+  result         := arqIni.ReadString('configuracoes', 'caminho',    '');
 end;
 
 

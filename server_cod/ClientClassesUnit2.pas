@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 22/11/2021 12:43:27
+// 30/12/2021 12:00:28
 //
 
 unit ClientClassesUnit2;
@@ -18,6 +18,8 @@ type
     FRetornarParametrosConnCommand: TDSRestCommand;
     FRetornarDadosBancoCommand: TDSRestCommand;
     FPersistirBancoCommand: TDSRestCommand;
+    FBaixarArquivoCommand: TDSRestCommand;
+    FBaixarArquivoCommand_Cache: TDSRestCommand;
   public
     constructor Create(ARestConnection: TDSRestConnection); overload;
     constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
@@ -28,6 +30,8 @@ type
     function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
     function RetornarDadosBanco(SQL: string; const ARequestFilter: string = ''): string;
     procedure PersistirBanco(SQL: string);
+    function BaixarArquivo(arq: string; const ARequestFilter: string = ''): TJSONArray;
+    function BaixarArquivo_Cache(arq: string; const ARequestFilter: string = ''): IDSRestCachedJSONArray;
   end;
 
 const
@@ -69,6 +73,18 @@ const
   TServerMethods1_PersistirBanco: array [0..0] of TDSRestParameterMetaData =
   (
     (Name: 'SQL'; Direction: 1; DBXType: 26; TypeName: 'string')
+  );
+
+  TServerMethods1_BaixarArquivo: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'arq'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: ''; Direction: 4; DBXType: 37; TypeName: 'TJSONArray')
+  );
+
+  TServerMethods1_BaixarArquivo_Cache: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'arq'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
   );
 
 implementation
@@ -180,6 +196,34 @@ begin
   FPersistirBancoCommand.Execute;
 end;
 
+function TServerMethods1Client.BaixarArquivo(arq: string; const ARequestFilter: string): TJSONArray;
+begin
+  if FBaixarArquivoCommand = nil then
+  begin
+    FBaixarArquivoCommand := FConnection.CreateCommand;
+    FBaixarArquivoCommand.RequestType := 'GET';
+    FBaixarArquivoCommand.Text := 'TServerMethods1.BaixarArquivo';
+    FBaixarArquivoCommand.Prepare(TServerMethods1_BaixarArquivo);
+  end;
+  FBaixarArquivoCommand.Parameters[0].Value.SetWideString(arq);
+  FBaixarArquivoCommand.Execute(ARequestFilter);
+  Result := TJSONArray(FBaixarArquivoCommand.Parameters[1].Value.GetJSONValue(FInstanceOwner));
+end;
+
+function TServerMethods1Client.BaixarArquivo_Cache(arq: string; const ARequestFilter: string): IDSRestCachedJSONArray;
+begin
+  if FBaixarArquivoCommand_Cache = nil then
+  begin
+    FBaixarArquivoCommand_Cache := FConnection.CreateCommand;
+    FBaixarArquivoCommand_Cache.RequestType := 'GET';
+    FBaixarArquivoCommand_Cache.Text := 'TServerMethods1.BaixarArquivo';
+    FBaixarArquivoCommand_Cache.Prepare(TServerMethods1_BaixarArquivo_Cache);
+  end;
+  FBaixarArquivoCommand_Cache.Parameters[0].Value.SetWideString(arq);
+  FBaixarArquivoCommand_Cache.ExecuteCache(ARequestFilter);
+  Result := TDSRestCachedJSONArray.Create(FBaixarArquivoCommand_Cache.Parameters[1].Value.GetString);
+end;
+
 constructor TServerMethods1Client.Create(ARestConnection: TDSRestConnection);
 begin
   inherited Create(ARestConnection);
@@ -198,6 +242,8 @@ begin
   FRetornarParametrosConnCommand.DisposeOf;
   FRetornarDadosBancoCommand.DisposeOf;
   FPersistirBancoCommand.DisposeOf;
+  FBaixarArquivoCommand.DisposeOf;
+  FBaixarArquivoCommand_Cache.DisposeOf;
   inherited;
 end;
 
