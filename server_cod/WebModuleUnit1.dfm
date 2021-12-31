@@ -18,9 +18,9 @@ object WebModule1: TWebModule1
       OnAction = WebModuleDefaultAction
     end>
   BeforeDispatch = WebModuleBeforeDispatch
-  Height = 333
-  Width = 414
-  PixelsPerInch = 96
+  Height = 251
+  Width = 486
+  PixelsPerInch = 120
   object DSHTTPWebDispatcher1: TDSHTTPWebDispatcher
     Filters = <>
     AuthenticationManager = ServerContainer1.DSAuthenticationManager1
@@ -65,6 +65,10 @@ object WebModule1: TWebModule1
       item
         MimeType = 'image/gif'
         Extensions = 'gif'
+      end
+      item
+        MimeType = 'text/plain'
+        Extensions = 'txt'
       end>
     BeforeDispatch = WebFileDispatcher1BeforeDispatch
     WebDirectories = <
@@ -78,6 +82,7 @@ object WebModule1: TWebModule1
       end>
     RootDirectory = '.'
     VirtualPath = '/'
+    DefaultFile = 'txt'
     Left = 56
     Top = 136
   end

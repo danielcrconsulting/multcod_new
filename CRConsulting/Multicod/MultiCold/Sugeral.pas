@@ -87,6 +87,7 @@ Type
 //  Procedure CriarAliasLog;     //   'S' = substituir; '+' = somar
   Procedure InsereAtualizaCompila(Operacao, CodRel : AnsiString; CodSis, CodGrupo, CodSubGrupo, Cont : Integer);
     procedure ImportarDados( StrSql : String; strPar : TFDParams);
+    function BaixarArquivo( arq : String) : TJSONArray;
     procedure Persistir( StrSql : String; StgParam : TFDParams);
     procedure JsonToDataset(aDataset : TDataSet; aJSON : string);
   End;
@@ -846,6 +847,11 @@ begin
     vConv.Free;
     JObj.Free;
   end;
+end;
+
+function TFormGeral.BaixarArquivo( arq : String) : TJSONArray;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.BaixarArquivo(arq);
 end;
 
 procedure TFormGeral.ImportarDados( StrSql : String; strPar : TFDParams);

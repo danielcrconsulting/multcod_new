@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Datasnap.DBClient, Vcl.Grids,
   Vcl.DBGrids, Datasnap.Provider, Vcl.StdCtrls, Vcl.Menus, Vcl.ExtCtrls, ADODB,
   Vcl.ComCtrls, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  IdSSLOpenSSL, uMetodosServer, System.Json;
+  IdSSLOpenSSL, System.Json;
 
 type
   TFrmConsultaExportacoesRemoto = class(TForm)
@@ -288,8 +288,8 @@ begin
 
     //sNomeArquivo := pArquivoJSON.Get(2).ToString;  // Pega o nome do arquivo que está na posição 2
     sNomeArquivo := ExtractFileName(pdir);
-    Delete(sNomeArquivo, Length(sNomeArquivo), 1); // Deleta a última aspas da string
-    Delete(sNomeArquivo, 1, 1); // Deleta a primeira aspas da string
+    //Delete(sNomeArquivo, Length(sNomeArquivo), 1); // Deleta a última aspas da string
+    //Delete(sNomeArquivo, 1, 1); // Deleta a primeira aspas da string
 
     iTamanhoArquivo := TJSONNumber(pArquivoJSON.Get(1)).AsInt; // Pega na posição 1 o tamanho do arquivo
 
@@ -326,16 +326,13 @@ var
   i: Integer;
   Thread: TMyThread;
   download: TDownload;
-  OMetodoServer : clsMetodosServer;
   oArquivoJSON : TJSONArray;
 begin
-  OMetodoServer := clsMetodosServer.Create(nil);
-  OMetodoServer.Configurar;
   //Url := FUrlBase + aFileName;
   Url := 'C:\ROM\MULTICOLD\Destino\Extracoes\' + aFileName;
   Filename := aFileName;
 
-  oArquivoJSON := OMetodoServer.ServerMethodsPrincipalClient.BaixarArquivo(Filename);
+  oArquivoJSON := FormGeral.BaixarArquivo(Filename);
   SaveDialog1.FileName := fileName;
   if SaveDialog1.Execute then
     ConverterJSONParaArquivo(oArquivoJSON, SaveDialog1.FileName);
@@ -369,7 +366,7 @@ begin
     Cursor := crDefault;
   end;
   }
-  FreeAndNil(OMetodoServer);
+  ShowMessage('Arquivo baixado com sucesso...');
   Close;
   //FrmDownloadManager.Show;
   //FrmDownloadManager.RefreshList;
