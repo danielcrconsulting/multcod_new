@@ -10,68 +10,67 @@ object Localizar: TLocalizar
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnShow = FormShow
+  PixelsPerInch = 96
   DesignSize = (
     643
     298)
-  PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Label1: TLabel
     Left = 8
     Top = 24
-    Width = 66
-    Height = 13
+    Width = 64
+    Height = 14
     Caption = 'P'#225'gina Inicial:'
   end
   object Label2: TLabel
     Left = 8
     Top = 56
-    Width = 61
-    Height = 13
+    Width = 60
+    Height = 14
     Caption = 'P'#225'gina Final:'
   end
   object Label3: TLabel
     Left = 8
     Top = 88
-    Width = 59
-    Height = 13
+    Width = 58
+    Height = 14
     Caption = 'Linha Inicial:'
   end
   object Label4: TLabel
     Left = 8
     Top = 120
     Width = 54
-    Height = 13
+    Height = 14
     Caption = 'Linha Final:'
   end
   object Label5: TLabel
     Left = 8
     Top = 152
     Width = 33
-    Height = 13
+    Height = 14
     Caption = 'Coluna'
   end
   object Label6: TLabel
     Left = 8
     Top = 184
-    Width = 45
-    Height = 13
+    Width = 47
+    Height = 14
     Caption = 'Localizar:'
   end
   object Label7: TLabel
     Left = 360
     Top = 280
-    Width = 63
-    Height = 13
+    Width = 62
+    Height = 14
     Caption = 'P'#225'gina Atual:'
   end
   object Lblvalidacao: TLabel
     Left = 223
     Top = 35
     Width = 4
-    Height = 23
+    Height = 18
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clRed
@@ -84,7 +83,7 @@ object Localizar: TLocalizar
     Left = 96
     Top = 176
     Width = 457
-    Height = 21
+    Height = 22
     TabOrder = 5
     OnChange = PagIniEditChange
   end
@@ -92,7 +91,7 @@ object Localizar: TLocalizar
     Left = 96
     Top = 16
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 0
     OnChange = PagIniEditChange
   end
@@ -100,7 +99,7 @@ object Localizar: TLocalizar
     Left = 96
     Top = 48
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 1
     OnChange = PagIniEditChange
   end
@@ -108,7 +107,7 @@ object Localizar: TLocalizar
     Left = 96
     Top = 80
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 2
     OnChange = PagIniEditChange
   end
@@ -116,7 +115,7 @@ object Localizar: TLocalizar
     Left = 96
     Top = 112
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 3
     OnChange = PagIniEditChange
   end
@@ -124,7 +123,7 @@ object Localizar: TLocalizar
     Left = 96
     Top = 144
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 4
     OnChange = PagIniEditChange
   end
@@ -150,7 +149,7 @@ object Localizar: TLocalizar
     Left = 432
     Top = 272
     Width = 121
-    Height = 21
+    Height = 22
     TabOrder = 8
   end
   object MemoGidley: TMemo

@@ -1,18 +1,14 @@
 Unit LocalizarU;
-
 {
  13/03/2003 - Só havia o botão localizar que a primeira vez funcionava como localizar e a partir dai, caso a string de
  pesquisa não fosse alterada, como localizar próxima. Implementei os dois botões, localizar e localizar próxima com
  funções distintas. Sempre que clicar localizar o programa reinicia a localização de acordo com os parâmetros
  fornecidos.
 }
-
 Interface
-
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, MdiEdit, ExtCtrls, IMulticoldServer1, Soap.SOAPHTTPClient, Zlib;
-
 Type
   TLocalizar = Class(TForm)
     Label1: TLabel;
@@ -49,7 +45,6 @@ Type
     { Public declarations }
     Proximo: boolean;
   End;
-
 Var
   Localizar: TLocalizar;
   PagIni,
@@ -58,16 +53,11 @@ Var
   LinFin,
   Coluna  : Integer;
   AlterouValores : Boolean;
-
 Implementation
-
 Uses MdiMultiCold, SuGeral, LogInForm, Gridque, SuBrug;
-
 {$R *.DFM}
-
 Var
   Cancelar : Boolean;
-
 function TLocalizar.convOperador(operador:AnsiString): Integer;
   begin
     result := -1;
@@ -111,13 +101,11 @@ function TLocalizar.convOperador(operador:AnsiString): Integer;
       result := -1;
   end;
 
-
 Procedure TLocalizar.SairButClick(Sender: TObject);
 Begin
 Cancelar := True;
 Close;
 End;
-
 function TLocalizar.ValidarQtdePaginasSuportadasRemoto: Boolean;
 begin
   Result := true;
@@ -132,15 +120,11 @@ begin
 
     ReallocMem(BufI,QtdeBytes div 2); { Allocates only the space needed }
     ReallocMem(Buffer,QtdeBytes div 2); // Temporariamente para a conversão.....
-
     auxPag := varPag;
     hexToBin(PAnsiChar(auxPag), PAnsiChar(BufferA), QtdeBytes div 2);
-
     Move(BufferA^,BufI^,QtdeBytes div 2); { Moves only the buffer To decompress }
 
-
     ReallocMem(Buffer,0); { DeAllocates }
-
     Try
       ZDecompress(BufI, QtdeBytes, Buffer, QtdBytesPagRel, 0);
     Except
@@ -171,13 +155,13 @@ Begin
   AlterouValores := False;
 End;
 
-
 procedure TLocalizar.FormShow(Sender: TObject);
 begin
   LblValidacao.Caption := '';
   if TEditForm(FrameForm.ActiveMdiChild).RelRemoto then
   begin
-    PaginaAtuEdit.Visible := False;
+
+    PaginaAtuEdit.Visible := False;
     Label7.Visible := False;
     if not Proximo then
     begin
@@ -205,7 +189,6 @@ Var
   spUser, spSenha : String;
   rio: THTTPRIO;
   MyClass: TEditForm;
-
   Function SetaLinIni : Boolean;
   Begin
   Result := True;
@@ -220,7 +203,6 @@ Var
   Else
     LinIni := 1;
   End;
-
   function paginaDaPesquisa(pagNum:Integer) : boolean;
   var
     z : integer;
@@ -233,13 +215,10 @@ Var
       break;
       end;
   end;
-
 Begin
-
 localizaNaPesquisa := ((TEditForm(FrameForm.ActiveMdiChild).temPesquisa) and (radioGroup1.ItemIndex = 1));
 FrameForm.LocalizarPrxima1.Enabled := True;
 LocProxBut.Enabled := True;
-
 If (not TEditForm(FrameForm.ActiveMdiChild).RelRemoto) and (not AlterouValores) and (PagIni > PagFin) then
   begin
   messageDlg('Fim da pesquisa.',mtInformation,[mbOk],0);
@@ -248,14 +227,12 @@ If (not TEditForm(FrameForm.ActiveMdiChild).RelRemoto) and (not AlterouValores) 
   
 If (AlterouValores) Or (Sender = LocBut) Then
   Begin
-
   PagIni := 1;
   PagFin := TEditForm(FrameForm.ActiveMdiChild).Paginas;
   LinIni := 1;
   LinFin := 1;
   Coluna := 1;
   LinhaLocalizada := -1;
-
   If PagFinEdit.Text <> '*' Then
     Begin
     Try
@@ -269,7 +246,6 @@ If (AlterouValores) Or (Sender = LocBut) Then
     if (localizaNaPesquisa) and (PagFin > FrameForm.ScrollBar1.Max) then
       PagFin := FrameForm.ScrollBar1.Max
     End;
-
   If PagIniEdit.Text <> '*' Then
     Begin
     Try
@@ -281,10 +257,8 @@ If (AlterouValores) Or (Sender = LocBut) Then
     If PagIni > PagFin Then
       PagIni := PagFin;
     End;
-
   If Not SetaLinIni Then
     Exit;
-
   If LinFinEdit.Text <> '*' Then
     Try
       LinFin := StrToInt(LinFinEdit.Text);
@@ -292,7 +266,6 @@ If (AlterouValores) Or (Sender = LocBut) Then
       ShowMessage('Linha Final inválida, verifique...');
       Exit;
     End;
-
   If ColunaEdit.Text <> '*' Then
     Try
       Coluna := StrToInt(ColunaEdit.Text);
@@ -300,14 +273,11 @@ If (AlterouValores) Or (Sender = LocBut) Then
       ShowMessage('Coluna inválida, verifique...');
       Exit;
     End;
-
   AlterouValores := False;
   End;
 Cancelar := False;
-
 With TEditForm(FrameForm.ActiveMdiChild) Do
   Begin
-
   If LinhaLocalizada <> -1 Then  // Começa a procurar na próxima linha depois de achada;
     Begin
     LinIni := LinhaLocalizada+2;
@@ -317,10 +287,8 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
     If Not SetaLinIni Then
       Exit;
 
-
 //*****************************************************//
 {  Iniciar aqui um tratamento para se for remoto, chamar o código do webServices.
-
 
 }
   if RelRemoto then
@@ -329,7 +297,6 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
       LinFin := -1;
     if ColunaEdit.Text = '*' then
       Coluna := -1;
-
     busca := TBuscaSequencialDTO.Create;
     try
 
@@ -409,12 +376,12 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
           FrameForm.ScrollBar2.Position := resultadoBusca.IndexPagLoc-1;
           FrameForm.Scrolla2;
         end;
-
         PaginaAtu := resultadoBusca.IndexPagLoc;
         Pagini := resultadoBusca.IndexPagLoc;
         Localizar.Close;
         Exit;
-
+
+
       finally
         Cursor := crDefault;
       end;
@@ -425,25 +392,19 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
       busca.Free;
     end;
 
-
   end;
-
 
 //*****************************************************//
 
-
   For I := PagIni To PagFin Do
     Begin
-
     If I <> PagIni Then // Mudou para outra página no loop do for, seta para pesquisar da linha inicial
       Begin
       If Not SetaLinIni Then
         Exit;
         PagIni := I;
       End;
-
     PaginaAtuEdit.Text := IntToStr(I);
-
     if localizaNaPesquisa then
       begin
       Seek(TEditForm(FrameForm.ActiveMdiChild).ArqPsq,I-1);
@@ -459,19 +420,15 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
       end
     else
       GetPaginaDoRel(I, False);
-
     Application.ProcessMessages;
-
     MemoGidley.Lines.Text := PaginaAcertada;
     
     If LinFinEdit.Text <> '*' Then
       LinFin := StrToInt(LinFinEdit.Text)
     Else
       LinFin := MemoGidley.Lines.Count;
-
     If LinFin > MemoGidley.Lines.Count Then
       LinFin := MemoGidley.Lines.Count;
-
     For J := LinIni To LinFin Do
       Begin
       If ColunaEdit.Text = '*' Then
@@ -549,7 +506,6 @@ If PagIni > PagFin Then
   AlterouValores := True;
   End;
 End;
-
 function TLocalizar.MontarQueryFacil :  QueryFacilArrayDTO;
 var
   i, len: Integer;
@@ -571,23 +527,19 @@ begin
       if trim(queryDlg.GridPesq.Cells[1,i]) <> '' then
         begin
           setLength(Result, len);
-
           campo := queryDlg.GridPesq.Cells[1,i];
           index := queryDlg.GridPesq.Cells[0,i];
           valor := queryDlg.GridPesq.Cells[3,i];
           conector := queryDlg.GridPesq.Cells[4,i];
-
           Result[i-1] := TQueryFacilDTO.Create;
           Result[i-1].Operador := convOperador(queryDlg.GridPesq.Cells[2,i]);
           Result[i-1].Campo := campo;
           Result[i-1].Index_ := index;
           Result[i-1].Valor := valor;
-
           if conector = '' then
             Result[i-1].Conector := -1
           else
             Result[i-1].Conector := ObterConector(conector);
-
           Inc(len);
         end;
   end;
@@ -599,5 +551,4 @@ AlterouValores := True;
 FrameForm.LocalizarPrxima1.Enabled := False;
 LocProxBut.Enabled := False;
 End;
-
 End.

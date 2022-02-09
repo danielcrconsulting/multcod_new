@@ -11,12 +11,11 @@ object AssisAbreRemotoForm: TAssisAbreRemotoForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   WindowMenu = FrameForm.Window1
   OnClose = FormClose
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Panel1: TPanel
     Left = 0
     Top = 0
@@ -25,7 +24,6 @@ object AssisAbreRemotoForm: TAssisAbreRemotoForm
     Align = alLeft
     Caption = 'Panel1'
     TabOrder = 0
-    ExplicitHeight = 487
     object TreeView1: TTreeView
       Left = 1
       Top = 1
@@ -36,7 +34,6 @@ object AssisAbreRemotoForm: TAssisAbreRemotoForm
       Indent = 19
       TabOrder = 0
       OnDblClick = Button1Click
-      ExplicitHeight = 444
     end
     object Panel2: TPanel
       Left = 1
@@ -45,7 +42,6 @@ object AssisAbreRemotoForm: TAssisAbreRemotoForm
       Height = 41
       Align = alBottom
       TabOrder = 1
-      ExplicitTop = 445
       object Button1: TButton
         Left = 136
         Top = 8
@@ -65,15 +61,13 @@ object AssisAbreRemotoForm: TAssisAbreRemotoForm
     Align = alClient
     AutoSize = True
     TabOrder = 1
-    ExplicitWidth = 423
-    ExplicitHeight = 487
     object ListBox2: TListBox
       Left = 1
       Top = 1
-      Width = 421
-      Height = 444
+      Width = 413
+      Height = 432
       Align = alClient
-      ItemHeight = 13
+      ItemHeight = 14
       TabOrder = 0
       OnDblClick = Button2Click
     end
@@ -84,8 +78,6 @@ object AssisAbreRemotoForm: TAssisAbreRemotoForm
       Height = 41
       Align = alBottom
       TabOrder = 1
-      ExplicitTop = 445
-      ExplicitWidth = 421
       DesignSize = (
         413
         41)
@@ -98,7 +90,6 @@ object AssisAbreRemotoForm: TAssisAbreRemotoForm
         Caption = 'Sair'
         TabOrder = 0
         OnClick = Button3Click
-        ExplicitLeft = 340
       end
       object Button2: TButton
         Left = 252
@@ -109,7 +100,6 @@ object AssisAbreRemotoForm: TAssisAbreRemotoForm
         Caption = 'Abrir'
         TabOrder = 1
         OnClick = Button2Click
-        ExplicitLeft = 260
       end
     end
   end

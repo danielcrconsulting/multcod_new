@@ -67,6 +67,15 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
       TabOrder = 0
       OnClick = BtnFecharClick
     end
+    object ProgressBar1: TProgressBar
+      Left = 1
+      Top = 1
+      Width = 760
+      Height = 59
+      Align = alLeft
+      TabOrder = 1
+      Visible = False
+    end
   end
   object Panel2: TPanel
     Left = 0

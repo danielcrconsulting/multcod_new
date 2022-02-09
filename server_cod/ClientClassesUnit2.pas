@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 30/12/2021 12:00:28
+// 09/02/2022 19:29:38
 //
 
 unit ClientClassesUnit2;
@@ -13,6 +13,7 @@ type
   TServerMethods1Client = class(TDSAdminRestClient)
   private
     FDSServerModuleDestroyCommand: TDSRestCommand;
+    FDSServerModuleCreateCommand: TDSRestCommand;
     FEchoStringCommand: TDSRestCommand;
     FReverseStringCommand: TDSRestCommand;
     FRetornarParametrosConnCommand: TDSRestCommand;
@@ -20,11 +21,17 @@ type
     FPersistirBancoCommand: TDSRestCommand;
     FBaixarArquivoCommand: TDSRestCommand;
     FBaixarArquivoCommand_Cache: TDSRestCommand;
+    FAbreRelatorioCommand: TDSRestCommand;
+    FInsereEventosVisuCommand: TDSRestCommand;
+    FfazerumtesteCommand: TDSRestCommand;
+    FGetPaginaCommand: TDSRestCommand;
+    FLogInCommand: TDSRestCommand;
   public
     constructor Create(ARestConnection: TDSRestConnection); overload;
     constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
     destructor Destroy; override;
     procedure DSServerModuleDestroy(Sender: TObject);
+    procedure DSServerModuleCreate(Sender: TObject);
     function EchoString(Value: string; const ARequestFilter: string = ''): string;
     function ReverseString(Value: string; const ARequestFilter: string = ''): string;
     function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
@@ -32,10 +39,20 @@ type
     procedure PersistirBanco(SQL: string);
     function BaixarArquivo(arq: string; const ARequestFilter: string = ''): TJSONArray;
     function BaixarArquivo_Cache(arq: string; const ARequestFilter: string = ''): IDSRestCachedJSONArray;
+    function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; const ARequestFilter: string = ''): Integer;
+    procedure InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
+    procedure fazerumteste;
+    function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; const ARequestFilter: string = ''): string;
+    function LogIn(Usuario: WideString; Senha: WideString; ConnectionID: Integer; const ARequestFilter: string = ''): string;
   end;
 
 const
   TServerMethods1_DSServerModuleDestroy: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: 'Sender'; Direction: 1; DBXType: 37; TypeName: 'TObject')
+  );
+
+  TServerMethods1_DSServerModuleCreate: array [0..0] of TDSRestParameterMetaData =
   (
     (Name: 'Sender'; Direction: 1; DBXType: 37; TypeName: 'TObject')
   );
@@ -87,6 +104,52 @@ const
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
   );
 
+  TServerMethods1_AbreRelatorio: array [0..9] of TDSRestParameterMetaData =
+  (
+    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'FullPath'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'QtdPaginas'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'StrCampos'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'Rel64'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
+    (Name: 'Rel133'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
+    (Name: 'CmprBrncs'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
+    (Name: ''; Direction: 4; DBXType: 6; TypeName: 'Integer')
+  );
+
+  TServerMethods1_InsereEventosVisu: array [0..7] of TDSRestParameterMetaData =
+  (
+    (Name: 'Arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'Diretorio'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'CodRel'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'CodUsuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'NomeGrupoUsuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'Grupo'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'SubGrupo'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'CodMens'; Direction: 1; DBXType: 6; TypeName: 'Integer')
+  );
+
+  TServerMethods1_GetPagina: array [0..7] of TDSRestParameterMetaData =
+  (
+    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'Relatorio'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'PagNum'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'QtdBytes'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'Pagina'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
+  );
+
+  TServerMethods1_LogIn: array [0..3] of TDSRestParameterMetaData =
+  (
+    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
+  );
+
 implementation
 
 procedure TServerMethods1Client.DSServerModuleDestroy(Sender: TObject);
@@ -112,6 +175,31 @@ begin
     end
     end;
   FDSServerModuleDestroyCommand.Execute;
+end;
+
+procedure TServerMethods1Client.DSServerModuleCreate(Sender: TObject);
+begin
+  if FDSServerModuleCreateCommand = nil then
+  begin
+    FDSServerModuleCreateCommand := FConnection.CreateCommand;
+    FDSServerModuleCreateCommand.RequestType := 'POST';
+    FDSServerModuleCreateCommand.Text := 'TServerMethods1."DSServerModuleCreate"';
+    FDSServerModuleCreateCommand.Prepare(TServerMethods1_DSServerModuleCreate);
+  end;
+  if not Assigned(Sender) then
+    FDSServerModuleCreateCommand.Parameters[0].Value.SetNull
+  else
+  begin
+    FMarshal := TDSRestCommand(FDSServerModuleCreateCommand.Parameters[0].ConnectionHandler).GetJSONMarshaler;
+    try
+      FDSServerModuleCreateCommand.Parameters[0].Value.SetJSONValue(FMarshal.Marshal(Sender), True);
+      if FInstanceOwner then
+        Sender.Free
+    finally
+      FreeAndNil(FMarshal)
+    end
+    end;
+  FDSServerModuleCreateCommand.Execute;
 end;
 
 function TServerMethods1Client.EchoString(Value: string; const ARequestFilter: string): string;
@@ -224,6 +312,95 @@ begin
   Result := TDSRestCachedJSONArray.Create(FBaixarArquivoCommand_Cache.Parameters[1].Value.GetString);
 end;
 
+function TServerMethods1Client.AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; const ARequestFilter: string): Integer;
+begin
+  if FAbreRelatorioCommand = nil then
+  begin
+    FAbreRelatorioCommand := FConnection.CreateCommand;
+    FAbreRelatorioCommand.RequestType := 'GET';
+    FAbreRelatorioCommand.Text := 'TServerMethods1.AbreRelatorio';
+    FAbreRelatorioCommand.Prepare(TServerMethods1_AbreRelatorio);
+  end;
+  FAbreRelatorioCommand.Parameters[0].Value.SetWideString(Usuario);
+  FAbreRelatorioCommand.Parameters[1].Value.SetWideString(Senha);
+  FAbreRelatorioCommand.Parameters[2].Value.SetInt32(ConnectionID);
+  FAbreRelatorioCommand.Parameters[3].Value.SetWideString(FullPath);
+  FAbreRelatorioCommand.Parameters[4].Value.SetInt32(QtdPaginas);
+  FAbreRelatorioCommand.Parameters[5].Value.SetWideString(StrCampos);
+  FAbreRelatorioCommand.Parameters[6].Value.SetUInt8(Rel64);
+  FAbreRelatorioCommand.Parameters[7].Value.SetUInt8(Rel133);
+  FAbreRelatorioCommand.Parameters[8].Value.SetUInt8(CmprBrncs);
+  FAbreRelatorioCommand.Execute(ARequestFilter);
+  Result := FAbreRelatorioCommand.Parameters[9].Value.GetInt32;
+end;
+
+procedure TServerMethods1Client.InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
+begin
+  if FInsereEventosVisuCommand = nil then
+  begin
+    FInsereEventosVisuCommand := FConnection.CreateCommand;
+    FInsereEventosVisuCommand.RequestType := 'GET';
+    FInsereEventosVisuCommand.Text := 'TServerMethods1.InsereEventosVisu';
+    FInsereEventosVisuCommand.Prepare(TServerMethods1_InsereEventosVisu);
+  end;
+  FInsereEventosVisuCommand.Parameters[0].Value.SetWideString(Arquivo);
+  FInsereEventosVisuCommand.Parameters[1].Value.SetWideString(Diretorio);
+  FInsereEventosVisuCommand.Parameters[2].Value.SetWideString(CodRel);
+  FInsereEventosVisuCommand.Parameters[3].Value.SetWideString(CodUsuario);
+  FInsereEventosVisuCommand.Parameters[4].Value.SetWideString(NomeGrupoUsuario);
+  FInsereEventosVisuCommand.Parameters[5].Value.SetInt32(Grupo);
+  FInsereEventosVisuCommand.Parameters[6].Value.SetInt32(SubGrupo);
+  FInsereEventosVisuCommand.Parameters[7].Value.SetInt32(CodMens);
+  FInsereEventosVisuCommand.Execute;
+end;
+
+procedure TServerMethods1Client.fazerumteste;
+begin
+  if FfazerumtesteCommand = nil then
+  begin
+    FfazerumtesteCommand := FConnection.CreateCommand;
+    FfazerumtesteCommand.RequestType := 'GET';
+    FfazerumtesteCommand.Text := 'TServerMethods1.fazerumteste';
+  end;
+  FfazerumtesteCommand.Execute;
+end;
+
+function TServerMethods1Client.GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; const ARequestFilter: string): string;
+begin
+  if FGetPaginaCommand = nil then
+  begin
+    FGetPaginaCommand := FConnection.CreateCommand;
+    FGetPaginaCommand.RequestType := 'GET';
+    FGetPaginaCommand.Text := 'TServerMethods1.GetPagina';
+    FGetPaginaCommand.Prepare(TServerMethods1_GetPagina);
+  end;
+  FGetPaginaCommand.Parameters[0].Value.SetWideString(Usuario);
+  FGetPaginaCommand.Parameters[1].Value.SetWideString(Senha);
+  FGetPaginaCommand.Parameters[2].Value.SetInt32(ConnectionID);
+  FGetPaginaCommand.Parameters[3].Value.SetWideString(Relatorio);
+  FGetPaginaCommand.Parameters[4].Value.SetInt32(PagNum);
+  FGetPaginaCommand.Parameters[5].Value.SetInt32(QtdBytes);
+  FGetPaginaCommand.Parameters[6].Value.SetWideString(Pagina);
+  FGetPaginaCommand.Execute(ARequestFilter);
+  Result := FGetPaginaCommand.Parameters[7].Value.GetWideString;
+end;
+
+function TServerMethods1Client.LogIn(Usuario: WideString; Senha: WideString; ConnectionID: Integer; const ARequestFilter: string): string;
+begin
+  if FLogInCommand = nil then
+  begin
+    FLogInCommand := FConnection.CreateCommand;
+    FLogInCommand.RequestType := 'GET';
+    FLogInCommand.Text := 'TServerMethods1.LogIn';
+    FLogInCommand.Prepare(TServerMethods1_LogIn);
+  end;
+  FLogInCommand.Parameters[0].Value.SetWideString(Usuario);
+  FLogInCommand.Parameters[1].Value.SetWideString(Senha);
+  FLogInCommand.Parameters[2].Value.SetInt32(ConnectionID);
+  FLogInCommand.Execute(ARequestFilter);
+  Result := FLogInCommand.Parameters[3].Value.GetWideString;
+end;
+
 constructor TServerMethods1Client.Create(ARestConnection: TDSRestConnection);
 begin
   inherited Create(ARestConnection);
@@ -237,6 +414,7 @@ end;
 destructor TServerMethods1Client.Destroy;
 begin
   FDSServerModuleDestroyCommand.DisposeOf;
+  FDSServerModuleCreateCommand.DisposeOf;
   FEchoStringCommand.DisposeOf;
   FReverseStringCommand.DisposeOf;
   FRetornarParametrosConnCommand.DisposeOf;
@@ -244,6 +422,11 @@ begin
   FPersistirBancoCommand.DisposeOf;
   FBaixarArquivoCommand.DisposeOf;
   FBaixarArquivoCommand_Cache.DisposeOf;
+  FAbreRelatorioCommand.DisposeOf;
+  FInsereEventosVisuCommand.DisposeOf;
+  FfazerumtesteCommand.DisposeOf;
+  FGetPaginaCommand.DisposeOf;
+  FLogInCommand.DisposeOf;
   inherited;
 end;
 

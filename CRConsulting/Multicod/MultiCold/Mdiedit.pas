@@ -338,6 +338,7 @@ Var
   varPag : WideString;
 //  varPag : Variant;
   V : Variant;
+  Retorno : TStringList;
 Begin
 If RelRemoto Then
   Begin
@@ -353,7 +354,7 @@ If RelRemoto Then
 
     //RetVal := (formGeral.HTTPRIO1 as MulticoldServer).GetPagina(ws, ws, i, ws, i, i, v);
 
-
+    {
     RetVal := (formGeral.HTTPRIO1 as IMulticoldServer).GetPagina(LogInRemotoForm.UsuEdit.Text,
                                                  LogInRemotoForm.PassEdit.Text,
                                                  ConnectionID,
@@ -361,6 +362,21 @@ If RelRemoto Then
                                                  Pagina,
                                                  EEE,
                                                  varPag);
+    }
+    RetVal := formgeral.GetPagina(LogInRemotoForm.UsuEdit.Text,
+                                                 LogInRemotoForm.PassEdit.Text,
+                                                 ConnectionID,
+                                                 Filename,
+                                                 Pagina,
+                                                 EEE,
+                                                 varPag);
+    Retorno := TStringList.Create;
+    Retorno.Delimiter := '|';
+    Retorno.DelimitedText := RetVal;
+
+    RetVal := Retorno.Strings[0];
+    EEE    := StrToInt(Retorno.Strings[2]);
+    varPag := Retorno.Strings[1];
 
     ReallocMem(BufI,EEE div 2); { Allocates only the space needed }
     ReallocMem(Buffer,EEE div 2); // Temporariamente para a conversão.....
@@ -1395,6 +1411,7 @@ Var
 //  varPag : Variant;
   V : Variant;
   PosQuery : INteger;
+  Retorno : TStringList;
 
   Procedure ComFundo;
 
@@ -1581,6 +1598,7 @@ If PagAtu <> PaginaAtu Then
     Begin
     With FrameForm Do
       Begin
+      {
       RetVal := (formGeral.HTTPRIO1 as IMulticoldServer).GetPagina(LogInRemotoForm.UsuEdit.Text,
                                                    LogInRemotoForm.PassEdit.Text,
                                                    ConnectionID,
@@ -1588,6 +1606,23 @@ If PagAtu <> PaginaAtu Then
                                                    PagAtu,
                                                    EEE,
                                                    varPag);
+      }
+      RetVal := formgeral.GetPagina(LogInRemotoForm.UsuEdit.Text,
+                                                 LogInRemotoForm.PassEdit.Text,
+                                                 ConnectionID,
+                                                 Filename,
+                                                 PagAtu,
+                                                 EEE,
+                                                 varPag);
+
+      Retorno := TStringList.Create;
+      Retorno.Delimiter := '|';
+      Retorno.DelimitedText := RetVal;
+
+      RetVal := Retorno.Strings[0];
+      EEE    := StrToInt(Retorno.Strings[2]);
+      varPag := Retorno.Strings[1];
+
       //RetVal := WebConnection1.AppServer.GetPagina(LogInRemotoForm.UsuEdit.Text,
       //                                             LogInRemotoForm.PassEdit.Text,
       //                                             ConnectionID,

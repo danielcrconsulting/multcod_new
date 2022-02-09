@@ -129,6 +129,10 @@ $(PostBuildEvent)]]></PostBuildEvent>
         </DCCReference>
         <DCCReference Include="ClientClassesUnit2.pas"/>
         <DCCReference Include="UMetodosServer.pas"/>
+        <DCCReference Include="..\CRConsulting\Multicod\Subrug\SuTypGer.pas"/>
+        <DCCReference Include="..\CRConsulting\Multicod\Subrug\Subrug.pas"/>
+        <DCCReference Include="..\CRConsulting\Multicod\Subrug\SuTypMultiCold.pas"/>
+        <DCCReference Include="..\CRConsulting\Multicod\CR CONSULTING\Pilha.pas"/>
         <None Include="js\base64.js"/>
         <None Include="js\serverfunctionexecutor.js"/>
         <None Include="js\json2.js"/>

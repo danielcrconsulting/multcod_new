@@ -69,6 +69,14 @@ object WebModule1: TWebModule1
       item
         MimeType = 'text/plain'
         Extensions = 'txt'
+      end
+      item
+        MimeType = 'text/plain'
+        Extensions = 'dat'
+      end
+      item
+        MimeType = 'text/plain'
+        Extensions = 'IAPX'
       end>
     BeforeDispatch = WebFileDispatcher1BeforeDispatch
     WebDirectories = <
@@ -82,7 +90,7 @@ object WebModule1: TWebModule1
       end>
     RootDirectory = '.'
     VirtualPath = '/'
-    DefaultFile = 'txt'
+    DefaultFile = 'IAPX'
     Left = 56
     Top = 136
   end

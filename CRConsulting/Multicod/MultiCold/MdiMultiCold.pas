@@ -3500,9 +3500,14 @@ Begin
         //    showmessage((formGeral.HTTPRIO1 as IMulticoldServer).LogInX(LogInRemotoForm.UsuEdit.Text, LogInRemotoForm.PassEdit.Text, ConnectionID));
         //    Teste := GetIMulticoldServer;
         //    Teste.LogIn(LogInRemotoForm.UsuEdit.Text, LogInRemotoForm.PassEdit.Text, ConnectionID);
-        StrAux := (formGeral.HTTPRIO1 as IMulticoldServer).LogIn(LogInRemotoForm.UsuEdit.Text,
-                                                                 LogInRemotoForm.PassEdit.Text,
-                                                                 ConnectionID);
+       // StrAux := (formGeral.HTTPRIO1 as IMulticoldServer).LogIn(LogInRemotoForm.UsuEdit.Text,
+       //                                                          LogInRemotoForm.PassEdit.Text,
+       //                                                          ConnectionID);
+        StrAux := formGeral.LogIn(LogInRemotoForm.UsuEdit.Text,
+                                  LogInRemotoForm.PassEdit.Text,
+                                  ConnectionID);
+
+
         Dados.Text := deCompressHexReturnString(StrAux);
       Except
         on e:exception do
@@ -3515,7 +3520,7 @@ Begin
       End; // Try
 
       Screen.Cursor := crDefault;
-
+      ConnectionID := 1;
       If ConnectionID = 0 Then
         Begin
           // ConectouRemoto := False;

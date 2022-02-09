@@ -36,7 +36,8 @@ uses
   ClientClassesUnit2 in '..\..\..\server_cod\ClientClassesUnit2.pas',
   UMetodosServer in '..\..\..\server_cod\UMetodosServer.pas',
   Vcl.Themes,
-  Vcl.Styles;
+  Vcl.Styles,
+  MultiColdServerUnit1 in '..\..\..\rotinas do server antigo\MultiColdServerUnit1.pas' {MultiColdServerForm};
 
 {$R *.RES}
 
@@ -65,6 +66,7 @@ Begin
   Application.CreateForm(TStatusForm, StatusForm);
   Application.CreateForm(TFrmDownloadManager, FrmDownloadManager);
   Application.CreateForm(TFrmConsultaExportacoesRemoto, FrmConsultaExportacoesRemoto);
+  Application.CreateForm(TMultiColdServerForm, MultiColdServerForm);
   //Application.CreateForm(TAnotaForm, AnotaForm);
   //Application.CreateForm(TAnotaTextoForm, AnotaTextoForm);
   FrameForm.Inicializa;

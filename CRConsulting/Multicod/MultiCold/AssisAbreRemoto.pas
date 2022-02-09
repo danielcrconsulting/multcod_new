@@ -34,7 +34,7 @@ Var
 
 Implementation
 
-Uses MdiMultiCold, Subrug, LogInForm, Sugeral, Avisoi, zLib;
+Uses MdiMultiCold, Subrug, LogInForm, Sugeral, Avisoi, zLib, MultiColdServerUnit1;
 
 {$R *.DFM}
 
@@ -252,6 +252,7 @@ Procedure TAssisAbreRemotoForm.Button2Click(Sender: TObject);
 Var
   I,
   RetVal : Integer;
+  frmMultiColdServer : TMultiColdServerForm;
 Begin
 If ListBox2.SelCount = 0 Then
   Begin
@@ -276,7 +277,9 @@ Else
           //                                                 StrCampos,
           //                                                 Rel64,
           //                                                 Rel133,
-          //                                                 CmprBrncs);
+          //
+          //                                               CmprBrncs);
+
           RetVal := (formGeral.HTTPRIO1 as IMulticoldServer).AbreRelatorio(LogInRemotoForm.UsuEdit.Text,
                                                            LogInRemotoForm.PassEdit.Text,
                                                            ConnectionID,
@@ -287,12 +290,35 @@ Else
                                                            Rel133,
                                                            CmprBrncs);
 
+          {
+          frmMultiColdServer := TMultiColdServerForm.Create(nil);
+          frmMultiColdServer.AbreRelatorio(LogInRemotoForm.UsuEdit.Text,
+                                                           LogInRemotoForm.PassEdit.Text,
+                                                           ConnectionID,
+                                                           'http://localhost:8080/RELATORIO_20211017_132823.txt' ,//Copy(FullPaths[I], 21,Length(FullPaths[I])-20),
+                                                           QtdPaginas,
+                                                           StrCampos,
+                                                           Rel64,
+                                                           Rel133,
+                                                           CmprBrncs);
+
+                    RetVal := formGeral.AbreRelatorio(LogInRemotoForm.UsuEdit.Text,
+                                            LogInRemotoForm.PassEdit.Text,
+                                            ConnectionID,
+                                            Copy(FullPaths[I], 21,Length(FullPaths[I])-20),
+                                            QtdPaginas,
+                                            StrCampos,
+                                            Rel64,
+                                            Rel133,
+                                            CmprBrncs);
+         }
         Finally
           Screen.Cursor := crDefault;
           Rel133 := Rel133;
           End; // Try
         Case RetVal Of
           0 : AbreRel(Copy(FullPaths[I], 21,Length(FullPaths[I])-20), True);
+          //0 : AbreRel('c:\temp\a.dat', True);
           1 : ShowMessage('Usuário '+LogInRemotoForm.UsuEdit.Text+' não autorizado a abrir este relatório: '+
                           ExtractFileName(Copy(FullPaths[I], 21,Length(FullPaths[I])-20)));
           2 : ShowMessage('Falha de I/O '+ExtractFileName(Copy(FullPaths[I], 21,Length(FullPaths[I])-20)));

@@ -12,7 +12,7 @@ Uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect,
-  REST.Response.Adapter, System.JSON;
+  REST.Response.Adapter, System.JSON, System.Zip;
 
 Type
 
@@ -90,6 +90,12 @@ Type
     function BaixarArquivo( arq : String) : TJSONArray;
     procedure Persistir( StrSql : String; StgParam : TFDParams);
     procedure JsonToDataset(aDataset : TDataSet; aJSON : string);
+    function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString;
+                            Rel64: Byte; Rel133: Byte; CmprBrncs: Byte): Integer;
+    function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer;
+                         Pagina: WideString): WideString;
+    function LogIn(Usuario, Senha: WideString;
+      ConnectionID: Integer): String;
   End;
 
 
@@ -849,6 +855,21 @@ begin
   end;
 end;
 
+function TFormGeral.GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer;
+                         Pagina: WideString): WideString;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.GetPagina(Usuario,Senha,ConnectionID,Relatorio,
+                         PagNum,QtdBytes,Pagina);
+end;
+
+function TFormGeral.AbreRelatorio(Usuario, Senha: WideString;
+  ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer;
+  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte): Integer;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.AbreRelatorio(Usuario, Senha,
+  ConnectionID, FullPath, QtdPaginas, StrCampos, Rel64, Rel133, CmprBrncs);
+end;
+
 function TFormGeral.BaixarArquivo( arq : String) : TJSONArray;
 begin
   result := OMetodosServer.ServerMethodsPrincipalClient.BaixarArquivo(arq);
@@ -1004,6 +1025,12 @@ Begin
 
   memtb.Close;
 End;
+
+function TFormGeral.LogIn(Usuario, Senha: WideString;
+  ConnectionID: Integer): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.LogIn(Usuario,Senha,ConnectionID);
+end;
 
 Procedure TFormGeral.InsereAtualizaCompila;
 var

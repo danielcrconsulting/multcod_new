@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Datasnap.DBClient, Vcl.Grids,
   Vcl.DBGrids, Datasnap.Provider, Vcl.StdCtrls, Vcl.Menus, Vcl.ExtCtrls, ADODB,
   Vcl.ComCtrls, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  IdSSLOpenSSL, System.Json;
+  IdSSLOpenSSL, System.Json, System.Zlib, System.Zip;
 
 type
   TFrmConsultaExportacoesRemoto = class(TForm)
@@ -35,6 +35,7 @@ type
     CheckBoxData: TCheckBox;
     SaveDialog1: TSaveDialog;
     LblStatus: TLabel;
+    ProgressBar1: TProgressBar;
     procedure BtnFecharClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BtnPesquisarClick(Sender: TObject);
@@ -51,6 +52,8 @@ type
     { Public declarations }
     procedure SetParameters(codUsuario, urlBase: String);
     procedure DimensionarGrid(dbg: TDBGrid);
+    procedure Descomprimir(ArquivoZip: TFileName; DiretorioDestino: string);
+
     procedure ConverterJSONParaArquivo(pArquivoJSON: TJSONArray; pDir: string);
   end;
 
@@ -318,6 +321,41 @@ begin
   end;
 end;
 
+procedure TFrmConsultaExportacoesRemoto.Descomprimir(ArquivoZip: TFileName; DiretorioDestino: string);
+var
+  NomeSaida: string;
+  FileEntrada, FileOut: TFileStream;
+  Descompressor: TDecompressionStream;
+  NumArq, I, Len, Size: Integer;
+  Fim: Byte;
+begin
+  FileEntrada := TFileStream.Create(ArquivoZip, fmOpenRead and fmShareExclusive);
+  Descompressor := TDecompressionStream.Create(FileEntrada);
+  Descompressor.Read(NumArq, SizeOf(Integer));
+  try
+    I := 0;
+    while I < NumArq do begin
+      Descompressor.Read(Len, SizeOf(Integer));
+      SetLength(NomeSaida, Len);
+      Descompressor.Read(NomeSaida[1], Len);
+      Descompressor.Read(Size, SizeOf(Integer));
+      FileOut := TFileStream.Create(
+        IncludeTrailingBackslash(DiretorioDestino) + NomeSaida,
+        fmCreate or fmShareExclusive);
+      try
+        FileOut.CopyFrom(Descompressor, Size);
+      finally
+        FileOut.Free;
+      end;
+      Descompressor.Read(Fim, SizeOf(Byte));
+      Inc(I);
+    end;
+  finally
+    FreeAndNil(Descompressor);
+    FreeAndNil(FileEntrada);
+  end;
+end;
+
 procedure TFrmConsultaExportacoesRemoto.DownloadFile(aFileName: String);
 var
   IdHTTP1: TIdHTTP;
@@ -327,15 +365,34 @@ var
   Thread: TMyThread;
   download: TDownload;
   oArquivoJSON : TJSONArray;
+  ZipFile: TZipFile;
 begin
   //Url := FUrlBase + aFileName;
+  ProgressBar1.Visible := True;
+  ProgressBar1.Max := 3;
   Url := 'C:\ROM\MULTICOLD\Destino\Extracoes\' + aFileName;
   Filename := aFileName;
-
-  oArquivoJSON := FormGeral.BaixarArquivo(Filename);
   SaveDialog1.FileName := fileName;
-  if SaveDialog1.Execute then
-    ConverterJSONParaArquivo(oArquivoJSON, SaveDialog1.FileName);
+  ProgressBar1.Position := 1;
+  Application.ProcessMessages;
+  if not SaveDialog1.Execute then
+  begin
+    ProgressBar1.Visible := False;
+    exit;
+  end;
+  oArquivoJSON := FormGeral.BaixarArquivo(Filename);
+
+  ConverterJSONParaArquivo(oArquivoJSON, ExtractFileDir(SaveDialog1.FileName) + '\arq.zip');
+  ProgressBar1.Position := 2;
+  ZipFile := TZipFile.Create;
+  ZipFile.Open(ExtractFileDir(SaveDialog1.FileName) + '\arq.zip', zmReadWrite);
+  ZipFile.ExtractAll(ExtractFileDir(SaveDialog1.FileName));
+  RenameFile(ExtractFileDir(SaveDialog1.FileName) + '\' + aFileName, SaveDialog1.FileName);
+
+  FreeAndNil(ZipFile);
+  DeleteFile(ExtractFileDir(SaveDialog1.FileName) + '\arq.zip');
+  ProgressBar1.Position := 3;
+  //Descomprimir('arq.zip', ExtractFileDir(SaveDialog1.FileName) );
   {
   // DEBUG => Para Testes.
   // ShowMessage(Url);
@@ -367,6 +424,7 @@ begin
   end;
   }
   ShowMessage('Arquivo baixado com sucesso...');
+  ProgressBar1.Visible := False;
   Close;
   //FrmDownloadManager.Show;
   //FrmDownloadManager.RefreshList;

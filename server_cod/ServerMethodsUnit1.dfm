@@ -1,4 +1,5 @@
 object ServerMethods1: TServerMethods1
+  OnCreate = DSServerModuleCreate
   OnDestroy = DSServerModuleDestroy
   Height = 251
   Width = 486
@@ -33,5 +34,19 @@ object ServerMethods1: TServerMethods1
     Provider = 'Forms'
     Left = 224
     Top = 104
+  end
+  object FDConE: TFDConnection
+    Params.Strings = (
+      'DriverID=MSSQL')
+    Left = 344
+    Top = 96
+  end
+  object FDQryE: TFDQuery
+    Connection = FDConE
+    FormatOptions.AssignedValues = [fvDataSnapCompatibility, fvADOCompatibility]
+    FormatOptions.DataSnapCompatibility = True
+    FormatOptions.ADOCompatibility = True
+    Left = 336
+    Top = 168
   end
 end

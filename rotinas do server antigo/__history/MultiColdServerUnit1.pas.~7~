@@ -1,0 +1,172 @@
+Unit MultiColdServerUnit1;
+
+{
+  R3 - 13/07/2001
+  Acerto da sessão para AutoSessionName = true permitindo mais de um usuario remoto ao mesmo tempo
+}
+
+Interface
+
+Uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, IniFiles, Db{, IBDatabase}, SutypGer, Subrug, SuTypMultiCold;
+
+Type
+  TMultiColdServerForm = Class(TForm)
+    Memo1: TMemo;
+    Procedure FormCreate(Sender: TObject);
+  Private
+    { Private declarations }
+  Public
+    { Public declarations }
+    function AbreRelatorio(Usuario: WideString; Senha: WideString;
+                           ConnectionID: Integer; FullPath: WideString;
+                           QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte;
+                           Rel133: Byte; CmprBrncs: Byte): Integer;
+  End;
+
+Var
+  MultiColdServerForm: TMultiColdServerForm;
+  DirDatabase,
+  Servidor : String;
+  LogInInfoLocal,
+  LogInInfoEventos : Array[1..2] Of String;
+
+
+Implementation
+
+//Uses MultiColdServerInterfaceUnit1;
+
+{$R *.DFM}
+
+Procedure LogaLocal(Const Mens : String);
+Var
+  Arq : TextFile;
+Begin
+AssignFile(Arq,extractFilePath(ParamStr(0))+'multicoldServer.log');
+If FileExists(extractFilePath(ParamStr(0))+'multicoldServer.log') Then
+  Append(Arq)
+Else
+  ReWrite(Arq);
+WriteLn(Arq, formatDateTime('dd/mm/yyyy - hh:nn:ss ',now)+Mens);
+CloseFile(Arq);
+End;
+
+Procedure TMultiColdServerForm.FormCreate(Sender: TObject);
+Begin
+Memo1.Clear;
+Memo1.Align := alClient;
+logaLocal('Servidor iniciado...');
+//Grupo := f.ReadString('Nomes','Grupo','');
+//SubGrupo := f.ReadString('Nomes','SubGrupo','');
+//DirDataBase := IncludeTrailingPathDelimiter(f.ReadString('Cold','PathLocal',''));
+//Servidor := f.ReadString('Cold','ServLocal','');
+Memo1.Lines.Add('Inicializando servidor...');
+Memo1.Lines.Add('');
+Memo1.Lines.Add('Aguardando conexões remotas...');
+Memo1.Lines.Add('');
+End;
+
+
+function TMultiColdServerForm.AbreRelatorio(Usuario: WideString; Senha: WideString;
+                           ConnectionID: Integer; FullPath: WideString;
+                           QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte;
+                           Rel133: Byte; CmprBrncs: Byte): Integer;;
+Var
+  Arq : File;
+  I : Integer;
+  ArqPag64 : File Of Int64;
+  ArrRegIndice : TgRegIndice;
+  StrAux : String;
+
+Begin
+Result := 99999; // Código para o erro não detectado
+try
+  MultiColdServerForm.Memo1.Lines.Add('Requisição de abertura de relatório, Usuario = '+Usuario+', Arquivo = '+FullPath);
+  MultiColdServerForm.Memo1.Lines.Add('Verificando segurança ');
+  If Not VerificaSeguranca(FullPath, Usuario, Boolean(Rel133), Boolean(CmprBrncs), ArrRegIndice) Then
+    Begin
+    MultiColdServerForm.Memo1.Lines.Add('Acesso ao relatório negado '+FullPath);
+    Result := 1;
+    Exit;
+    End;
+  FileMode := 0;
+  AssignFile(Arq,FullPath);
+  {$i-}
+  Reset(Arq,1);
+  {$i+}
+  I := IoResult;
+  If (I <> 0) Then
+    Begin
+    MultiColdServerForm.Memo1.Lines.Add('Relatório não pode ser aberto: '+FullPath+' Falha '+IntToStr(I));
+    Result := 2;
+    Exit;
+    End;
+  If (Filesize(Arq) = 0) Then
+    Begin
+    MultiColdServerForm.Memo1.Lines.Add('Relatório não pode ser aberto: '+FullPath+' Arquivo Vazio');
+    Result := 3;
+    CloseFile(Arq);
+    Exit;
+    End;
+  Boolean(Rel64) := False;
+  AssignFile(ArqPag64,ChangeFileExt(FullPath,'.IAPX'));
+  {$i-}
+  Reset(ArqPag64);
+  {$i+}
+  If (IoResult <> 0) Or (Filesize(ArqPag64) = 0) Then
+    Begin
+    MultiColdServerForm.Memo1.Lines.Add('Índice de página não pode ser aberto 2');
+    Result := 5;
+    CloseFile(ArqPag64);
+    Exit;
+    End
+  Else
+    Begin
+    QtdPaginas := FileSize(ArqPag64);
+    Boolean(Rel64) := True;
+    CloseFile(ArqPag64);
+    End;
+  StrAux := '';
+  For I := 0 To 199 Do
+    Begin
+    If ArrRegIndice[I].TipoReg = 0 Then
+      Break
+    Else
+      Begin
+      StrAux := StrAux +
+                IntToStr(ArrRegIndice[I].LINHAI) + CrLf +
+                IntToStr(ArrRegIndice[I].LINHAF) + CrLf +
+                IntToStr(ArrRegIndice[I].COLUNA) + CrLf +
+                IntToStr(ArrRegIndice[I].TAMANHO) + CrLf +
+                ArrRegIndice[I].BRANCO + CrLf +
+                ArrRegIndice[I].NOMECAMPO + CrLf +
+                ArrRegIndice[I].TIPOCAMPO + CrLf +
+                ArrRegIndice[I].CHARINC + CrLf +
+                ArrRegIndice[I].CHAREXC + CrLf +
+                ArrRegIndice[I].STRINC + CrLf +
+                ArrRegIndice[I].STREXC + CrLf;
+      End;
+    End;
+  //      DefChave.Cells[1,I+1] := IntToStr(ArrRegIndice[I].LinhaI);
+  //      DefChave.Cells[2,I+1] := IntToStr(ArrRegIndice[I].LinhaF);
+  //      DefChave.Cells[3,I+1] := IntToStr(ArrRegIndice[I].Coluna);
+  //      DefChave.Cells[4,I+1] := IntToStr(ArrRegIndice[I].Tamanho);
+  //      DefChave.Cells[5,I+1] := ArrRegIndice[I].Branco;
+  //      DefChave.Cells[6,I+1] := ArrRegIndice[I].NomeCampo;
+  //      DefChave.Cells[7,I+1] := ArrRegIndice[I].TipoCampo;
+  //      DefChave.Cells[8,I+1] := ArrRegIndice[I].CharInc;
+  //      DefChave.Cells[9,I+1] := ArrRegIndice[I].CharExc;
+  //      DefChave.Cells[10,I+1] := ArrRegIndice[I].StrInc;
+  //      DefChave.Cells[11,I+1] := ArrRegIndice[I].StrExc;
+  StrCampos := StrAux;
+  Result := 0;
+  MultiColdServerForm.Memo1.Lines.Add('Relatório '+FullPath+' aberto com sucesso');
+  MultiColdServerForm.Memo1.Lines.Add('');
+except
+  on e:exception do
+    logaLocal('TMultiColdDataServer.AbreRelatorio '+e.Message);
+end;
+End;
+
+end.
