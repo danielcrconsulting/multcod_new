@@ -53,6 +53,8 @@ Var
   Sistema,
   Grupo,
   SubGrupo : Integer;
+  retornoSTR : String;
+  retorno : TStringList;
 
 //  lixo : string;
 
@@ -209,9 +211,20 @@ Else
 //      lixo := (formGeral.HTTPRIO1 as IMulticoldServer).GetRelatorio(LogInRemotoForm.UsuEdit.Text,
 //                                               LogInRemotoForm.PassEdit.Text, ConnectionID, Lista.Text, FullPathsTemp);
 
-      ListBox2.Items.Text := deCompressHexReturnString((formGeral.HTTPRIO1 as IMulticoldServer).GetRelatorio(LogInRemotoForm.UsuEdit.Text,
-                                               LogInRemotoForm.PassEdit.Text, ConnectionID, Lista.Text, FullPathsTemp));
-      FullPaths.Text := deCompressHexReturnString(FullPathsTemp);
+      //ListBox2.Items.Text := deCompressHexReturnString((formGeral.HTTPRIO1 as IMulticoldServer).GetRelatorio(LogInRemotoForm.UsuEdit.Text,
+      //                                         LogInRemotoForm.PassEdit.Text, ConnectionID, Lista.Text, FullPathsTemp));
+
+      retornoStr  := deCompressHexReturnString(formGeral.GetRelatorio(LogInRemotoForm.UsuEdit.Text,
+                                               LogInRemotoForm.PassEdit.Text, ConnectionID, Lista.Text, FullPathsTemp, 1));
+
+
+      ListBox2.Items.Text := retornoStr;
+
+      retornoStr  := deCompressHexReturnString(formGeral.GetRelatorio(LogInRemotoForm.UsuEdit.Text,
+                                               LogInRemotoForm.PassEdit.Text, ConnectionID, Lista.Text, FullPathsTemp, 2));
+
+      //FullPaths.Text := deCompressHexReturnString(FullPathsTemp);
+      FullPaths.Text := retornoStr;
 //      ListBox2.Items.Text := (lixo);
 //      FullPaths.Text := (FullPathsTemp);
 
@@ -252,7 +265,9 @@ Procedure TAssisAbreRemotoForm.Button2Click(Sender: TObject);
 Var
   I,
   RetVal : Integer;
+  RetValStr : String;
   frmMultiColdServer : TMultiColdServerForm;
+  Retorno : TStringList;
 Begin
 If ListBox2.SelCount = 0 Then
   Begin
@@ -279,7 +294,7 @@ Else
           //                                                 Rel133,
           //
           //                                               CmprBrncs);
-
+          {
           RetVal := (formGeral.HTTPRIO1 as IMulticoldServer).AbreRelatorio(LogInRemotoForm.UsuEdit.Text,
                                                            LogInRemotoForm.PassEdit.Text,
                                                            ConnectionID,
@@ -290,7 +305,7 @@ Else
                                                            Rel133,
                                                            CmprBrncs);
 
-          {
+
           frmMultiColdServer := TMultiColdServerForm.Create(nil);
           frmMultiColdServer.AbreRelatorio(LogInRemotoForm.UsuEdit.Text,
                                                            LogInRemotoForm.PassEdit.Text,
@@ -301,8 +316,8 @@ Else
                                                            Rel64,
                                                            Rel133,
                                                            CmprBrncs);
-
-                    RetVal := formGeral.AbreRelatorio(LogInRemotoForm.UsuEdit.Text,
+          }
+          RetValStr := formGeral.AbreRelatorio(LogInRemotoForm.UsuEdit.Text,
                                             LogInRemotoForm.PassEdit.Text,
                                             ConnectionID,
                                             Copy(FullPaths[I], 21,Length(FullPaths[I])-20),
@@ -311,7 +326,16 @@ Else
                                             Rel64,
                                             Rel133,
                                             CmprBrncs);
-         }
+          Retorno := TStringList.Create;
+          Retorno.Delimiter := '|';
+          Retorno.DelimitedText := RetValStr;
+          RetVal := StrToInt(Retorno.Strings[0]);
+          QtdPaginas := StrToInt(Retorno.Strings[1]);
+          StrCampos  := Retorno.Strings[2];
+          Rel64      := StrToInt(Retorno.Strings[3]);
+          Rel133     := StrToInt(Retorno.Strings[4]);
+          CmprBrncs  := StrToInt(Retorno.Strings[5]);
+
         Finally
           Screen.Cursor := crDefault;
           Rel133 := Rel133;

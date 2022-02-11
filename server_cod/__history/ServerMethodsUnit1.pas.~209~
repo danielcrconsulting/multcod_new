@@ -511,13 +511,13 @@ FDQry.Sql.Clear;
 FDQry.Sql.Add('SELECT * FROM USUARIOS A');
 FDQry.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(Usuario)+''') ');
 {If Senha = '' Then
-  dataModule.IBQuery1.Sql.Add('AND   (A.SENHA IS NULL) ')
+  FdQry.Sql.Add('AND   (A.SENHA IS NULL) ')
 Else
-  dataModule.IBQuery1.Sql.Add('AND   (A.SENHA = '''+Senha+''') ');   }
+  FdQry.Sql.Add('AND   (A.SENHA = '''+Senha+''') ');   }
 FDQry.Sql.Add('AND   (A.REMOTO = ''S'') ');
 try
 //  vitX.logaLocal('Montou o sql, vai dar open na query ');
-//  vitX.logaLocal(dataModule.IBQuery1.SQL.Text);
+//  vitX.logaLocal(FdQry.SQL.Text);
   FDQry.Open;
 //  vitX.logaLocal('Query is open');
 except
@@ -638,34 +638,34 @@ Resulta := (Resulta + IntToStr(AuxQTd) + CrLf); // Quantidade de INCs
 //vitX.LogaLocal('Aqui 4');
 
 Linha := '';
-While Not dataModule.IBQuery1.Eof Do
+While Not FDQry.Eof Do
   Begin
-  Resulta := (Resulta + dataModule.IBQuery1.FieldByName('CodUsuario').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodSis').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodGrupo').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodSubGrupo').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodRel').AsString + CrLf);
-  Linha := (Linha + dataModule.IBQuery1.FieldByName('CodUsuario').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodSis').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodGrupo').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodSubGrupo').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodRel').AsString + CrLf);
-  dataModule.IBQuery1.Next;
+  Resulta := (Resulta + FDQry.FieldByName('CodUsuario').AsString + CrLf +
+                     FDQry.FieldByName('CodSis').AsString + CrLf +
+                     FDQry.FieldByName('CodGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodSubGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodRel').AsString + CrLf);
+  Linha := (Linha + FDQry.FieldByName('CodUsuario').AsString + CrLf +
+                     FDQry.FieldByName('CodSis').AsString + CrLf +
+                     FDQry.FieldByName('CodGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodSubGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodRel').AsString + CrLf);
+  FDQry.Next;
   End;
-dataModule.IBQuery1.Close;
+FDQry.Close;
 
 //vitX.LogaLocal(Linha);
 
-dataModule.IBQuery1.Sql.Clear;
-dataModule.IBQuery1.Sql.Add('SELECT * FROM USUREL A');
-dataModule.IBQuery1.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(Usuario)+''') AND ');
-dataModule.IBQuery1.Sql.Add('      (A.TIPO = ''EXC'') ');
+FDQry.Sql.Clear;
+FDQry.Sql.Add('SELECT * FROM USUREL A');
+FDQry.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(Usuario)+''') AND ');
+FDQry.Sql.Add('      (A.TIPO = ''EXC'') ');
 Try
-  dataModule.IBQuery1.Open;
+  FDQry.Open;
 Except
   on e:exception do
     begin
-    vitX.LogaLocal('Erro carregando dados de negação de acesso a relatórios: '+e.Message);
+    LogaLocal('Erro carregando dados de negação de acesso a relatórios: '+e.Message);
     ConnectionID := 0;
     Result := compressStringReturnHex('Erro ao tentar carregar dados de USUREL EXC '+Usuario);
 //    Result := (('Erro ao tentar carregar dados de USUREL EXC '+Usuario));
@@ -674,36 +674,36 @@ Except
   End; // Try
 
 AuxQtd := 0;
-While Not dataModule.IBQuery1.Eof Do
+While Not FDQry.Eof Do
   begin
-  dataModule.IBQuery1.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  FDQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
   Inc(AuxQtd);
   end;
-dataModule.IBQuery1.First;
+FDQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de EXCs
 
 //vitX.LogaLocal('Aqui 5');
 
-While Not dataModule.IBQuery1.Eof Do
+While Not FDQry.Eof Do
   Begin
-  Resulta := (Resulta + dataModule.IBQuery1.FieldByName('CodUsuario').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodSis').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodGrupo').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodSubGrupo').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('CodRel').AsString + CrLf);
-  dataModule.IBQuery1.Next;
+  Resulta := (Resulta + FDQry.FieldByName('CodUsuario').AsString + CrLf +
+                     FDQry.FieldByName('CodSis').AsString + CrLf +
+                     FDQry.FieldByName('CodGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodSubGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodRel').AsString + CrLf);
+  FDQry.Next;
   End;
-dataModule.IBQuery1.Close;
+FDQry.Close;
 
-dataModule.IBQuery1.Sql.Clear;
-dataModule.IBQuery1.Sql.Add('SELECT * FROM SISTEMA A');
+FDQry.Sql.Clear;
+FDQry.Sql.Add('SELECT * FROM SISTEMA A');
 Try
-  dataModule.IBQuery1.Open;
+  FDQry.Open;
 Except
   on e:exception do
     begin
-    vitX.LogaLocal('Erro ao tentar carregar dados de SISTEMA para '+Usuario+': '+e.Message);
+    LogaLocal('Erro ao tentar carregar dados de SISTEMA para '+Usuario+': '+e.Message);
     Result := compressStringReturnHex('Erro ao tentar carregar dados de SISTEMA para ' + Usuario);
 //    Result := (('Erro ao tentar carregar dados de SISTEMA para ' + Usuario));
     ConnectionID := 0;
@@ -712,33 +712,33 @@ Except
   End; // Try
 
 AuxQtd := 0;
-While Not dataModule.IBQuery1.Eof Do
+While Not FDQry.Eof Do
   begin
-  dataModule.IBQuery1.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  FDQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
   Inc(AuxQtd);
   end;
-dataModule.IBQuery1.First;
+FDQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de Grupos
 
 //vitX.LogaLocal('Aqui 6');
 
-While Not dataModule.IBQuery1.Eof Do
+While Not FDQry.Eof Do
   Begin
-  Resulta := (Resulta + dataModule.IBQuery1.FieldByName('CodSis').AsString + CrLf +
-                     dataModule.IBQuery1.FieldByName('NomeSis').AsString + CrLf);
-  dataModule.IBQuery1.Next;
+  Resulta := (Resulta + FDQry.FieldByName('CodSis').AsString + CrLf +
+                    FDQry.FieldByName('NomeSis').AsString + CrLf);
+  FDQry.Next;
   End;
-dataModule.IBQuery1.Close;
+FDQry.Close;
 
-dataModule.IBQuery1.Sql.Clear;
-dataModule.IBQuery1.Sql.Add('SELECT * FROM GRUPOSDFN A');
+FdQry.Sql.Clear;
+FdQry.Sql.Add('SELECT * FROM GRUPOSDFN A');
 Try
-  dataModule.IBQuery1.Open;
+  FdQry.Open;
 Except
   on e:exception do
     begin
-    vitX.LogaLocal('Erro ao tentar carregar dados de GRUPO para '+Usuario+': '+e.Message);
+    LogaLocal('Erro ao tentar carregar dados de GRUPO para '+Usuario+': '+e.Message);
     Result := compressStringReturnHex('Erro ao tentar carregar dados de GRUPO para ' + Usuario);
 //    Result := (('Erro ao tentar carregar dados de GRUPO para ' + Usuario));
     ConnectionID := 0;
@@ -747,34 +747,34 @@ Except
   End; // Try
 
 AuxQtd := 0;
-While Not dataModule.IBQuery1.Eof Do
+While Not FdQry.Eof Do
   begin
-  dataModule.IBQuery1.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  FdQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
   Inc(AuxQtd);
   end;
-dataModule.IBQuery1.First;
+FdQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de Grupos
 
 //vitX.LogaLocal('Aqui 7');
 
-While Not dataModule.IBQuery1.Eof Do
+While Not FdQry.Eof Do
   Begin
-  Resulta := (Resulta + dataModule.IBQuery1.FieldByName('CodSis').AsString + CrLf +
-                       dataModule.IBQuery1.FieldByName('CodGrupo').AsString + CrLf +
-                       dataModule.IBQuery1.FieldByName('NomeGrupo').AsString + CrLf);
-  dataModule.IBQuery1.Next;
+  Resulta := (Resulta + FdQry.FieldByName('CodSis').AsString + CrLf +
+                       FdQry.FieldByName('CodGrupo').AsString + CrLf +
+                       FdQry.FieldByName('NomeGrupo').AsString + CrLf);
+  FdQry.Next;
   End;
-dataModule.IBQuery1.Close;
+FdQry.Close;
 
-dataModule.IBQuery1.Sql.Clear;
-dataModule.IBQuery1.Sql.Add('SELECT * FROM SUBGRUPOSDFN A');
+FdQry.Sql.Clear;
+FdQry.Sql.Add('SELECT * FROM SUBGRUPOSDFN A');
 Try
-  dataModule.IBQuery1.Open;
+  FdQry.Open;
 Except
   on e:exception do
     begin
-    vitX.LogaLocal('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario+': '+e.Message);
+    LogaLocal('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario+': '+e.Message);
     result := compressStringReturnHex('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario+': '+e.Message);
 //    result := (('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario+': '+e.Message));
     ConnectionID := 0;
@@ -783,40 +783,40 @@ Except
   End; // Try
 
 AuxQtd := 0;
-While Not dataModule.IBQuery1.Eof Do
+While Not FdQry.Eof Do
   begin
-  dataModule.IBQuery1.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  FdQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
   Inc(AuxQtd);
   end;
-dataModule.IBQuery1.First;
+FdQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de SubGrupos
 
 //vitX.LogaLocal('Aqui 8');
 
-While Not dataModule.IBQuery1.Eof Do
+While Not FdQry.Eof Do
   Begin
-    Resulta := (Resulta + dataModule.IBQuery1.FieldByName('CodSis').AsString + CrLf +
-                       dataModule.IBQuery1.FieldByName('CodGrupo').AsString + CrLf +
-                       dataModule.IBQuery1.FieldByName('CodSubGrupo').AsString + CrLf +
-                       dataModule.IBQuery1.FieldByName('NomeSubGrupo').AsString + CrLf);
-  dataModule.IBQuery1.Next;
+    Resulta := (Resulta + FdQry.FieldByName('CodSis').AsString + CrLf +
+                       FdQry.FieldByName('CodGrupo').AsString + CrLf +
+                       FdQry.FieldByName('CodSubGrupo').AsString + CrLf +
+                       FdQry.FieldByName('NomeSubGrupo').AsString + CrLf);
+  FdQry.Next;
   End;
-dataModule.IBQuery1.Close;
+FdQry.Close;
 
 //vitX.LogaLocal('Aqui 9');
 
-dataModule.IBQuery1.Sql.Clear;
+FdQry.Sql.Clear;
 //vitX.LogaLocal('Aqui 91');
-dataModule.IBQuery1.Sql.Add('SELECT DISTINCT CODREL, CODSIS, CODGRUPO FROM SISAUXDFN');
+FdQry.Sql.Add('SELECT DISTINCT CODREL, CODSIS, CODGRUPO FROM SISAUXDFN');
 //vitX.LogaLocal('Aqui 92');
 try
-  dataModule.IBQuery1.Open;
+  FdQry.Open;
 //  vitX.LogaLocal('Aqui 93');
 except
   on e:exception do
     begin
-    vitX.LogaLocal('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message);
+    LogaLocal('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message);
     result := compressStringReturnHex('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message);
 //    result := (('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message));
     ConnectionID := 0;
@@ -827,31 +827,31 @@ end;
 //vitX.LogaLocal('Aqui 94');
 //vitX.LogaLocal('Aqui 95');
 AuxQTd := 0;
-While Not dataModule.IBQuery1.Eof Do
+While Not FdQry.Eof Do
   begin
-  dataModule.IBQuery1.Next;   // Estabelecer o recordcount correto nesta query que tem DISTINCT e o dbExpress NÃO GOSTA!!!
+  FdQry.Next;   // Estabelecer o recordcount correto nesta query que tem DISTINCT e o dbExpress NÃO GOSTA!!!
   Inc(AuxQtd);
   end;
-dataModule.IBQuery1.First;
+FdQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de SisAuxDfn
 
 //vitX.LogaLocal('Aqui 10');
 
-while not dataModule.IBQuery1.Eof do
+while not FdQry.Eof do
   begin
   If AuxQtd = 1 Then
-    Resulta := (Resulta + dataModule.IBQuery1.FieldByName('CodRel').AsString + CrLf +
-                       dataModule.IBQuery1.FieldByName('CodSis').AsString + CrLf +
-                       dataModule.IBQuery1.FieldByName('CodGrupo').AsString) // O último não tem CrLf
+    Resulta := (Resulta + FdQry.FieldByName('CodRel').AsString + CrLf +
+                       FdQry.FieldByName('CodSis').AsString + CrLf +
+                       FdQry.FieldByName('CodGrupo').AsString) // O último não tem CrLf
   Else
-    Resulta := (Resulta + dataModule.IBQuery1.FieldByName('CodRel').AsString + CrLf +
-                       dataModule.IBQuery1.FieldByName('CodSis').AsString + CrLf +
-                       dataModule.IBQuery1.FieldByName('CodGrupo').AsString + CrLf);
-  dataModule.IBQuery1.Next;
+    Resulta := (Resulta + FdQry.FieldByName('CodRel').AsString + CrLf +
+                       FdQry.FieldByName('CodSis').AsString + CrLf +
+                       FdQry.FieldByName('CodGrupo').AsString + CrLf);
+  FdQry.Next;
   Dec(AuxQtd);
   end;
-dataModule.IBQuery1.Close;
+FdQry.Close;
 
 //vitX.LogaLocal('Aqui 11');
 
@@ -862,11 +862,12 @@ try
 //  result := resulta;
 except
   on e:exception do
-    vitX.logaLocal('login: '+e.Message);
+    logaLocal('login: '+e.Message);
 end;
-dataModule.IBQuery1.Close;
+FdQry.Close;
 
 ConnectionID := 1;
+result := result + '|' + '1';
 
 //vitX.logaLocal(Result);
 //vitX.logaLocal('Aqui no final');

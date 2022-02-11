@@ -62,6 +62,10 @@ type
        Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina : WideString) : String;
     function LogIn(Usuario, Senha: WideString;
       ConnectionID: Integer): String;
+    function GetRelatorio(Usuario, Senha: WideString;
+                          ConnectionID: Integer; ListaCodRel: WideString;
+                          FullPaths: WideString; tipo : Integer): String;
+
   end;
 
 implementation
@@ -475,212 +479,396 @@ logaLocal('GetPagina concluida com sucesso');
 result := Retorno;
 End;
 
+function TServerMethods1.GetRelatorio(Usuario, Senha: WideString;
+  ConnectionID: Integer; ListaCodRel, FullPaths: WideString; tipo : Integer): String;
+Var
+
+//  dtLog : TDateTime; // Tirei da raiz!!!!
+  OutroPath,
+  CmplPath : String;
+  SearchRec : TSearchRec;
+  ListBox1,
+  ListBox2,
+  FullPathsTemp : TStringList;
+  errorCode : integer;
+
+  Function PegaInfo(Path : String) : String;
+  Var
+    Arq64 : File Of Int64;
+    //OldFileMode : Byte;
+  Begin
+  try
+    //OldFileMode := FileMode;
+    //FileMode := fmShareDenyWrite;
+    Result := ExtractFileName(Path);
+    If FileExists(ChangeFileExt(Path,'.IAPX')) Then
+      Begin
+      AssignFile(Arq64,ChangeFileExt(Path,'.IAPX'));
+      Reset(Arq64);
+      Result := Result + ' -> ' + Format('%7d',[Filesize(Arq64)]) + ' Pgns';
+      CloseFile(Arq64);
+      End;
+    //FileMode := OldFileMode;
+  except
+    on e:exception do
+      logaLocal('Erro verificando dados de índice: '+e.Message);
+  end;
+  End;
+
+Begin
+//dtLog := now;
+//logaLocal('Requisição de Lista de Relatórios, Usuario = '+Usuario);
+fileMode := fmShareDenyNone;
+
+ConectarBanco;
+
+try
+  Result := compressStringReturnHex(' ');
+//  Result := (' ');
+  ListBox1 := TStringList.Create;
+  ListBox2 := TStringList.Create;
+  FullPathsTemp := TStringList.Create;
+  ListBox1.Text := ListaCodRel;
+  If ListBox1.Count = 0 Then
+    Begin
+    ListBox1.Free;
+    ListBox2.Free;
+    FullPathsTemp.Free;
+    FullPaths := compressStringReturnHex(' ');
+//    FullPaths := (' ');
+    Exit;
+    End
+  Else
+    Begin
+    ListBox2.Clear;
+    FdQry.Close;
+    FdQry.Sql.Clear;
+    FdQry.Sql.Add('SELECT * FROM DESTINOSDFN A ');
+    FdQry.Sql.Add('WHERE A.CODREL = '''+ListBox1[0]+'''');
+    FdQry.Sql.Add('AND A.TIPODESTINO = ''Dir''');
+    FdQry.Sql.Add('AND A.SEGURANCA = ''S''');
+    try
+      FdQry.Open;
+    except
+      on e:exception do
+        logaLocal('Erro carregando dados de destino de relatórios: '+e.Message);
+    end;
+    If FdQry.RecordCount <> 0 Then
+      Begin
+      If UpperCase(FdQry.FieldByName('DirExpl').AsString) = 'S' Then
+        CmplPath := '\'
+      Else
+        CmplPath := FullPaths;
+      FullPaths := '';
+      OutroPath := IncludeTrailingPathDelimiter(UpperCase(FdQry.FieldByName('Destino').AsString)) + CmplPath;
+      // Macaquinho para Daniel - 12/11/2007
+      LogaLocal('Procurando relatórios em: '+OutroPath);
+      errorCode := FindFirst(OutroPath+'*.DAT',faAnyFile,SearchRec);
+      If errorCode = 0 Then
+        Repeat
+          FullPathsTemp.Add(FormatDateTime('YYYY/MM/DD, HH:NN:SS',FileDateToDateTime(SearchRec.Time))+
+                            OutroPath+SearchRec.Name); // Armazena o nome do arquivo (FullPath)
+          ListBox2.Add(FormatDateTime('YYYY/MM/DD, HH:NN:SS',FileDateToDateTime(SearchRec.Time))+' '+
+                       PegaInfo(OutroPath+SearchRec.Name));
+          // Macaquinho para Daniel - 12/11/2007
+          LogaLocal('Relatório encontrado '+OutroPath+SearchRec.Name);
+        Until FindNext(SearchRec) <> 0
+      else
+        begin
+        logaLocal('Relatório não encontrado. Motivo: '+IntToStr(ErrorCode));
+        logaLocal('Motivo: '+SysErrorMessage(ErrorCode));
+        GetLastError;
+        end;
+      FindClose(SearchRec);
+      End;
+    FdQry.Close;
+    End;
+  ListBox1.Free;
+  //Result := ListBox2.Text;
+  try
+//    logaLocal('getRelatorio: '+FullPathsTemp.Text);
+//    logaLocal('getRelatorio: '+ListBox2.Text);
+//    auxStr := FullPathsTemp.Text;
+    FullPaths := compressStringReturnHex(FullPathsTemp.Text);
+//    auxStr := ListBox2.Text;
+    result := compressStringReturnHex(ListBox2.Text);
+    logaLocal('getRelatorio: '+FullPaths);
+    logaLocal('getRelatorio: '+result);
+//    FullPaths := FullPathsTemp.Text;
+//    result := ListBox2.Text;
+
+  except
+    on e:exception do
+      logaLocal('getRelatorio: '+e.Message);
+  end;
+  ListBox2.Free;
+  FullPathsTemp.Free;
+except
+  on e:exception do
+    logaLocal('Erro carregando dados de relatório: '+e.Message);
+end;
+//LogaTempoExecucao('GetRelatorio',dtLog);
+if tipo = 2 then
+  result := FullPaths;
+End;
+
+
 function TServerMethods1.LogIn(Usuario, Senha: WideString;
   ConnectionID: Integer): String;
 Var
+
+//  dtLog : TDateTime; // Tirei da raiz!!!!
+
   AuxQtd : Integer;
+  Linha,
   Resulta : String;
 Begin
+
+
+fileMode := fmShareDenyNone;
+//dtLog := now;
+
+
+  begin
+  try
+    ConectarBanco;
+  except
+    on e:exception do
+      begin
+      logaLocal(e.Message);
+      exit;
+      end;
+  end; //Try
+  end;
+//logaLocal('Abriu o BD ');
+
 Result := '';
 Resulta := '';
-Fmemo.Add('Requisição de LogIn, Usuario = '+Usuario);
-
-Try
-  ConectarBanco;
-  //FDCon.Open;
-Except
-  On E: Exception Do
-    Begin
-    logaLocal('TMultiColdDataServer.LogIn '+e.Message);
-    ConnectionID := 0;
-    Result := 'Erro de conexão ao banco de dados: '+FDCon.ConnectionName + ' Erro: ' + E.Message;
-    Fmemo.Add(Result);
-    Exit;
-    End;
-  End;
-
-FdQry.Sql.Clear;                        // efetuar conexões remotas
-FdQry.Sql.Add('SELECT * FROM USUARIOS A');
-FdQry.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(Usuario)+''') ');
-If Senha = '' Then
+logaLocal('Requisição de LogIn, Usuario = '+Usuario);
+FDQry.Sql.Clear;
+FDQry.Sql.Add('SELECT * FROM USUARIOS A');
+FDQry.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(Usuario)+''') ');
+{If Senha = '' Then
   FdQry.Sql.Add('AND   (A.SENHA IS NULL) ')
 Else
-  FdQry.Sql.Add('AND   (A.SENHA = '''+Senha+''') ');
-FdQry.Sql.Add('AND   (A.REMOTO = ''S'') ');
-
+  FdQry.Sql.Add('AND   (A.SENHA = '''+Senha+''') ');   }
+FDQry.Sql.Add('AND   (A.REMOTO = ''S'') ');
 try
-  FdQry.Open;
+//  logaLocal('Montou o sql, vai dar open na query ');
+//  logaLocal(FdQry.SQL.Text);
+  FDQry.Open;
+//  logaLocal('Query is open');
 except
   on e:exception do
     begin
-    logaLocal('TMultiColdDataServer.LogIn '+e.Message);
+    LogaLocal('Open query deu erro: '+e.Message);
     ConnectionID := 0;
-    FdQry.Close;
-    Fmemo.Add('LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado');
-    Result := 'LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado';
+    FDQry.Close;
+    Result := compressStringReturnHex('Erro no acesso ao banco de dados - query ');
+//    Result := ('Erro no acesso ao banco de dados - query ');
     Exit;
     end;
 end;
-
-If FdQry.RecordCount = 0 Then
+If FDQry.RecordCount = 0 Then
   Begin
   ConnectionID := 0;
-  FdQry.Close;
-  Fmemo.Add('LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado');
-  Result := 'LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado';
+  FDQry.Close;
+  LogaLocal('LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado');
+  Result := compressStringReturnHex('LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado');
+//  Result := (('LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado'));
   Exit;
   End;
+FDQry.Close;
 
-FdQry.Close;
+//LogaLocal('Aqui 1');
 
 // Inicio da carga das informações...
-
-FdQry.Sql.Clear;
-FdQry.Sql.Add('SELECT * FROM DFN A');
-FdQry.Sql.Add('ORDER BY A.CODREL ');
+FDQry.Sql.Clear;
+FDQry.Sql.Add('SELECT * FROM DFN A');
+FDQry.Sql.Add('ORDER BY A.CODREL ');
 Try
-  FdQry.Open;
+  FDQry.Open;
 Except
   on e:exception do
     begin
-    logaLocal('TMultiColdDataServer.LogIn '+e.Message);
-    Fmemo.Add('Erro ao tentar carregar dados de DFN ' + Usuario);
-    Result := 'Erro ao tentar carregar dados de DFN ' + Usuario;
+    LogaLocal('Erro ao tentar carregar dados de DFN: '+e.Message);
+    //LogaLocal('Erro ao tentar carregar dados de DFN ' + Usuario);
+    Result := compressStringReturnHex('Erro ao tentar carregar dados de DFN ' + Usuario);
+//    Result := (('Erro ao tentar carregar dados de DFN ' + Usuario));
     ConnectionID := 0;
     Exit;
     end;
   End; // Try
 
-While Not FdQry.Eof Do
-  FdQry.Next;   // Estabelecer o recordcount correto
+AuxQTd := 0;
+While Not FDQry.Eof Do
+  begin
+  FDQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  Inc(AuxQtd);
+  end;
+FDQry.First;
 
-Resulta := Resulta + IntToStr(FdQry.RecordCount) + CrLf; // Quantidade de DFNs
+Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de DFNs
 
-FdQry.Close;
-FdQry.Open;
-While Not FdQry.Eof Do
+//LogaLocal('Aqui 2');
+
+While Not FDQry.Eof Do
   Begin
-  Resulta := Resulta + FdQry.FieldByName('CodRel').AsString + CrLf +
-                     FdQry.FieldByName('CodSis').AsString + CrLf +
-                     FdQry.FieldByName('CodGrupo').AsString + CrLf +
-                     FdQry.FieldByName('CodSubGrupo').AsString + CrLf;
-  If (FdQry.FieldByName('CodGrupAuto').AsString = 'T') Or (FdQry.FieldByName('SubDirAuto').AsString = 'T') Then
-    Resulta := Resulta + 'T' + CrLf
-  Else
-    Resulta := Resulta + 'F' + CrLf;
-  FdQry.Next;
-  End;
+  Resulta := (Resulta + FDQry.FieldByName('CodRel').AsString + CrLf +
+                     FDQry.FieldByName('CodSis').AsString + CrLf +
+                     FDQry.FieldByName('CodGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodSubGrupo').AsString + CrLf);
 
-FdQry.Close;
-FdQry.Sql.Clear;
-FdQry.Sql.Add('SELECT * FROM USUREL A');
-FdQry.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(Usuario)+''') AND ');
-FdQry.Sql.Add('      (A.TIPO = ''INC'') ');
+  If (FDQry.FieldByName('CodGrupAuto').AsString = 'T') Or
+     (FDQry.FieldByName('SubDirAuto').AsString = 'T') Then
+    Resulta := (Resulta + 'T' + CrLf)
+  Else
+    Resulta := (Resulta + 'F' + CrLf);
+
+  If (FDQry.FieldByName('SisAuto').AsString = 'T') Then
+    Resulta := (Resulta + 'T' + CrLf)
+  Else
+    Resulta := (Resulta + 'F' + CrLf);
+
+  FDQry.Next;
+  End;
+FDQry.Close;
+
+//LogaLocal('Aqui 3');
+
+FDQry.Sql.Clear;
+FDQry.Sql.Add('SELECT * FROM USUREL A');
+FDQry.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(Usuario)+''') AND ');
+FDQry.Sql.Add('      (A.TIPO = ''INC'') ');
 Try
-  FdQry.Open;
+  FDQry.Open;
 Except
   on e:exception do
     begin
-    logaLocal('TMultiColdDataServer.LogIn '+e.Message);
-    Fmemo.Add('Erro ao tentar carregar dados de USUREL INC '+Usuario);
-    Result := 'Erro ao tentar carregar dados de USUREL INC ' + Usuario;
+    LogaLocal('Erro carregando permissões de acesso a relatórios: '+e.Message);
+    Result := compressStringReturnHex('Erro ao tentar carregar dados de USUREL INC ' + Usuario);
+//    Result := (('Erro ao tentar carregar dados de USUREL INC ' + Usuario));
     ConnectionID := 0;
     Exit;
     end;
   End; // Try
-
-If FdQry.RecordCount = 0 Then
+If FDQry.RecordCount = 0 Then
   Begin
   ConnectionID := 0;
-  FdQry.Close;
-  Fmemo.Add('LogIn aceito, porém o Usuario '+Usuario+' não possui relatórios cadastrados');
-  Result := 'LogIn aceito, porém o Usuario '+Usuario+' não possui relatórios cadastrados';
+  FDQry.Close;
+  LogaLocal('LogIn aceito, porém o Usuario '+Usuario+' não possui relatórios cadastrados');
+  Result := compressStringReturnHex('LogIn aceito, porém o Usuario '+Usuario+' não possui relatórios cadastrados');
+//  Result := (('LogIn aceito, porém o Usuario '+Usuario+' não possui relatórios cadastrados'));
   Exit;
   End;
 
-While Not FdQry.Eof Do
-  FdQry.Next;   // Estabelecer o recordcount correto
+AuxQTd := 0;
+While Not FDQry.Eof Do
+  begin
+  FDQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  Inc(AuxQtd);
+  end;
+FDQry.First;
 
-Resulta := Resulta + IntToStr(FdQry.RecordCount) + CrLf; // Quantidade de INCs
+//LogaLocal(IntToStr(AuxQTd));
+Resulta := (Resulta + IntToStr(AuxQTd) + CrLf); // Quantidade de INCs
 
-FdQry.Close;
-FdQry.Open;
-While Not FdQry.Eof Do
+//LogaLocal('Aqui 4');
+
+Linha := '';
+While Not FDQry.Eof Do
   Begin
-  Resulta := Resulta + FdQry.FieldByName('CodUsuario').AsString + CrLf +
-                     FdQry.FieldByName('CodSis').AsString + CrLf +
-                     FdQry.FieldByName('CodGrupo').AsString + CrLf +
-                     FdQry.FieldByName('CodSubGrupo').AsString + CrLf +
-                     FdQry.FieldByName('CodRel').AsString + CrLf;
-  FdQry.Next;
+  Resulta := (Resulta + FDQry.FieldByName('CodUsuario').AsString + CrLf +
+                     FDQry.FieldByName('CodSis').AsString + CrLf +
+                     FDQry.FieldByName('CodGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodSubGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodRel').AsString + CrLf);
+  Linha := (Linha + FDQry.FieldByName('CodUsuario').AsString + CrLf +
+                     FDQry.FieldByName('CodSis').AsString + CrLf +
+                     FDQry.FieldByName('CodGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodSubGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodRel').AsString + CrLf);
+  FDQry.Next;
   End;
+FDQry.Close;
 
-FdQry.Close;
-FdQry.Sql.Clear;
-FdQry.Sql.Add('SELECT * FROM USUREL A');
-FdQry.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(Usuario)+''') AND ');
-FdQry.Sql.Add('      (A.TIPO = ''EXC'') ');
+//LogaLocal(Linha);
+
+FDQry.Sql.Clear;
+FDQry.Sql.Add('SELECT * FROM USUREL A');
+FDQry.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(Usuario)+''') AND ');
+FDQry.Sql.Add('      (A.TIPO = ''EXC'') ');
 Try
-  FdQry.Open;
+  FDQry.Open;
 Except
   on e:exception do
     begin
-    logaLocal('TMultiColdDataServer.LogIn '+e.Message);
-    Fmemo.Add('Erro ao tentar carregar dados de USUREL EXC '+Usuario);
+    LogaLocal('Erro carregando dados de negação de acesso a relatórios: '+e.Message);
     ConnectionID := 0;
-    Result := 'Erro ao tentar carregar dados de USUREL EXC '+Usuario;
+    Result := compressStringReturnHex('Erro ao tentar carregar dados de USUREL EXC '+Usuario);
+//    Result := (('Erro ao tentar carregar dados de USUREL EXC '+Usuario));
     Exit;
     end;
   End; // Try
 
-While Not FdQry.Eof Do
-  FdQry.Next;   // Estabelecer o recordcount correto
+AuxQtd := 0;
+While Not FDQry.Eof Do
+  begin
+  FDQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  Inc(AuxQtd);
+  end;
+FDQry.First;
 
-Resulta := Resulta + IntToStr(FdQry.RecordCount) + CrLf; // Quantidade de EXCs
+Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de EXCs
 
-FdQry.Close;
-FdQry.Open;
-While Not FdQry.Eof Do
+//LogaLocal('Aqui 5');
+
+While Not FDQry.Eof Do
   Begin
-  Resulta := Resulta + FdQry.FieldByName('CodUsuario').AsString + CrLf +
-                     FdQry.FieldByName('CodSis').AsString + CrLf +
-                     FdQry.FieldByName('CodGrupo').AsString + CrLf +
-                     FdQry.FieldByName('CodSubGrupo').AsString + CrLf +
-                     FdQry.FieldByName('CodRel').AsString + CrLf;
-  FdQry.Next;
+  Resulta := (Resulta + FDQry.FieldByName('CodUsuario').AsString + CrLf +
+                     FDQry.FieldByName('CodSis').AsString + CrLf +
+                     FDQry.FieldByName('CodGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodSubGrupo').AsString + CrLf +
+                     FDQry.FieldByName('CodRel').AsString + CrLf);
+  FDQry.Next;
   End;
+FDQry.Close;
 
-FdQry.Close;
-FdQry.Sql.Clear;
-FdQry.Sql.Add('SELECT * FROM SISTEMA A');
+FDQry.Sql.Clear;
+FDQry.Sql.Add('SELECT * FROM SISTEMA A');
 Try
-  FdQry.Open;
+  FDQry.Open;
 Except
   on e:exception do
     begin
-    logaLocal('TMultiColdDataServer.LogIn '+e.Message);
-    Result := 'Erro ao tentar carregar dados de SISTEMA para ' + Usuario;
-    Fmemo.Add(Result);
+    LogaLocal('Erro ao tentar carregar dados de SISTEMA para '+Usuario+': '+e.Message);
+    Result := compressStringReturnHex('Erro ao tentar carregar dados de SISTEMA para ' + Usuario);
+//    Result := (('Erro ao tentar carregar dados de SISTEMA para ' + Usuario));
     ConnectionID := 0;
     Exit;
     end;
   End; // Try
 
-While Not FdQry.Eof Do
-  FdQry.Next;   // Estabelecer o recordcount correto
+AuxQtd := 0;
+While Not FDQry.Eof Do
+  begin
+  FDQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  Inc(AuxQtd);
+  end;
+FDQry.First;
 
-Resulta := Resulta + IntToStr(FdQry.RecordCount) + CrLf; // Quantidade de Grupos
+Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de Grupos
 
-FdQry.Close;
-FdQry.Open;
-While Not FdQry.Eof Do
+//LogaLocal('Aqui 6');
+
+While Not FDQry.Eof Do
   Begin
-  Resulta := Resulta + FdQry.FieldByName('CodSis').AsString + CrLf +
-                     FdQry.FieldByName('NomeSis').AsString + CrLf;
-  FdQry.Next;
+  Resulta := (Resulta + FDQry.FieldByName('CodSis').AsString + CrLf +
+                    FDQry.FieldByName('NomeSis').AsString + CrLf);
+  FDQry.Next;
   End;
+FDQry.Close;
 
-FdQry.Close;
 FdQry.Sql.Clear;
 FdQry.Sql.Add('SELECT * FROM GRUPOSDFN A');
 Try
@@ -688,30 +876,35 @@ Try
 Except
   on e:exception do
     begin
-    logaLocal('TMultiColdDataServer.LogIn '+e.Message);
-    Result := 'Erro ao tentar carregar dados de GRUPO para ' + Usuario;
-    Fmemo.Add(Result);
+    LogaLocal('Erro ao tentar carregar dados de GRUPO para '+Usuario+': '+e.Message);
+    Result := compressStringReturnHex('Erro ao tentar carregar dados de GRUPO para ' + Usuario);
+//    Result := (('Erro ao tentar carregar dados de GRUPO para ' + Usuario));
     ConnectionID := 0;
     Exit;
     end;
   End; // Try
 
+AuxQtd := 0;
 While Not FdQry.Eof Do
-  FdQry.Next;   // Estabelecer o recordcount correto
+  begin
+  FdQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  Inc(AuxQtd);
+  end;
+FdQry.First;
 
-Resulta := Resulta + IntToStr(FdQry.RecordCount) + CrLf; // Quantidade de Grupos
+Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de Grupos
 
-FdQry.Close;
-FdQry.Open;
+//LogaLocal('Aqui 7');
+
 While Not FdQry.Eof Do
   Begin
-  Resulta := Resulta + FdQry.FieldByName('CodSis').AsString + CrLf +
+  Resulta := (Resulta + FdQry.FieldByName('CodSis').AsString + CrLf +
                        FdQry.FieldByName('CodGrupo').AsString + CrLf +
-                       FdQry.FieldByName('NomeGrupo').AsString + CrLf;
+                       FdQry.FieldByName('NomeGrupo').AsString + CrLf);
   FdQry.Next;
   End;
-
 FdQry.Close;
+
 FdQry.Sql.Clear;
 FdQry.Sql.Add('SELECT * FROM SUBGRUPOSDFN A');
 Try
@@ -719,51 +912,106 @@ Try
 Except
   on e:exception do
     begin
-    logaLocal('TMultiColdDataServer.LogIn '+e.Message);
-    Fmemo.Add('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario);
+    LogaLocal('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario+': '+e.Message);
+    result := compressStringReturnHex('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario+': '+e.Message);
+//    result := (('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario+': '+e.Message));
     ConnectionID := 0;
     Exit;
     end;
   End; // Try
 
+AuxQtd := 0;
 While Not FdQry.Eof Do
-  FdQry.Next;   // Estabelecer o recordcount correto
+  begin
+  FdQry.Next;   // Estabelecer o recordcount correto nesta query que o dbExpress NÃO GOSTA!!!
+  Inc(AuxQtd);
+  end;
+FdQry.First;
 
-Resulta := Resulta + IntToStr(FdQry.RecordCount) + CrLf; // Quantidade de SubGrupos
-AuxQtd := FdQry.RecordCount;
+Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de SubGrupos
 
-FdQry.Close;
-FdQry.Open;
+//LogaLocal('Aqui 8');
+
 While Not FdQry.Eof Do
   Begin
+    Resulta := (Resulta + FdQry.FieldByName('CodSis').AsString + CrLf +
+                       FdQry.FieldByName('CodGrupo').AsString + CrLf +
+                       FdQry.FieldByName('CodSubGrupo').AsString + CrLf +
+                       FdQry.FieldByName('NomeSubGrupo').AsString + CrLf);
+  FdQry.Next;
+  End;
+FdQry.Close;
+
+//LogaLocal('Aqui 9');
+
+FdQry.Sql.Clear;
+//LogaLocal('Aqui 91');
+FdQry.Sql.Add('SELECT DISTINCT CODREL, CODSIS, CODGRUPO FROM SISAUXDFN');
+//LogaLocal('Aqui 92');
+try
+  FdQry.Open;
+//  LogaLocal('Aqui 93');
+except
+  on e:exception do
+    begin
+    LogaLocal('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message);
+    result := compressStringReturnHex('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message);
+//    result := (('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message));
+    ConnectionID := 0;
+    Exit;
+    end;
+end;
+
+//LogaLocal('Aqui 94');
+//LogaLocal('Aqui 95');
+AuxQTd := 0;
+While Not FdQry.Eof Do
+  begin
+  FdQry.Next;   // Estabelecer o recordcount correto nesta query que tem DISTINCT e o dbExpress NÃO GOSTA!!!
+  Inc(AuxQtd);
+  end;
+FdQry.First;
+
+Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de SisAuxDfn
+
+//LogaLocal('Aqui 10');
+
+while not FdQry.Eof do
+  begin
   If AuxQtd = 1 Then
-    Resulta := Resulta + FdQry.FieldByName('CodSis').AsString + CrLf +
-                       FdQry.FieldByName('CodGrupo').AsString + CrLf +
-                       FdQry.FieldByName('CodSubGrupo').AsString + CrLf +
-                       FdQry.FieldByName('NomeSubGrupo').AsString      // O último não tem CrLf
+    Resulta := (Resulta + FdQry.FieldByName('CodRel').AsString + CrLf +
+                       FdQry.FieldByName('CodSis').AsString + CrLf +
+                       FdQry.FieldByName('CodGrupo').AsString) // O último não tem CrLf
   Else
-    Resulta := Resulta + FdQry.FieldByName('CodSis').AsString + CrLf +
-                       FdQry.FieldByName('CodGrupo').AsString + CrLf +
-                       FdQry.FieldByName('CodSubGrupo').AsString + CrLf +
-                       FdQry.FieldByName('NomeSubGrupo').AsString + CrLf;
+    Resulta := (Resulta + FdQry.FieldByName('CodRel').AsString + CrLf +
+                       FdQry.FieldByName('CodSis').AsString + CrLf +
+                       FdQry.FieldByName('CodGrupo').AsString + CrLf);
   FdQry.Next;
   Dec(AuxQtd);
-  End;
-
+  end;
 FdQry.Close;
+
+//LogaLocal('Aqui 11');
 
 // Fim da carga de informações...
+// Compressão do retorno para reduzir o tempo de execução -> Deixou de funcionar com Delphi Xe4
+try
+  result := compressStringReturnHex(resulta);
+//  result := resulta;
+except
+  on e:exception do
+    logaLocal('login: '+e.Message);
+end;
+FdQry.Close;
 
 ConnectionID := 1;
-Fmemo.Add('LogIn realizado com sucesso. ConnectionID = '+IntToStr(ConnectionID) +
-                                    ' Config = '+IntToStr(Length(Resulta)));
-Fmemo.Add('');
-Result := Resulta;
+result := result + '|' + '1';
 
-FdQry.Close;
-FdCon.Close;
-
+//logaLocal(Result);
+//logaLocal('Aqui no final');
+//LogaTempoExecucao('LogIn',dtLog);
 End;
+
 
 procedure TServerMethods1.PersistirBanco(SQL : String);
 begin

@@ -91,11 +91,13 @@ Type
     procedure Persistir( StrSql : String; StgParam : TFDParams);
     procedure JsonToDataset(aDataset : TDataSet; aJSON : string);
     function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString;
-                            Rel64: Byte; Rel133: Byte; CmprBrncs: Byte): Integer;
+                            Rel64: Byte; Rel133: Byte; CmprBrncs: Byte): String;
     function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer;
                          Pagina: WideString): WideString;
     function LogIn(Usuario, Senha: WideString;
       ConnectionID: Integer): String;
+    function GetRelatorio(Usuario, Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString; tipo : Integer): String;
+
   End;
 
 
@@ -862,9 +864,16 @@ begin
                          PagNum,QtdBytes,Pagina);
 end;
 
+function TFormGeral.GetRelatorio(Usuario, Senha: WideString;
+  ConnectionID: Integer; ListaCodRel, FullPaths: WideString; tipo : Integer): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.GetRelatorio(Usuario, Senha,
+  ConnectionID, ListaCodRel, FullPaths, tipo);
+end;
+
 function TFormGeral.AbreRelatorio(Usuario, Senha: WideString;
   ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer;
-  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte): Integer;
+  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte): String;
 begin
   result := OMetodosServer.ServerMethodsPrincipalClient.AbreRelatorio(Usuario, Senha,
   ConnectionID, FullPath, QtdPaginas, StrCampos, Rel64, Rel133, CmprBrncs);

@@ -1687,6 +1687,7 @@ Else
 //  PathServer := viPathBaseLocal; ALIAS, verificar como vai ficar...
   End;
 
+  {
 If FileExists(ExtractFilePath(ParamStr(0))+'URLREMOTE.DAT') Then
   Begin
   AssignFile(ArqExtra,ExtractFilePath(ParamStr(0))+'URLREMOTE.DAT');
@@ -1696,7 +1697,8 @@ If FileExists(ExtractFilePath(ParamStr(0))+'URLREMOTE.DAT') Then
   CloseFile(ArqExtra);
   End
 Else
-  UrlRemoteServer := '';
+}
+  UrlRemoteServer := 'abc';
 
 //AdcPassWord := False;
 Tela := '';
@@ -3396,6 +3398,7 @@ Var
   Prima : Boolean;
   RelRoot : TTreeNode;
   StrAux : AnsiString;
+  Retorno : TStringList;
 
   Function PodeIncluir(J, CodSis, CodGrupo : Integer) : Boolean;
   Var
@@ -3506,9 +3509,14 @@ Begin
         StrAux := formGeral.LogIn(LogInRemotoForm.UsuEdit.Text,
                                   LogInRemotoForm.PassEdit.Text,
                                   ConnectionID);
+        Retorno := TStringList.Create;
+        Retorno.Delimiter := '|';
+        Retorno.DelimitedText := StrAux;
 
+        ConnectionID := StrToInt(Retorno.Strings[1]);
 
-        Dados.Text := deCompressHexReturnString(StrAux);
+        //Dados.Text := deCompressHexReturnString(StrAux);
+        Dados.Text := deCompressHexReturnString(Retorno.Strings[0]);
       Except
         on e:exception do
           begin
