@@ -75,6 +75,7 @@ Type
 
   Public
     FMulticoldServer: IMulticoldServer;
+    SemServidor, ModoOff : Boolean;
   Procedure InsereLog(Arquivo,Mensagem : AnsiString);
   Procedure InsereEventos(V1, V2, V3 : AnsiString; V4 : Integer;Const Reg : AnsiString);
   Procedure InsereEventosVisu(Arquivo, Diretorio, CodRel, CodUsuario, NomeGrupoUsuario : AnsiString;
@@ -777,6 +778,14 @@ Begin
 
   OMetodosServer := clsMetodosServer.Create(Self);
   OMetodosServer.Configurar;
+  SemServidor := OMetodosServer.SemServidor;
+  ModoOff     := OMetodosServer.ModoOff;
+  if (SemServidor) and (not ModoOff) then
+  begin
+    ShowMessage('Servidor Multicold não encontrado');
+    Application.Terminate;
+    Close;
+  end;
 FormGeral.Visible := false;
 ControleFiltro := ' ';
 Exportar := False;

@@ -3512,8 +3512,10 @@ Begin
         Retorno := TStringList.Create;
         Retorno.Delimiter := '|';
         Retorno.DelimitedText := StrAux;
-
-        ConnectionID := StrToInt(Retorno.Strings[1]);
+        if Retorno.Count = 1 then
+          ConnectionID := StrToInt(Retorno.Strings[0])
+        else
+          ConnectionID := StrToInt(Retorno.Strings[1]);
 
         //Dados.Text := deCompressHexReturnString(StrAux);
         Dados.Text := deCompressHexReturnString(Retorno.Strings[0]);
@@ -3528,7 +3530,6 @@ Begin
       End; // Try
 
       Screen.Cursor := crDefault;
-      ConnectionID := 1;
       If ConnectionID = 0 Then
         Begin
           // ConectouRemoto := False;
@@ -4011,7 +4012,21 @@ End;
 
 Procedure TFrameForm.FormActivate(Sender: TObject);
 Begin
-  If not JaAbriu Then
+  if (FormGeral.SemServidor) and (not FormGeral.ModoOff)  then
+  begin
+    close;
+    Application.Terminate;
+    exit;
+  end;
+  if FormGeral.ModoOff then
+  begin
+    MainMenu1.Items.Items[0].Items[1].Enabled := False;
+    MainMenu1.Items.Items[0].Items[2].Enabled := False;
+    MainMenu1.Items.Items[3].Enabled := False;
+    MainMenu1.Items.Items[4].Enabled := False;
+  end;
+
+  If (not JaAbriu) and (not FormGeral.ModoOff) Then
     begin
 
       if Tela <> '' Then

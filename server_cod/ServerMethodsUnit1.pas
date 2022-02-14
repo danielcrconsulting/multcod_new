@@ -642,6 +642,7 @@ fileMode := fmShareDenyNone;
     on e:exception do
       begin
       logaLocal(e.Message);
+      result := result + '|' + IntToStr(ConnectionID);
       exit;
       end;
   end; //Try
@@ -672,6 +673,7 @@ except
     FDQry.Close;
     Result := compressStringReturnHex('Erro no acesso ao banco de dados - query ');
 //    Result := ('Erro no acesso ao banco de dados - query ');
+    result := result + '|' + IntToStr(ConnectionID);
     Exit;
     end;
 end;
@@ -682,6 +684,7 @@ If FDQry.RecordCount = 0 Then
   LogaLocal('LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado');
   Result := compressStringReturnHex('LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado');
 //  Result := (('LogIn negado, Usuario '+Usuario+' não cadastrado ou não autorizado'));
+  result := result + '|' + IntToStr(ConnectionID);
   Exit;
   End;
 FDQry.Close;
@@ -702,6 +705,7 @@ Except
     Result := compressStringReturnHex('Erro ao tentar carregar dados de DFN ' + Usuario);
 //    Result := (('Erro ao tentar carregar dados de DFN ' + Usuario));
     ConnectionID := 0;
+    result := result + '|' + IntToStr(ConnectionID);
     Exit;
     end;
   End; // Try
@@ -755,6 +759,7 @@ Except
     Result := compressStringReturnHex('Erro ao tentar carregar dados de USUREL INC ' + Usuario);
 //    Result := (('Erro ao tentar carregar dados de USUREL INC ' + Usuario));
     ConnectionID := 0;
+    result := result + '|' + IntToStr(ConnectionID);
     Exit;
     end;
   End; // Try
@@ -765,6 +770,7 @@ If FDQry.RecordCount = 0 Then
   LogaLocal('LogIn aceito, porém o Usuario '+Usuario+' não possui relatórios cadastrados');
   Result := compressStringReturnHex('LogIn aceito, porém o Usuario '+Usuario+' não possui relatórios cadastrados');
 //  Result := (('LogIn aceito, porém o Usuario '+Usuario+' não possui relatórios cadastrados'));
+  result := result + '|' + IntToStr(ConnectionID);
   Exit;
   End;
 
@@ -813,6 +819,7 @@ Except
     ConnectionID := 0;
     Result := compressStringReturnHex('Erro ao tentar carregar dados de USUREL EXC '+Usuario);
 //    Result := (('Erro ao tentar carregar dados de USUREL EXC '+Usuario));
+    result := result + '|' + IntToStr(ConnectionID);
     Exit;
     end;
   End; // Try
@@ -851,6 +858,7 @@ Except
     Result := compressStringReturnHex('Erro ao tentar carregar dados de SISTEMA para ' + Usuario);
 //    Result := (('Erro ao tentar carregar dados de SISTEMA para ' + Usuario));
     ConnectionID := 0;
+    result := result + '|' + IntToStr(ConnectionID);
     Exit;
     end;
   End; // Try
@@ -886,6 +894,7 @@ Except
     Result := compressStringReturnHex('Erro ao tentar carregar dados de GRUPO para ' + Usuario);
 //    Result := (('Erro ao tentar carregar dados de GRUPO para ' + Usuario));
     ConnectionID := 0;
+    result := result + '|' + IntToStr(ConnectionID);
     Exit;
     end;
   End; // Try
@@ -922,6 +931,7 @@ Except
     result := compressStringReturnHex('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario+': '+e.Message);
 //    result := (('Erro ao tentar carregar dados de SUBGRUPO para '+Usuario+': '+e.Message));
     ConnectionID := 0;
+    result := result + '|' + IntToStr(ConnectionID);
     Exit;
     end;
   End; // Try
@@ -964,6 +974,7 @@ except
     result := compressStringReturnHex('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message);
 //    result := (('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message));
     ConnectionID := 0;
+    result := result + '|' + IntToStr(ConnectionID);
     Exit;
     end;
 end;
@@ -1010,7 +1021,6 @@ except
 end;
 FdQry.Close;
 
-ConnectionID := 1;
 result := result + '|' + '1';
 
 //logaLocal(Result);

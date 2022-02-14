@@ -17,7 +17,7 @@ type
 
     { Private declarations }
   public
-
+    SemServidor : Boolean;
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Configurar;
@@ -39,13 +39,30 @@ begin
   try
     if FileExists(GetCurrentDir + '/conf.ini') then
     begin
-      ArquivoINI := TIniFile.Create(fCaminhoINI + '/conf.ini');
+      ArquivoINI := TIniFile.Create(GetCurrentDir + '/conf.ini');
 
-      host := ArquivoINI.ReadString('configuracoes', 'servidor',    '');
-      port := ArquivoINI.ReadString('configuracoes', 'driver',      '');
+      host := ArquivoINI.ReadString('configuracoes', 'server',    '');
+      port := ArquivoINI.ReadString('configuracoes', 'port',      '');
 
       DSRestConnection1.Host := host;
-      DSRestConnection1.Port := port;
+      DSRestConnection1.Port := StrToInt(port);
+      DSRestConnection1.UserName := 'multicoldserver';
+      DSRestConnection1.Password := 'server@#2021';
+      SemServidor := True;
+      {
+      try
+        DSRestConnection1.TestConnection();
+      except
+        on e:exception do
+        begin
+          raise Exception.Create('Servidor MultiCold não encontrato');
+        end;
+      end;
+      }
+    end
+    else
+    begin
+      SemServidor := False;
     end;
   except
     on e: exception do begin
@@ -86,6 +103,7 @@ end;
 
 function clsMetodosServer.GetServerMethodsPrincipalClient: TServerMethods1Client;
 begin
+  FreeAndNil(FServerMethodsPrincipalClient);
   if FServerMethodsPrincipalClient = nil then
     FServerMethodsPrincipalClient:= TServerMethods1Client.Create(DSRestConnection1, FInstanceOwner);
   Result := FServerMethodsPrincipalClient;

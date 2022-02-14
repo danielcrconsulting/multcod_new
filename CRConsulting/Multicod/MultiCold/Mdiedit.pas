@@ -2253,6 +2253,11 @@ Procedure TEditForm.FormActivate(Sender: TObject);
 Var
   I : Integer;
 Begin
+  if (FormGeral.SemServidor) and (not FormGeral.ModoOff) then
+  begin
+    close;
+    Application.Terminate;
+  end;
 FrameForm.ScrollBar1.Min := Scroll1Min;
 FrameForm.ScrollBar1.Max := Scroll1Max;
 FrameForm.ScrollBar1.Position := Scroll1Pos;

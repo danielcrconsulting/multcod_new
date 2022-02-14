@@ -330,11 +330,14 @@ Else
           Retorno.Delimiter := '|';
           Retorno.DelimitedText := RetValStr;
           RetVal := StrToInt(Retorno.Strings[0]);
-          QtdPaginas := StrToInt(Retorno.Strings[1]);
-          StrCampos  := Retorno.Strings[2];
-          Rel64      := StrToInt(Retorno.Strings[3]);
-          Rel133     := StrToInt(Retorno.Strings[4]);
-          CmprBrncs  := StrToInt(Retorno.Strings[5]);
+          if RetVal = 0 then
+          begin
+            QtdPaginas := StrToInt(Retorno.Strings[1]);
+            StrCampos  := Retorno.Strings[2];
+            Rel64      := StrToInt(Retorno.Strings[3]);
+            Rel133     := StrToInt(Retorno.Strings[4]);
+            CmprBrncs  := StrToInt(Retorno.Strings[5]);
+          end;
 
         Finally
           Screen.Cursor := crDefault;
@@ -365,6 +368,11 @@ End;
 
 procedure TAssisAbreRemotoForm.FormShow(Sender: TObject);
 begin
+  if FormGeral.SemServidor then
+  begin
+    close;
+    Application.Terminate;
+  end;
 Self.Width := FrameForm.Width - 20;
 Self.Left := FrameForm.Left + 10;
 Self.Top := FrameForm.Height - Self.Height - 20;

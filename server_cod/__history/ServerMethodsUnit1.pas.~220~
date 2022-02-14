@@ -54,7 +54,7 @@ type
     function AbreRelatorio(Usuario: WideString; Senha: WideString;
                            ConnectionID: Integer; FullPath: WideString;
                            QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte;
-                           Rel133: Byte; CmprBrncs: Byte): Integer;
+                           Rel133: Byte; CmprBrncs: Byte): String;
     Procedure InsereEventosVisu(Arquivo, Diretorio, CodRel, CodUsuario, NomeGrupoUsuario : String;
                                 Grupo, SubGrupo, CodMens : Integer);
     procedure fazerumteste;
@@ -62,7 +62,9 @@ type
        Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina : WideString) : String;
     function LogIn(Usuario, Senha: WideString;
       ConnectionID: Integer): String;
-    function GetRelatorio(Usuario, Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString): String;
+    function GetRelatorio(Usuario, Senha: WideString;
+                          ConnectionID: Integer; ListaCodRel: WideString;
+                          FullPaths: WideString; tipo : Integer): String;
 
   end;
 
@@ -111,7 +113,7 @@ End;
 
 function TServerMethods1.AbreRelatorio(Usuario, Senha: WideString;
   ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer;
-  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte): Integer;
+  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte): String;
 Var
   Arq : File;
   I : Integer;
@@ -120,14 +122,14 @@ Var
   StrAux : String;
 
 Begin
-Result := 99999; // Código para o erro não detectado
+Result := '99999'; // Código para o erro não detectado
 try
   Fmemo.Add('Requisição de abertura de relatório, Usuario = '+Usuario+', Arquivo = '+FullPath);
   Fmemo.Add('Verificando segurança ');
   If Not VerificaSeguranca(FullPath, Usuario, Boolean(Rel133), Boolean(CmprBrncs), ArrRegIndice) Then
     Begin
     Fmemo.Add('Acesso ao relatório negado '+FullPath);
-    Result := 1;
+    Result := '1';
     Exit;
     End;
   FileMode := 0;
@@ -139,13 +141,13 @@ try
   If (I <> 0) Then
     Begin
     Fmemo.Add('Relatório não pode ser aberto: '+FullPath+' Falha '+IntToStr(I));
-    Result := 2;
+    Result := '2';
     Exit;
     End;
   If (Filesize(Arq) = 0) Then
     Begin
     Fmemo.Add('Relatório não pode ser aberto: '+FullPath+' Arquivo Vazio');
-    Result := 3;
+    Result := '3';
     CloseFile(Arq);
     Exit;
     End;
@@ -157,7 +159,7 @@ try
   If (IoResult <> 0) Or (Filesize(ArqPag64) = 0) Then
     Begin
     Fmemo.Add('Índice de página não pode ser aberto 2');
-    Result := 5;
+    Result := '5';
     CloseFile(ArqPag64);
     Exit;
     End
@@ -200,9 +202,15 @@ try
   //      DefChave.Cells[10,I+1] := ArrRegIndice[I].StrInc;
   //      DefChave.Cells[11,I+1] := ArrRegIndice[I].StrExc;
   StrCampos := StrAux;
-  Result := 0;
+  Result := '0';
   Fmemo.Add('Relatório '+FullPath+' aberto com sucesso');
   Fmemo.Add('');
+
+  result := result + '|' + IntToStr(QtdPaginas);
+  result := result + '|' + StrCampos;
+  result := result + '|' + IntToStr(Rel64);
+  result := result + '|' + IntToStr(Rel133);
+  result := result + '|' + IntToStr(CmprBrncs);
 except
   on e:exception do
     logaLocal('TMultiColdDataServer.AbreRelatorio '+e.Message);
@@ -478,7 +486,7 @@ result := Retorno;
 End;
 
 function TServerMethods1.GetRelatorio(Usuario, Senha: WideString;
-  ConnectionID: Integer; ListaCodRel, FullPaths: WideString): String;
+  ConnectionID: Integer; ListaCodRel, FullPaths: WideString; tipo : Integer): String;
 Var
 
 //  dtLog : TDateTime; // Tirei da raiz!!!!
@@ -606,8 +614,10 @@ except
     logaLocal('Erro carregando dados de relatório: '+e.Message);
 end;
 //LogaTempoExecucao('GetRelatorio',dtLog);
-  result := result + '|' + FullPaths;
+if tipo = 2 then
+  result := FullPaths;
 End;
+
 
 function TServerMethods1.LogIn(Usuario, Senha: WideString;
   ConnectionID: Integer): String;
@@ -1000,8 +1010,7 @@ except
 end;
 FdQry.Close;
 
-ConnectionID := 1;
-result := result + '|' + '1';
+result := result + '|' + IntToStr(ConnectionID);
 
 //logaLocal(Result);
 //logaLocal('Aqui no final');

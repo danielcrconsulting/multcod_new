@@ -354,8 +354,8 @@ End;
 Procedure TAssisAbreForm.FormCreate(Sender: TObject);
 Begin
   AssisAbreFlg := False;
-  OMetodosServer := clsMetodosServer.Create(Self);
-  OMetodosServer.Configurar;
+  //OMetodosServer := clsMetodosServer.Create(Self);
+  //OMetodosServer.Configurar;
 End;
 
 Procedure TAssisAbreForm.FiltradoCheckBoxClick(Sender: TObject);

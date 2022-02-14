@@ -46,6 +46,8 @@ begin
 
       DSRestConnection1.Host := host;
       DSRestConnection1.Port := StrToInt(port);
+      DSRestConnection1.UserName := 'multicoldserver';
+      DSRestConnection1.Password := 'server@#2021';
     end;
   except
     on e: exception do begin
@@ -86,6 +88,7 @@ end;
 
 function clsMetodosServer.GetServerMethodsPrincipalClient: TServerMethods1Client;
 begin
+  FreeAndNil(FServerMethodsPrincipalClient);
   if FServerMethodsPrincipalClient = nil then
     FServerMethodsPrincipalClient:= TServerMethods1Client.Create(DSRestConnection1, FInstanceOwner);
   Result := FServerMethodsPrincipalClient;

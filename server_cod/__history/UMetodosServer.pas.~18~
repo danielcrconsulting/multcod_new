@@ -17,7 +17,7 @@ type
 
     { Private declarations }
   public
-    SemServidor, ModoOff : Boolean;
+    SemServidor : Boolean;
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Configurar;
@@ -36,7 +36,6 @@ var
   ArquivoINI: TIniFile;
   host, port : String;
 begin
-  ModoOff := False;
   try
     if FileExists(GetCurrentDir + '/conf.ini') then
     begin
@@ -49,21 +48,20 @@ begin
       DSRestConnection1.Port := StrToInt(port);
       DSRestConnection1.UserName := 'multicoldserver';
       DSRestConnection1.Password := 'server@#2021';
-      SemServidor := False;
+      SemServidor := True;
       try
         DSRestConnection1.TestConnection();
       except
         on e:exception do
         begin
-          SemServidor := True;
+          SemServidor := False;
           //raise Exception.Create('Servidor MultiCold não encontrato');
         end;
       end;
     end
     else
     begin
-      SemServidor := True;
-      ModoOff     := True;
+      SemServidor := False;
     end;
   except
     //on e: exception do begin

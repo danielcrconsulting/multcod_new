@@ -54,7 +54,7 @@ type
     function AbreRelatorio(Usuario: WideString; Senha: WideString;
                            ConnectionID: Integer; FullPath: WideString;
                            QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte;
-                           Rel133: Byte; CmprBrncs: Byte): Integer;
+                           Rel133: Byte; CmprBrncs: Byte): String;
     Procedure InsereEventosVisu(Arquivo, Diretorio, CodRel, CodUsuario, NomeGrupoUsuario : String;
                                 Grupo, SubGrupo, CodMens : Integer);
     procedure fazerumteste;
@@ -62,6 +62,10 @@ type
        Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina : WideString) : String;
     function LogIn(Usuario, Senha: WideString;
       ConnectionID: Integer): String;
+    function GetRelatorio(Usuario, Senha: WideString;
+                          ConnectionID: Integer; ListaCodRel: WideString;
+                          FullPaths: WideString; tipo : Integer): String;
+
   end;
 
 implementation
@@ -109,7 +113,7 @@ End;
 
 function TServerMethods1.AbreRelatorio(Usuario, Senha: WideString;
   ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer;
-  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte): Integer;
+  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte): String;
 Var
   Arq : File;
   I : Integer;
@@ -118,14 +122,14 @@ Var
   StrAux : String;
 
 Begin
-Result := 99999; // Código para o erro não detectado
+Result := '99999'; // Código para o erro não detectado
 try
   Fmemo.Add('Requisição de abertura de relatório, Usuario = '+Usuario+', Arquivo = '+FullPath);
   Fmemo.Add('Verificando segurança ');
   If Not VerificaSeguranca(FullPath, Usuario, Boolean(Rel133), Boolean(CmprBrncs), ArrRegIndice) Then
     Begin
     Fmemo.Add('Acesso ao relatório negado '+FullPath);
-    Result := 1;
+    Result := '1';
     Exit;
     End;
   FileMode := 0;
@@ -137,13 +141,13 @@ try
   If (I <> 0) Then
     Begin
     Fmemo.Add('Relatório não pode ser aberto: '+FullPath+' Falha '+IntToStr(I));
-    Result := 2;
+    Result := '2';
     Exit;
     End;
   If (Filesize(Arq) = 0) Then
     Begin
     Fmemo.Add('Relatório não pode ser aberto: '+FullPath+' Arquivo Vazio');
-    Result := 3;
+    Result := '3';
     CloseFile(Arq);
     Exit;
     End;
@@ -155,7 +159,7 @@ try
   If (IoResult <> 0) Or (Filesize(ArqPag64) = 0) Then
     Begin
     Fmemo.Add('Índice de página não pode ser aberto 2');
-    Result := 5;
+    Result := '5';
     CloseFile(ArqPag64);
     Exit;
     End
@@ -198,9 +202,15 @@ try
   //      DefChave.Cells[10,I+1] := ArrRegIndice[I].StrInc;
   //      DefChave.Cells[11,I+1] := ArrRegIndice[I].StrExc;
   StrCampos := StrAux;
-  Result := 0;
+  Result := '0';
   Fmemo.Add('Relatório '+FullPath+' aberto com sucesso');
   Fmemo.Add('');
+
+  result := result + '|' + IntToStr(QtdPaginas);
+  result := result + '|' + StrCampos;
+  result := result + '|' + IntToStr(Rel64);
+  result := result + '|' + IntToStr(Rel133);
+  result := result + '|' + IntToStr(CmprBrncs);
 except
   on e:exception do
     logaLocal('TMultiColdDataServer.AbreRelatorio '+e.Message);
@@ -475,6 +485,140 @@ logaLocal('GetPagina concluida com sucesso');
 result := Retorno;
 End;
 
+function TServerMethods1.GetRelatorio(Usuario, Senha: WideString;
+  ConnectionID: Integer; ListaCodRel, FullPaths: WideString; tipo : Integer): String;
+Var
+
+//  dtLog : TDateTime; // Tirei da raiz!!!!
+  OutroPath,
+  CmplPath : String;
+  SearchRec : TSearchRec;
+  ListBox1,
+  ListBox2,
+  FullPathsTemp : TStringList;
+  errorCode : integer;
+
+  Function PegaInfo(Path : String) : String;
+  Var
+    Arq64 : File Of Int64;
+    //OldFileMode : Byte;
+  Begin
+  try
+    //OldFileMode := FileMode;
+    //FileMode := fmShareDenyWrite;
+    Result := ExtractFileName(Path);
+    If FileExists(ChangeFileExt(Path,'.IAPX')) Then
+      Begin
+      AssignFile(Arq64,ChangeFileExt(Path,'.IAPX'));
+      Reset(Arq64);
+      Result := Result + ' -> ' + Format('%7d',[Filesize(Arq64)]) + ' Pgns';
+      CloseFile(Arq64);
+      End;
+    //FileMode := OldFileMode;
+  except
+    on e:exception do
+      logaLocal('Erro verificando dados de índice: '+e.Message);
+  end;
+  End;
+
+Begin
+//dtLog := now;
+//logaLocal('Requisição de Lista de Relatórios, Usuario = '+Usuario);
+fileMode := fmShareDenyNone;
+
+ConectarBanco;
+
+try
+  Result := compressStringReturnHex(' ');
+//  Result := (' ');
+  ListBox1 := TStringList.Create;
+  ListBox2 := TStringList.Create;
+  FullPathsTemp := TStringList.Create;
+  ListBox1.Text := ListaCodRel;
+  If ListBox1.Count = 0 Then
+    Begin
+    ListBox1.Free;
+    ListBox2.Free;
+    FullPathsTemp.Free;
+    FullPaths := compressStringReturnHex(' ');
+//    FullPaths := (' ');
+    Exit;
+    End
+  Else
+    Begin
+    ListBox2.Clear;
+    FdQry.Close;
+    FdQry.Sql.Clear;
+    FdQry.Sql.Add('SELECT * FROM DESTINOSDFN A ');
+    FdQry.Sql.Add('WHERE A.CODREL = '''+ListBox1[0]+'''');
+    FdQry.Sql.Add('AND A.TIPODESTINO = ''Dir''');
+    FdQry.Sql.Add('AND A.SEGURANCA = ''S''');
+    try
+      FdQry.Open;
+    except
+      on e:exception do
+        logaLocal('Erro carregando dados de destino de relatórios: '+e.Message);
+    end;
+    If FdQry.RecordCount <> 0 Then
+      Begin
+      If UpperCase(FdQry.FieldByName('DirExpl').AsString) = 'S' Then
+        CmplPath := '\'
+      Else
+        CmplPath := FullPaths;
+      FullPaths := '';
+      OutroPath := IncludeTrailingPathDelimiter(UpperCase(FdQry.FieldByName('Destino').AsString)) + CmplPath;
+      // Macaquinho para Daniel - 12/11/2007
+      LogaLocal('Procurando relatórios em: '+OutroPath);
+      errorCode := FindFirst(OutroPath+'*.DAT',faAnyFile,SearchRec);
+      If errorCode = 0 Then
+        Repeat
+          FullPathsTemp.Add(FormatDateTime('YYYY/MM/DD, HH:NN:SS',FileDateToDateTime(SearchRec.Time))+
+                            OutroPath+SearchRec.Name); // Armazena o nome do arquivo (FullPath)
+          ListBox2.Add(FormatDateTime('YYYY/MM/DD, HH:NN:SS',FileDateToDateTime(SearchRec.Time))+' '+
+                       PegaInfo(OutroPath+SearchRec.Name));
+          // Macaquinho para Daniel - 12/11/2007
+          LogaLocal('Relatório encontrado '+OutroPath+SearchRec.Name);
+        Until FindNext(SearchRec) <> 0
+      else
+        begin
+        logaLocal('Relatório não encontrado. Motivo: '+IntToStr(ErrorCode));
+        logaLocal('Motivo: '+SysErrorMessage(ErrorCode));
+        GetLastError;
+        end;
+      FindClose(SearchRec);
+      End;
+    FdQry.Close;
+    End;
+  ListBox1.Free;
+  //Result := ListBox2.Text;
+  try
+//    logaLocal('getRelatorio: '+FullPathsTemp.Text);
+//    logaLocal('getRelatorio: '+ListBox2.Text);
+//    auxStr := FullPathsTemp.Text;
+    FullPaths := compressStringReturnHex(FullPathsTemp.Text);
+//    auxStr := ListBox2.Text;
+    result := compressStringReturnHex(ListBox2.Text);
+    logaLocal('getRelatorio: '+FullPaths);
+    logaLocal('getRelatorio: '+result);
+//    FullPaths := FullPathsTemp.Text;
+//    result := ListBox2.Text;
+
+  except
+    on e:exception do
+      logaLocal('getRelatorio: '+e.Message);
+  end;
+  ListBox2.Free;
+  FullPathsTemp.Free;
+except
+  on e:exception do
+    logaLocal('Erro carregando dados de relatório: '+e.Message);
+end;
+//LogaTempoExecucao('GetRelatorio',dtLog);
+if tipo = 2 then
+  result := FullPaths;
+End;
+
+
 function TServerMethods1.LogIn(Usuario, Senha: WideString;
   ConnectionID: Integer): String;
 Var
@@ -502,7 +646,7 @@ fileMode := fmShareDenyNone;
       end;
   end; //Try
   end;
-//vitX.logaLocal('Abriu o BD ');
+//logaLocal('Abriu o BD ');
 
 Result := '';
 Resulta := '';
@@ -516,10 +660,10 @@ Else
   FdQry.Sql.Add('AND   (A.SENHA = '''+Senha+''') ');   }
 FDQry.Sql.Add('AND   (A.REMOTO = ''S'') ');
 try
-//  vitX.logaLocal('Montou o sql, vai dar open na query ');
-//  vitX.logaLocal(FdQry.SQL.Text);
+//  logaLocal('Montou o sql, vai dar open na query ');
+//  logaLocal(FdQry.SQL.Text);
   FDQry.Open;
-//  vitX.logaLocal('Query is open');
+//  logaLocal('Query is open');
 except
   on e:exception do
     begin
@@ -542,7 +686,7 @@ If FDQry.RecordCount = 0 Then
   End;
 FDQry.Close;
 
-//vitX.LogaLocal('Aqui 1');
+//LogaLocal('Aqui 1');
 
 // Inicio da carga das informações...
 FDQry.Sql.Clear;
@@ -572,7 +716,7 @@ FDQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de DFNs
 
-//vitX.LogaLocal('Aqui 2');
+//LogaLocal('Aqui 2');
 
 While Not FDQry.Eof Do
   Begin
@@ -596,7 +740,7 @@ While Not FDQry.Eof Do
   End;
 FDQry.Close;
 
-//vitX.LogaLocal('Aqui 3');
+//LogaLocal('Aqui 3');
 
 FDQry.Sql.Clear;
 FDQry.Sql.Add('SELECT * FROM USUREL A');
@@ -632,10 +776,10 @@ While Not FDQry.Eof Do
   end;
 FDQry.First;
 
-//vitX.LogaLocal(IntToStr(AuxQTd));
+//LogaLocal(IntToStr(AuxQTd));
 Resulta := (Resulta + IntToStr(AuxQTd) + CrLf); // Quantidade de INCs
 
-//vitX.LogaLocal('Aqui 4');
+//LogaLocal('Aqui 4');
 
 Linha := '';
 While Not FDQry.Eof Do
@@ -654,7 +798,7 @@ While Not FDQry.Eof Do
   End;
 FDQry.Close;
 
-//vitX.LogaLocal(Linha);
+//LogaLocal(Linha);
 
 FDQry.Sql.Clear;
 FDQry.Sql.Add('SELECT * FROM USUREL A');
@@ -683,7 +827,7 @@ FDQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de EXCs
 
-//vitX.LogaLocal('Aqui 5');
+//LogaLocal('Aqui 5');
 
 While Not FDQry.Eof Do
   Begin
@@ -721,7 +865,7 @@ FDQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de Grupos
 
-//vitX.LogaLocal('Aqui 6');
+//LogaLocal('Aqui 6');
 
 While Not FDQry.Eof Do
   Begin
@@ -756,7 +900,7 @@ FdQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de Grupos
 
-//vitX.LogaLocal('Aqui 7');
+//LogaLocal('Aqui 7');
 
 While Not FdQry.Eof Do
   Begin
@@ -792,7 +936,7 @@ FdQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de SubGrupos
 
-//vitX.LogaLocal('Aqui 8');
+//LogaLocal('Aqui 8');
 
 While Not FdQry.Eof Do
   Begin
@@ -804,15 +948,15 @@ While Not FdQry.Eof Do
   End;
 FdQry.Close;
 
-//vitX.LogaLocal('Aqui 9');
+//LogaLocal('Aqui 9');
 
 FdQry.Sql.Clear;
-//vitX.LogaLocal('Aqui 91');
+//LogaLocal('Aqui 91');
 FdQry.Sql.Add('SELECT DISTINCT CODREL, CODSIS, CODGRUPO FROM SISAUXDFN');
-//vitX.LogaLocal('Aqui 92');
+//LogaLocal('Aqui 92');
 try
   FdQry.Open;
-//  vitX.LogaLocal('Aqui 93');
+//  LogaLocal('Aqui 93');
 except
   on e:exception do
     begin
@@ -820,12 +964,13 @@ except
     result := compressStringReturnHex('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message);
 //    result := (('Erro ao tentar carregar dados de SISAUXDFN para '+Usuario+': '+e.Message));
     ConnectionID := 0;
+    result := result + '|' + IntToStr(ConnectionID);
     Exit;
     end;
 end;
 
-//vitX.LogaLocal('Aqui 94');
-//vitX.LogaLocal('Aqui 95');
+//LogaLocal('Aqui 94');
+//LogaLocal('Aqui 95');
 AuxQTd := 0;
 While Not FdQry.Eof Do
   begin
@@ -836,7 +981,7 @@ FdQry.First;
 
 Resulta := (Resulta + IntToStr(AuxQtd) + CrLf); // Quantidade de SisAuxDfn
 
-//vitX.LogaLocal('Aqui 10');
+//LogaLocal('Aqui 10');
 
 while not FdQry.Eof do
   begin
@@ -853,7 +998,7 @@ while not FdQry.Eof do
   end;
 FdQry.Close;
 
-//vitX.LogaLocal('Aqui 11');
+//LogaLocal('Aqui 11');
 
 // Fim da carga de informações...
 // Compressão do retorno para reduzir o tempo de execução -> Deixou de funcionar com Delphi Xe4
@@ -866,11 +1011,10 @@ except
 end;
 FdQry.Close;
 
-ConnectionID := 1;
-result := result + '|' + '1';
+result := result + '|' + IntToStr(ConnectionID);
 
-//vitX.logaLocal(Result);
-//vitX.logaLocal('Aqui no final');
+//logaLocal(Result);
+//logaLocal('Aqui no final');
 //LogaTempoExecucao('LogIn',dtLog);
 End;
 
