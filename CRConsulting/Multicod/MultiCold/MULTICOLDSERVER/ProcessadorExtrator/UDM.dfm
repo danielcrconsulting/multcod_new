@@ -1,15 +1,16 @@
 object DMMain: TDMMain
-  OldCreateOrder = False
-  Height = 275
-  Width = 650
-  object Conn: TADOConnection
+  OnCreate = DataModuleCreate
+  Height = 251
+  Width = 486
+  PixelsPerInch = 120
+  object ConnW: TADOConnection
     ConnectionString = 'FILE NAME=Multicold.udl'
     Provider = 'Multicold.udl'
     Left = 40
     Top = 16
   end
   object QryPendentes: TADOQuery
-    Connection = Conn
+    Connection = ConnW
     Parameters = <>
     SQL.Strings = (
       'select'
@@ -28,13 +29,13 @@ object DMMain: TDMMain
     Top = 16
   end
   object CmdUpdate: TADOCommand
-    Connection = Conn
+    Connection = ConnW
     Parameters = <>
     Left = 120
     Top = 80
   end
   object ADOQryDescomp: TADOQuery
-    Connection = Conn
+    Connection = ConnW
     Parameters = <
       item
         Name = 'Id'
@@ -55,11 +56,11 @@ object DMMain: TDMMain
       #9'PesquisaMensagem'
       'from ParametroDescompactador '
       'where Id = :Id')
-    Left = 208
+    Left = 248
     Top = 16
   end
   object ADOQryPesq: TADOQuery
-    Connection = Conn
+    Connection = ConnW
     Parameters = <
       item
         Name = 'IdParametroDescompactador'
@@ -78,7 +79,44 @@ object DMMain: TDMMain
       #9'Conector'#9
       'from ParametroPesquisa'
       'where IdParametroDescompactador = :IdParametroDescompactador')
-    Left = 288
+    Left = 376
     Top = 16
+  end
+  object FDQuery1: TFDQuery
+    Left = 344
+    Top = 112
+  end
+  object MemPen: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 152
+    Top = 176
+  end
+  object MemDes: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 224
+    Top = 176
+  end
+  object MemPesq: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 296
+    Top = 176
   end
 end

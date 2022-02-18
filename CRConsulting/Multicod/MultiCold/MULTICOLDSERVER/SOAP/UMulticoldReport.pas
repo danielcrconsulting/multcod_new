@@ -118,7 +118,6 @@ uses SuTypGer, SuTypMultiCold, Types, SysUtils, System.Classes,
       FObjF1,
       FObjF2 : TFileStream;
 
-
       procedure DescarregaPilha(strPilha: String; var pResultado: TListaResultadoPesquisa);
       procedure DescarregaAnd;
       procedure DescarregaOr;
@@ -406,7 +405,6 @@ begin
   PagNum := pIndexPagina;
   fileMode := fmShareDenyNone;
   AssignFile(Arq, FFilename);
-
   Try
     Reset(Arq,1);
   Except
@@ -415,11 +413,9 @@ begin
       Exit;
     end;
   End;
-
   If FileExists(ChangeFileExt(FFilename,'.IAPX')) Then // Novo formato
   Begin
     AssignFile(ArqPag64,ChangeFileExt(FFilename,'.IAPX'));
-
     Try
       Reset(ArqPag64);
     Except
@@ -429,7 +425,6 @@ begin
           Exit;
         end;
     End; // Try
-
     Seek(ArqPag64, PagNum - 1);
     Read(ArqPag64, Pag64);
     {$i-}
@@ -437,23 +432,17 @@ begin
     {$i+}
     If IoResult <> 0 Then
       FimPag64 := FileSize(Arq);
-
     FQtdePaginas := FileSize(ArqPag64);
     CloseFile(ArqPag64);
-
     Seek(Arq, Pag64 + 1); // 1 = OffSet do primeiro byte
   End;
-
   New(ArrBuf);
   BlockRead(Arq, ArrBuf^, FimPag64 - Pag64, ContBytes); { Read only the buffer To decompress }
-
   SetLength(Pag, ContBytes*2);
   binToHex(ArrBuf^, PAnsiChar(Pag), ContBytes);
   FQtdeBytesComp := ContBytes*2;
-
   FPaginaCompactada := Pag;
   FIndexPagina := PagNum;
-
   decriptador := TDecriptadorFactory.ObterDecriptador(Self, aForceOriginal);
   try
     FPaginaDescompactada := decriptador.Decripta;
@@ -461,7 +450,6 @@ begin
   finally
     FreeAndNil(decriptador);
   end;
-
   Dispose(ArrBuf);
 end;
 
@@ -568,7 +556,6 @@ begin
             Result.IndexPagLoc := i;
             Result.QtdeBytesPag := FMulticoldManager.QtdeBytes;
             Result.QtdeTotalPag := FMulticoldManager.QtdePaginas;
-
             Exit;
           End;
         End Else
@@ -583,7 +570,6 @@ begin
             Result.IndexPagLoc := i;
             Result.QtdeBytesPag := FMulticoldManager.QtdeBytes;
             Result.QtdeTotalPag := FMulticoldManager.QtdePaginas;
-
             Exit;
           End;
         End;
@@ -854,7 +840,6 @@ Var
     I : Integer;
   Begin
   Result := -1;
-
   For I := 0 To Length(FArDFN)-1 Do
     If FArDFN[I].CodRel = CodRel Then
       Begin
@@ -866,30 +851,23 @@ Var
 begin
   fileMode := fmShareDenyNone;
   Result := true;
-
   if not FDatabaseLocal.Connected then
     FDatabaseLocal.Open;
-
   NomeRel := FNomeArquivo;
-
   try
     If FileExists(ChangeFileExt(NomeRel,'.IAPX')) Then // Novo formato, candidato a segurança
     Begin
       AssignFile(FArqCNFG,ExtractFilePath(NomeRel)+SeArquivoSemExt(NomeRel)+'Dfn.Dfn');
-
       Reset(FArqCNFG);
-
       Read(FArqCNFG,RegDestinoII); // Lê o primeiro Destino, mas não checa a segurança por ele
       I := 0;
       FillChar(FArrRegIndice, SizeOf(FArrRegIndice),0);
       TemRegGrp := False;
       RegSistema.CODSIS := -999;
       CodSeg.CODSEG := -1; // Inicializar para marcar ...
-
       While Not Eof(FArqCNFG) Do
       Begin
         Read(FArqCNFG,RegDestinoII);
-
         Case RegDestinoII.TipoReg Of
           0 : Begin
                 RegGrp := RegDestinoII;
@@ -906,13 +884,10 @@ begin
           6 : RegSisAuto := RegDestinoII;
           End; // Case
       End;
-
     FRel133 := (RegDFN.TipoQuebra = 1);
     FComprimeBrancos := RegDFN.COMPRBRANCOS;
-
     If Not TemRegGrp Then  // Força que reggrp tenha sempre algum conteúdo
       RegGrp.Grp := RegDFN.CodGrupo;
-
     CloseFile(FArqCNFG);
     
     If RegDestino.SEGURANCA Then
@@ -932,10 +907,8 @@ begin
             Exit;
             end;
           End; //Try
-
         CodRel := UpperCase(RegDFN.CodRel); // Código do relatório em questão
         CodGrupo := FQueryLocal.FieldByName('NomeGrupoUsuario').AsString;
-
         If CodGrupo = 'ADMSIS' Then
         Begin
           FQueryLocal.Close;   // Usuario admsis pode ver tudo
@@ -943,49 +916,37 @@ begin
                             UpperCase(FUsuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 01);
           Exit;
         End;
-
         FQueryLocal.Close;
-
         If Not CarregaDadosDefinicoes Then
         Begin
           Result := false;
           Exit;
         End;
-
         I := LocalizaCodRel(CodRel);
-
         If I = -1 Then
         Begin
           Result := false;
-
           InsereEventoVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
                             UpperCase(FUsuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 02);
           Exit;
         End;
-
         CodSisDFNAtu := FArDFN[I].CodSis;    // Banco
         CodSisDFNOld := RegSistema.CODSIS;  // Rel (Pode ser -999 se é a versão interbase do relatório...
-
         If CodSisDFNOld = -1 Then
           CodSisDFNOld := RegSisAuto.CODSISREAL; // Pega o Còdigo Real que é o da copilação do relatório
-
         CodGrupoDFNAtu := FArDFN[I].CodGrupo;
         CodSubGrupoDFNAtu := FArDFN[I].CodSubGrupo;
         CodGrupoDFNOld := RegDFN.CODGRUPO;
         CodSubGrupoDFNOld := RegDFN.CODSUBGRUPO;
-
         If RegDFN.CODGRUPAUTO Or (TemRegGrp And RegDFN.SUBDIRAUTO) Then
           CodGrupoDFNGrp := RegGRP.Grp
         Else
           CodGrupoDFNGrp := RegDFN.CODGRUPO;
-
         If Length(FArINC) = 0 Then // Nenhuma definição de Inclusão para este usuário
         begin
           Result := false;
         end;
-
         PassouGrupoSubGrupoRel := False;
-
         For I := 0 To Length(FArINC) - 1 Do
         Begin
           If (FArINC[I].CodSis = -999) Or
@@ -1006,7 +967,6 @@ begin
             Break;
           End;
         End;
-
         For I := 0 To Length(FArEXC) - 1 Do
         Begin
           If (FArEXC[I].CodSis = -999) Or
@@ -1027,7 +987,6 @@ begin
             Break;
           End;
         End;
-
         If Result and PassouGrupoSubGrupoRel Then
         Begin
           // Muito Bem, Passou por todos os testes..............
@@ -1080,20 +1039,16 @@ begin
     If FileExists(ChangeFileExt(NomeRel,'.IAPX')) Then // Novo formato, candidato a segurança
     Begin
       AssignFile(FArqCNFG,ExtractFilePath(NomeRel)+SeArquivoSemExt(NomeRel)+'Dfn.Dfn');
-
       Reset(FArqCNFG);
-
       Read(FArqCNFG,RegDestinoII); // Lê o primeiro Destino, mas não checa a segurança por ele
       I := 0;
       FillChar(FArrRegIndice, SizeOf(FArrRegIndice),0);
       TemRegGrp := False;
       RegSistema.CODSIS := -999;
       CodSeg.CODSEG := -1; // Inicializar para marcar ...
-
       While Not Eof(FArqCNFG) Do
       Begin
         Read(FArqCNFG,RegDestinoII);
-
         Case RegDestinoII.TipoReg Of
           0 : Begin
                 RegGrp := RegDestinoII;
@@ -1110,7 +1065,6 @@ begin
           6 : RegSisAuto := RegDestinoII;
           End; // Case
       End;
-
       FRel133 := (RegDFN.TipoQuebra = 1);
       FComprimeBrancos := RegDFN.COMPRBRANCOS;
       FTipoQuebraPagina := RegDFN.TipoQuebra
@@ -1146,7 +1100,6 @@ begin
     mode := cmUnknown;
     provider := 'SQLOLEDB.1';
   end;
-
   with FDatabaseEventos do
   begin
     connectionString := 'FILE NAME='+extractFilePath(ParamStr(0))+'MulticoldEventos.udl';
@@ -1194,18 +1147,13 @@ Var
   Agora : TDateTime;
 Begin
   fileMode := fmShareDenyNone;
-
   if not FDatabaseEventos.Connected then
     FDatabaseEventos.Open;
-
   FDatabaseEventos.Connected := True;
   If FDatabaseEventos.InTransaction Then
     FDatabaseEventos.CommitTrans;
-
   FDatabaseEventos.BeginTrans;
-
   Agora := Now;
-
   FQueryEventos.Close;
   FQueryEventos.Sql.Clear;
   FQueryEventos.Sql.Add('INSERT INTO EVENTOS_VISU (DT, HR, ARQUIVO, DIRETORIO, CODREL, GRUPO, SUBGRUPO, CODUSUARIO, NOMEGRUPOUSUARIO, CODMENSAGEM) ');
@@ -1220,7 +1168,6 @@ Begin
   FQueryEventos.Parameters[7].Value := Copy(CodUsuario,1,20);
   FQueryEventos.Parameters[8].Value := Copy(NomeGrupoUsuario,1,30);
   FQueryEventos.Parameters[9].Value := CodMens;
-
     Try
       FQueryEventos.ExecSql;
     Except
@@ -1426,7 +1373,6 @@ begin
       begin
         if FrSet[0, k] = objeto then
         begin
-
           try
             Query.Close;
           except
@@ -1436,7 +1382,6 @@ begin
           Query.SQL.Clear;
           Query.SQL.Add(' SELECT * FROM "'+changeFileExt(extractFileName(FReport.Filename),'')+
                         FrSet[1, k]+'" '+FrSet[1, k]); // Montar SELECT
-
           for l := 0 to high(FArrRegIndice) do
             if (FArrRegIndice[l].NOMECAMPO = FrSet[1, k]) then
               begin
@@ -1560,7 +1505,6 @@ var
   primeiraVez: Boolean;
   j,
   pgAux: Integer;
-
 begin
   abrirDados(FQuery1, FObjF1, FOprnd1);
   abrirDados(FQuery2, FObjF2, FOprnd2);
@@ -1665,7 +1609,6 @@ begin
   FreeAndNil(h);
   fechaArquivoTemp(FQuery1,FObjF1,FOprnd1);
   fechaArquivoTemp(FQuery2,FObjF2,FOprnd2);
-
   FPilha.push(intArqNum);
 end;
 
@@ -1765,7 +1708,6 @@ begin
     if FReg2.Pagina <> MAXINT then
       h.write(FReg2,sizeOf(FReg2));
     end;
-
   FreeAndNil(h);
     fechaArquivoTemp(FQuery1,FObjF1,FOprnd1);
   fechaArquivoTemp(FQuery2,FObjF2,FOprnd2);
@@ -1786,12 +1728,10 @@ var
   t,
   oprdr,
   Tt : AnsiString;
-
   function ehOperador(caractere : String) : boolean;
   begin
     result := (pos(caractere, '+-/*^') > 0);
   end;
-
 begin
   // Processa querys
   FPilha.clear;
@@ -1845,7 +1785,6 @@ begin
   
   abrirDados(FQuery1, FObjF1, FOprnd1);
   leRegistroFileStreamOuQuery(FQuery1, FObjF1, FReg1, ehEOF1, FOprnd1);
-
   if FReg1.Pagina = MAXINT then // EOF mesmo
   begin  
 //    setLength(pResultado, 1);
@@ -1878,7 +1817,6 @@ begin
     end;
     inc(i);
   end;
-
   fechaArquivoTemp(FQuery1, FObjF1, FOprnd1);
 end;
 
@@ -1915,14 +1853,11 @@ begin
 
   fileMode := fmShareDenyNone;
   result := false;
-
   FDirSecao := ColetaDiretorioTemporario+'Multicold_'+formatDateTime('yyyymmddhhnnsszzzz',now)+'\';
   forceDirectories(FDirSecao);
-
   FSession.PrivateDir := FDirSecao;
   FSession.NetFileDir := FDirSecao;
   FSession.Active := true;
-
 
   If FileExists(ChangeFileExt(FReport.Filename,'.IAPX')) Then // Novo formato, candidato a segurança
   Begin
@@ -1930,9 +1865,7 @@ begin
     Reset(ArqCNFG);
     Read(ArqCNFG, RegDestinoII); // Lê o primeiro Destino, mas não checa a segurança por ele
     i := 0;
-
     FillChar(FArrRegIndice,SizeOf(FArrRegIndice),0);
-
     While Not Eof(ArqCNFG) Do
       Begin
       Read(ArqCNFG,RegDestinoII);
@@ -1945,14 +1878,11 @@ begin
       End;
     closeFile(ArqCNFG);
   end;
-
   FPilha := TPilha.create(nil);
   try
     try
 
-
     FMaxLin := 0;
-
     for I := 0 to length(pPesquisa)-1 do
     begin
       Inc(FMaxLin);
@@ -1965,7 +1895,6 @@ begin
       else
         FrSet[4, FMaxLin] := IntToStr(pPesquisa[i].Conector);    
     end;
-
     except
       on e:exception do
         begin
@@ -1974,26 +1903,19 @@ begin
         exit;
         end;
     end;
-
     DescarregaPilha(pMensagem, pResultado);    // mensagem vem com a posfixa do grid da query fácil
-
     result := true;
   finally
-
     FSession.Active := false;
-
     if findFirst(FDirSecao+'*.*',faAnyFile,f) = 0 then
       repeat
         if (f.Name <> '.') and (f.Name <> '.') then
           deleteFile(FDirSecao+f.Name);
       until findNext(f) <> 0;
     findClose(f);
-
     removeDir(FDirSecao);
     FreeAndNil(FPilha);
   end;
-
-
 
 end;
 
@@ -2186,7 +2108,6 @@ begin
               Result.IndexPagLocPesq := i;
               Result.QtdeBytesPag := FMulticoldManager.QtdeBytes;
               Result.QtdeTotalPag := FMulticoldManager.QtdePaginas;
-
               Exit;
             End;
           End Else
@@ -2203,12 +2124,12 @@ begin
               Result.QtdeBytesPag := FMulticoldManager.QtdeBytes;
               Result.QtdeTotalPag := FMulticoldManager.QtdePaginas;
 
-
               Exit;
             End;
           End;
 
-        end;
+
+        end;
 
         //**********************************************************************************************
       end;
@@ -2266,9 +2187,7 @@ begin
   Buffer := FBuffer;
   SetLength(PaginaNormal,10000);
   SetLength(PaginaAcertada,10000);
-
   I := 1;
-
   for Ind := 1 To FDescompactador.QtdeBytes Do
   begin
     if FMulticoldReport.ComprimeBrancos then
@@ -2276,12 +2195,10 @@ begin
       If (Byte(BufferA^[Ind]) And $80) = $80 Then
       begin
         AuxTemp := BufferA^[Ind];
-
         If Byte(BufferA^[Ind]) = $80 Then
           Teste := #$0
         Else
           Teste := #$80;
-
         repeat
           PaginaNormal[I] := ' ';
           Inc(I);
@@ -2289,7 +2206,6 @@ begin
             SetLength(PaginaNormal,Length(PaginaNormal)+10000);
           Dec(AuxTemp);
         until AuxTemp = Teste;
-
       end else
       begin
         PaginaNormal[I] := (BufferA^[Ind]);
@@ -2305,9 +2221,7 @@ begin
         SetLength(PaginaNormal,Length(PaginaNormal)+10000);
     end;
   end;
-
   SetLength(PaginaNormal,I-1); // Ajusta o tamanho certo
-
   Apendix := '';
   PaginaAcertada[1] := ' ';
   I := 2;
@@ -2325,10 +2239,8 @@ begin
         If I > Length(PaginaAcertada) Then
           SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
       End;
-
       Apendix := '';
       ComandoDeCarro := PaginaNormal[Ind];
-
       If ComandoDeCarro = '0' Then
       Begin
         PaginaAcertada[I] := #13;
@@ -2343,7 +2255,6 @@ begin
       Else
         If ComandoDeCarro = '-' Then
           Apendix := CrLf;
-
       PaginaAcertada[I] := ' ';
       Inc(I);
       If I > Length(PaginaAcertada) Then
@@ -2355,10 +2266,8 @@ begin
       If I > Length(PaginaAcertada) Then
         SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
     End;
-
     SetLength(PaginaAcertada,I-1); // Ajusta
     PaginaNormal := PaginaAcertada;
-
     Result := PaginaNormal;
 end;
 
@@ -2381,9 +2290,7 @@ begin
   Buffer := FBuffer;
   SetLength(PaginaNormal,10000);
   SetLength(PaginaAcertada,10000);
-
   I := 1;
-
   for Ind := 1 To FDescompactador.QtdeBytes do
   begin
     If FMulticoldReport.ComprimeBrancos Then
@@ -2391,12 +2298,10 @@ begin
       if (Byte(BufferA^[Ind]) And $80) = $80 Then
       begin
         AuxTemp := BufferA^[Ind];
-
         If Byte(BufferA^[Ind]) = $80 Then
           Teste := #$0
         Else
           Teste := #$80;
-
         repeat
           PaginaAcertada[I] := ' ';
           Inc(I);
@@ -2419,7 +2324,6 @@ begin
         SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
     end;
   end;
-
   SetLength(PaginaAcertada,I-1); // Ajusta o tamanho
   PaginaNormal := PaginaAcertada;
 
@@ -2457,13 +2361,9 @@ begin
     GetMem(BufI, QtPagRel div 2);
 
     GetMem(Buffer, QtPagRel div 2);
-
     hexToBin(PAnsiChar(auxPag), PAnsiChar(BufferA), QtPagRel div 2);
-
     Move(BufferA^, BufI^, QtPagRel div 2);
-
     ReallocMem(Buffer,0);
-
     try
       ZDecompress(BufI, QtdeBytesComp, Buffer, QtPagRel, 0);
     except

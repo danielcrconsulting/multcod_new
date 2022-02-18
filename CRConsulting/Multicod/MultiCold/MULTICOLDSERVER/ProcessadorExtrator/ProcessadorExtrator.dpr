@@ -16,7 +16,9 @@ uses
   UProcessaExtrator in 'UProcessaExtrator.pas',
   UDM in 'UDM.pas' {DMMain: TDataModule},
   UMulticoldMigrate in '..\SOAP\UMulticoldMigrate.pas',
-  UExtratorDados in '..\SOAP\UExtratorDados.pas';
+  UExtratorDados in '..\SOAP\UExtratorDados.pas',
+  ClientClassesUnit2 in '..\..\..\..\..\server_cod\ClientClassesUnit2.pas',
+  UMetodosServer in '..\..\..\..\..\server_cod\UMetodosServer.pas';
 
 var
   processador: TProcessaddor;

@@ -98,21 +98,35 @@ var
   MyGuid : TGUID;
   processador: TProcessadorBase;
   processou: boolean;
-
+  pathRel : String;
 begin
-  FDMMain.QryPendentes.Open;
+  //FDMMain.QryPendentes.Open;
+  FDMMain.ImportarDados('select ' +
+	'Id,' +
+	'TipoProcessamento,' +
+	'IdReferencia,' +
+	'PathRelatorio,' +
+	'StatusProcessamento,' +
+	'ArquivoTemplateComp,' +
+	'CODUSUARIO,' +
+	'SENHA,' +
+  'DataCriacao ' +
+  'from ConsultaProcessadorExtrator ' +
+  'order by CODUSUARIO, DataCriacao ',nil,'P');
+  FDMMain.MemPen.Open;
   baseOutput := FConfigPath;
   processou := false;
 
-  while not FDMMain.QryPendentes.Eof do
+  while not FDMMain.MemPen.Eof do
   begin
-    TUtils.ColocarEmAndamento(FDMMain, FDMMain.QryPendentes.FieldByName('Id').AsString);
-    Writeln(FDMMain.QryPendentes.FieldByName('PathRelatorio').AsString);
+    TUtils.ColocarEmAndamento(FDMMain, FDMMain.MemPen.FieldByName('Id').AsString);
+    pathrel := stringReplace(FDMMain.MemPen.FieldByName('PathRelatorio').AsString,'/','\',[rfIgnoreCase, rfReplaceAll]);
+    Writeln(pathrel);
 
     if CreateGUID(MyGuid) = 0 then
       outputFile := baseOutput + StringReplace(StringReplace(GUIDToString(MyGuid),'{','', [rfReplaceAll]),'}','', [rfReplaceAll]) + '.txt';
 
-    if FDMMain.QryPendentes.FieldByName('TipoProcessamento').AsInteger = 1 then
+    if FDMMain.MemPen.FieldByName('TipoProcessamento').AsInteger = 1 then
     begin
       processador := TProcessadorExtrator.Create(FDMMain, outputFile);
       try
@@ -131,9 +145,9 @@ begin
     end;
 
     if processou then
-      TUtils.RegistrarSucesso(FDMMain, FDMMain.QryPendentes.FieldByName('Id').AsString, outputFile);
+      TUtils.RegistrarSucesso(FDMMain, FDMMain.MemPen.FieldByName('Id').AsString, outputFile);
 
-    FDMMain.QryPendentes.Next;
+    FDMMain.MemPen.Next;
   end;
 
 end;
@@ -167,19 +181,21 @@ end;
 
 function TProcessadorExtrator.Processar: Boolean;
 var
-  template: String;
+  template, pathrel: String;
   multicoldManager: TMulticoldmanager;
 
 begin
     Result := false;
 
     try
-      multicoldManager := TMulticoldManager.Create(FDMMain.QryPendentes.FieldByName('CODUSUARIO').AsString,
-            FDMMain.QryPendentes.FieldByName('SENHA').AsString,
-            FDMMain.QryPendentes.FieldByName('PathRelatorio').AsString,
+      pathrel := stringReplace(FDMMain.MemPen.FieldByName('PathRelatorio').AsString,'/','\',[rfIgnoreCase, rfReplaceAll]);
+
+      multicoldManager := TMulticoldManager.Create(FDMMain.MemPen.FieldByName('CODUSUARIO').AsString,
+            FDMMain.MemPen.FieldByName('SENHA').AsString,
+            pathrel,
             false);
 
-      template := DescompactarTemplate(FDMMain.QryPendentes.FieldByName('ArquivoTemplateComp').AsString);
+      template := DescompactarTemplate(FDMMain.MemPen.FieldByName('ArquivoTemplateComp').AsString);
 
       try
         multicoldManager.ExecutarExtracaoDados(template, FOutputPath);
@@ -189,7 +205,7 @@ begin
       end;
 
     except on E: Exception do
-      TUtils.RegistrarErro(FDMMain, FDMMain.QryPendentes.FieldByName('Id').AsString, E.Message);
+      TUtils.RegistrarErro(FDMMain, FDMMain.MemPen.FieldByName('Id').AsString, E.Message);
     end;
 end;
 
@@ -201,9 +217,9 @@ var
   s: String;
 begin
   s := 'E';
-  ADMMain.CmdUpdate.CommandText := 'update ProcessadorExtracao set StatusProcessamento = '
-                                    + QuotedStr(s) + ' where id = ' + idProcessamento;
-  ADMMain.CmdUpdate.Execute;
+  ADMMain.Persistir('update ProcessadorExtracao set StatusProcessamento = '
+                                    + QuotedStr(s) + ' where id = ' + idProcessamento,nil);
+  //ADMMain.CmdUpdate.Execute;
 end;
 
 class procedure TUtils.RegistrarErro(ADMMain: TDMMain; idProcessamento,
@@ -212,10 +228,10 @@ var
   s: String;
 begin
   s := 'R';
-  ADMMain.CmdUpdate.CommandText := 'update ProcessadorExtracao set StatusProcessamento = '
+  ADMMain.Persistir('update ProcessadorExtracao set StatusProcessamento = '
                                     + QuotedStr(s) + ', MensagemDetalheErro = ' + QuotedStr(msgErro)
-                                    + ' where id = ' + idProcessamento;
-  ADMMain.CmdUpdate.Execute;
+                                    + ' where id = ' + idProcessamento,nil);
+  //ADMMain.CmdUpdate.Execute;
 end;
 
 class procedure TUtils.RegistrarSucesso(ADMMain: TDMMain; idProcessamento,
@@ -224,31 +240,54 @@ var
   s: String;
 begin
   s := 'S';
-  ADMMain.CmdUpdate.CommandText := 'update ProcessadorExtracao set StatusProcessamento = '
+  ADMMain.Persistir('update ProcessadorExtracao set StatusProcessamento = '
                                     + QuotedStr(s) + ', PathArquivoExportacao = ' + QuotedStr(outPutPath)
-                                    + ' where id = ' + idProcessamento;
-  ADMMain.CmdUpdate.Execute;
+                                    + ' where id = ' + idProcessamento,nil);
+  //ADMMain.CmdUpdate.Execute;
 end;
 
 { TProcessadorDescompactador }
 
 procedure TProcessadorDescompactador.ObterDescompactador(AId: Integer);
 begin
-  FDMMain.ADOQryDescomp.Close;
-  FDMMain.ADOQryDescomp.Parameters.ParamValues['Id'] :=  AId;
-  FDMMain.ADOQryDescomp.Open;
+  FDMMain.ImportarDados('select  '+
+	'Id,                           '+
+	'TipoDescompactacao,           '+
+	'RemoverBrancos,               '+
+	'Orig,                         '+
+	'IntervaloIni,                 '+
+	'IntervaloFin,                 '+
+	'IndexPaginaAtual,             '+
+	'ApenasLinhasPesquisa,         '+
+	'PesquisaMensagem              '+
+  'from ParametroDescompactador  '+
+  'where Id = ' + IntToStr(AId),nil,'D');
+  //FDMMain.ADOQryDescomp.Close;
+  //FDMMain.ADOQryDescomp.Parameters.ParamValues['Id'] :=  AId;
+  //FDMMain.ADOQryDescomp.Open;
 end;
 
 procedure TProcessadorDescompactador.ObterPesquisa(AIdParametroDescompactador: Integer);
 begin
-  FDMMain.ADOQryPesq.Close;
-  FDMMain.ADOQryPesq.Parameters.ParamValues['IdParametroDescompactador'] :=  AIdParametroDescompactador;
-  FDMMain.ADOQryPesq.Open;
+  FDMMain.ImportarDados(' select  ' +
+	'Id,                            ' +
+	'IdParametroDescompactador,     ' +
+	'IndexPesq,                     ' +
+	'Campo,                         ' +
+	'Operador,                      ' +
+	'Valor,                         ' +
+	'Conector                       ' +
+  'from ParametroPesquisa         ' +
+  'where IdParametroDescompactador = ' + IntToStr(AIdParametroDescompactador),nil,'PQ');
+
+  //FDMMain.ADOQryPesq.Close;
+  //FDMMain.ADOQryPesq.Parameters.ParamValues['IdParametroDescompactador'] :=  AIdParametroDescompactador;
+  //FDMMain.ADOQryPesq.Open;
 end;
 
 function TProcessadorDescompactador.Processar: Boolean;
 var
-  template: String;
+  template, pathrel: String;
   multicoldManager: TMulticoldmanager;
   outputFile: String;
   opcoes : TDescompactadorOptions;
@@ -259,29 +298,29 @@ var
 
 begin
     Result := false;
-    ObterDescompactador(FDMMain.QryPendentes.FieldByName('IdReferencia').AsInteger);
+    ObterDescompactador(FDMMain.MemPen.FieldByName('IdReferencia').AsInteger);
 
     opcoes := TDescompactadorOptions.Create;
     try
 
-      case FDMMain.ADOQryDescomp.FieldByName('TipoDescompactacao').AsInteger of
+      case FDMMain.MemDes.FieldByName('TipoDescompactacao').AsInteger of
         1:
         begin
           opcoes.TipoDescompactacao := tdPaginaAtual;
-          opcoes.IndexPaginaAtual := FDMMain.ADOQryDescomp.FieldByName('IndexPaginaAtual').AsInteger;
+          opcoes.IndexPaginaAtual := FDMMain.MemDes.FieldByName('IndexPaginaAtual').AsInteger;
         end;
         2:
         begin
           opcoes.TipoDescompactacao := tdPesquisa;
 
-          opcoes.ApenasLinhasPesquisa := FDMMain.ADOQryDescomp.FieldByName('ApenasLinhasPesquisa').AsBoolean;
+          opcoes.ApenasLinhasPesquisa := FDMMain.MemDes.FieldByName('ApenasLinhasPesquisa').AsBoolean;
         end;
         3:
         begin
           opcoes.TipoDescompactacao := tdIntervalo;
 
-          opcoes.IntervaloIni := FDMMain.ADOQryDescomp.FieldByName('IntervaloIni').AsInteger;
-          opcoes.IntervaloFin := FDMMain.ADOQryDescomp.FieldByName('IntervaloFin').AsInteger;
+          opcoes.IntervaloIni := FDMMain.MemDes.FieldByName('IntervaloIni').AsInteger;
+          opcoes.IntervaloFin := FDMMain.MemDes.FieldByName('IntervaloFin').AsInteger;
         end;
         4:
         begin
@@ -289,35 +328,36 @@ begin
         end;
       end;
 
-      opcoes.RemoverBrancos := FDMMain.ADOQryDescomp.FieldByName('RemoverBrancos').AsBoolean;
+      opcoes.RemoverBrancos := FDMMain.MemDes.FieldByName('RemoverBrancos').AsBoolean;
 
+      pathrel := stringReplace(FDMMain.MemPen.FieldByName('PathRelatorio').AsString,'/','\',[rfIgnoreCase, rfReplaceAll]);
 
       try
-        multicoldManager := TMulticoldManager.Create(FDMMain.QryPendentes.FieldByName('CODUSUARIO').AsString,
-              FDMMain.QryPendentes.FieldByName('SENHA').AsString,
-              FDMMain.QryPendentes.FieldByName('PathRelatorio').AsString,
+        multicoldManager := TMulticoldManager.Create(FDMMain.MemPen.FieldByName('CODUSUARIO').AsString,
+              FDMMain.MemPen.FieldByName('SENHA').AsString,
+              pathrel,
               false,
-              FDMMain.ADOQryDescomp.FieldByName('Orig').AsBoolean);
+              FDMMain.MemDes.FieldByName('Orig').AsBoolean);
 
 
         if opcoes.TipoDescompactacao = tdPesquisa then
         begin
           // Rodar QueryFacil //
-          ObterPesquisa(FDMMain.QryPendentes.FieldByName('idReferencia').AsInteger);
+          ObterPesquisa(FDMMain.MemPen.FieldByName('idReferencia').AsInteger);
 
           len := 0;
-          while not FDMMain.ADOQryPesq.Eof do
+          while not FDMMain.MemPesq.Eof do
           begin
             Inc(len);
             SetLength(query, len);
 
-            query[len-1].Index := FDMMain.ADOQryPesq.FieldByName('IndexPesq').AsString;
-            query[len-1].Campo := FDMMain.ADOQryPesq.FieldByName('CAMPO').AsString;
-            query[len-1].Operador := FDMMain.ADOQryPesq.FieldByName('Operador').AsInteger;
-            query[len-1].Valor := FDMMain.ADOQryPesq.FieldByName('Valor').AsString;
-            query[len-1].Conector := FDMMain.ADOQryPesq.FieldByName('Conector').AsInteger;
+            query[len-1].Index := FDMMain.MemPesq.FieldByName('IndexPesq').AsString;
+            query[len-1].Campo := FDMMain.MemPesq.FieldByName('CAMPO').AsString;
+            query[len-1].Operador := FDMMain.MemPesq.FieldByName('Operador').AsInteger;
+            query[len-1].Valor := FDMMain.MemPesq.FieldByName('Valor').AsString;
+            query[len-1].Conector := FDMMain.MemPesq.FieldByName('Conector').AsInteger;
 
-            FDMMain.ADOQryPesq.Next;
+            FDMMain.MemPesq.Next;
           end;
 
           if not multicoldManager.ExecutarQueryFacil(query, '(A)', resultadoQuerFacil) then
@@ -337,7 +377,7 @@ begin
         Result := true;
 
       except on E: Exception do
-        TUtils.RegistrarErro(FDMMain, FDMMain.QryPendentes.FieldByName('Id').AsString, E.Message);
+        TUtils.RegistrarErro(FDMMain, FDMMain.MemPen.FieldByName('Id').AsString, E.Message);
       end;
     finally
       FreeAndNil(opcoes);

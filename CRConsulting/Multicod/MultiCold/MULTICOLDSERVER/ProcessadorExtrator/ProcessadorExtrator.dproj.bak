@@ -5,7 +5,7 @@
         <FrameworkType>FMX</FrameworkType>
         <MainSource>ProcessadorExtrator.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -186,8 +186,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <DCC_ExeOutput>c:\workspace\CrConsulting\Multicod\Output\</DCC_ExeOutput>
-        <DCC_DcpOutput>c:\workspace\CrConsulting\Multicod\Output\dcp\</DCC_DcpOutput>
+        <DCC_ExeOutput>D:\workspace\CrConsulting\Multicod\Output\</DCC_ExeOutput>
+        <DCC_DcpOutput>D:\workspace\CrConsulting\Multicod\Output\dcp\</DCC_DcpOutput>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>(None)</Manifest_File>
     </PropertyGroup>
@@ -244,12 +244,6 @@
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="D:\workspace\CrConsulting\Multicod\Output\ProcessadorExtrator.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>ProcessadorExtrator.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="c:\workspace\CrConsulting\Multicod\Output\ProcessadorExtrator.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ProcessadorExtrator.exe</RemoteName>
                         <Overwrite>true</Overwrite>
