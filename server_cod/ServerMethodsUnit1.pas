@@ -12,9 +12,17 @@ uses System.SysUtils, System.Classes, System.Json,
   FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys,
   FireDAC.VCLUI.Wait, FireDAC.Phys.MSSQLDef, FireDAC.Phys.ODBCBase,
   FireDAC.Phys.MSSQL, FireDAC.Stan.StorageBin, FireDAC.Comp.UI, System.Zlib,
-  System.Zip, System.Variants, SutypGer, Subrug, SuTypMultiCold;
+  System.Zip, System.Variants, SutypGer, Subrug, SuTypMultiCold, Pilha,
+  Bde.DBTables, dm;
 
 type
+  TPesquisa = Record
+             Campo : Char;
+             Pagina : Integer;
+             Relativo : Integer;
+             Linha : Integer;
+  end;
+
   TServerMethods1 = class(TDSServerModule)
     FDStanStorageJSONLink1: TFDStanStorageJSONLink;
     FDCon: TFDConnection;
@@ -24,11 +32,16 @@ type
     FDGUIxWaitCursor1: TFDGUIxWaitCursor;
     FDConE: TFDConnection;
     FDQryE: TFDQuery;
+    Query1: TQuery;
+    Query2: TQuery;
+    Database1: TDatabase;
+    Session1: TSession;
     procedure DSServerModuleDestroy(Sender: TObject);
     procedure DSServerModuleCreate(Sender: TObject);
   private
     { Private declarations }
     Fmemo : TStringList;
+    dataModule : TDataModule1;
     procedure ConectarBanco;
     procedure DesconectarBanco;
     procedure ConectarBanco_eve;
@@ -54,7 +67,7 @@ type
     function AbreRelatorio(Usuario: WideString; Senha: WideString;
                            ConnectionID: Integer; FullPath: WideString;
                            QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte;
-                           Rel133: Byte; CmprBrncs: Byte): String;
+                           Rel133: Byte; CmprBrncs: Byte; tipo : Integer): String;
     Procedure InsereEventosVisu(Arquivo, Diretorio, CodRel, CodUsuario, NomeGrupoUsuario : String;
                                 Grupo, SubGrupo, CodMens : Integer);
     procedure fazerumteste;
@@ -65,7 +78,7 @@ type
     function GetRelatorio(Usuario, Senha: WideString;
                           ConnectionID: Integer; ListaCodRel: WideString;
                           FullPaths: WideString; tipo : Integer): String;
-
+    function ExecutaNovaQueryFacil ( gridXML, fileName, usuario : WideString; mensagem, xmlData : WideString): String;
   end;
 
 implementation
@@ -113,7 +126,7 @@ End;
 
 function TServerMethods1.AbreRelatorio(Usuario, Senha: WideString;
   ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer;
-  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte): String;
+  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte; tipo : Integer): String;
 Var
   Arq : File;
   I : Integer;
@@ -211,11 +224,683 @@ try
   result := result + '|' + IntToStr(Rel64);
   result := result + '|' + IntToStr(Rel133);
   result := result + '|' + IntToStr(CmprBrncs);
+  if tipo = 2 then
+    result := StrCampos;
 except
   on e:exception do
     logaLocal('TMultiColdDataServer.AbreRelatorio '+e.Message);
 end;
 End;
+
+function TServerMethods1.ExecutaNovaQueryFacil( gridXML, fileName, usuario : WideString; mensagem, xmlData : WideString): String;
+var
+  ArrRegIndice : Array[0..199] Of TgRegDFN; // Tirei da raiz!!!!
+  RegDestinoII : TgRegDFN;  // Este tb
+//  dtLog : TDateTime; // Tirei da raiz!!!!
+  ArqCNFG : FileOfTgRegDFN; // Este tb
+  tam,
+  i,
+  j,
+  pgAux,
+  MaxLin : integer;
+  Caspa,
+  ArgPesq,
+  t,
+  oprnd1,
+  oprnd2,
+  oprdr,
+  Tt : AnsiString;
+  h : TFileStream;
+  reg1,
+  reg2 : TPesquisa;
+  ehEOF1,
+  ehEOF2,
+  primeiraVez : boolean;
+  objF1,
+  objF2 : TFileStream;
+  //Query1,
+  //Query2 : TQuery;
+//  rSet : TClientDataSet;
+  rSet : Array[0..4,1..30] of string;
+  //gridQueryFacil : Array of TPesquisa;
+  pilhaExecucao : TPilha;
+  f : TSearchRec;
+  dirSecao : AnsiString;
+  SessionM : TSession;
+
+  function convOperador(operador:string):string;
+  begin
+  result := '';
+  if operador = '1' then
+    result := '='
+  else if operador = '2' then
+    result := '>'
+  else if operador = '3' then
+    result := '<'
+  else if operador = '4' then
+    result := '>='
+  else if operador = '5' then
+    result := '<='
+  else if operador = '6' then
+    result := '<>'
+  else if operador = '7' then
+    result := 'IN'
+  else if operador = '8' then
+    result := 'IS'
+  else if operador = '9' then
+    result := 'BETWEEN'
+  else if operador = '10' then
+    result := 'LIKE'
+  else if operador = '11' then
+    result := 'NOT ='
+  else if operador = '12' then
+    result := 'NOT >'
+  else if operador = '13' then
+    result := 'NOT <'
+  else if operador = '14' then
+    result := 'NOT >='
+  else if operador = '15' then
+    result := 'NOT <='
+  else if operador = '16' then
+    result := 'NOT IN'
+  else if operador = '17' then
+    result := 'NOT BETWEEN'
+  else if operador = '18' then
+    result := 'IS NOT'
+  else
+    result := '';
+  end;
+
+  procedure leRegistroFileStreamOuQuery(var Query : TQuery; var Stream : TFileStream; var reg : TPesquisa; var EOF : boolean; campo : String);
+  begin
+  try
+    If Stream <> nil Then
+      Begin
+      if Stream.Position < Stream.Size then
+        Stream.Read(reg,sizeOf(reg))
+      else if Stream.Size = 0 then
+        reg.Pagina := MAXINT;
+      eof := Stream.Position = Stream.Size;
+      End
+    Else
+      Begin
+      eof := Query.Eof;
+      if not eof then
+        begin
+        reg.Campo := campo[1];
+        reg.Pagina := Query.Fields[1].AsInteger;
+        reg.Relativo := Query.Fields[2].AsInteger;
+        reg.Linha := Query.Fields[3].AsInteger;
+        Query.Next;
+        end
+      else
+        reg.Pagina := MAXINT;
+        End;
+  except
+    on e:exception do
+      begin
+      LogaLocal('leRegistroFileStreamOuQuery:'+e.Message);
+      end;
+    end;
+  end;
+
+  function tamanhoDados(var Query : TQuery; var Stream : TFileStream): Int64;
+  begin
+  result := 0;
+  try
+    if Stream = nil then
+      result := Query.recordCount
+    else
+      result := Stream.Size div sizeOf(reg1);
+  except
+    on e:exception do
+      LogaLocal('tamanhoDados:'+e.Message);
+    end;
+  end;
+
+  procedure abrirDados(var Query : TQuery; var Stream : TFileStream; objeto : variant);
+  var
+    l : word;
+    K : Integer;
+    fSettings : tFormatSettings;
+
+  begin
+//  vitX.LogaLocal('Abrir Dados');
+  try
+    Stream := nil;
+    if pos(objeto,'ABCDEFGHIJKLMNOPQRSTUVQWXYZ') > 0 then
+      begin
+//      rSet.First;
+//      while not rSet.Eof do //for k := 1 to QueryDlg.GridPesq.RowCount - 1 do
+//      vitX.LogaLocal('MaxLin:'+inttostr(maxlin));
+      for k := 1 to MaxLin do
+        begin
+//        if rSet.Fields[0].AsString = objeto then // if QueryDlg.GridPesq.Cells[0,k] = objeto then
+//        vitX.LogaLocal(rSet[0, k]);
+//        vitX.LogaLocal(objeto);
+        if rSet[0, k] = objeto then
+          begin
+          try
+            Query.Close;
+          except
+            end; // try
+          Query.DatabaseName := extractFilePath(FileName);
+          Query.SQL.Clear;
+          Query.SQL.Add(' SELECT * FROM "'+changeFileExt(extractFileName(FileName),'')+
+//                        rSet.Fields[1].AsString+'" '+rSet.Fields[1].AsString); // Montar SELECT
+                        rSet[1, k]+'" '+rSet[1, k]); // Montar SELECT
+          for l := 0 to high(ArrRegIndice) do
+//            if (ArrRegIndice[l].NOMECAMPO = rSet.Fields[1].AsString) then
+            if (ArrRegIndice[l].NOMECAMPO = rSet[1, k]) then
+              begin
+//              argPesq := rSet.Fields[3].AsString;
+              argPesq := rSet[3, k];
+              if (upperCase(ArrRegIndice[l].TIPOCAMPO) = 'C') or
+                 (upperCase(ArrRegIndice[l].TIPOCAMPO) = 'DT') then
+                Caspa := ''''
+              else
+                Caspa := '';
+{              if (upperCase(convOperador(rSet.Fields[2].AsString)) = 'IN') or
+                 (upperCase(convOperador(rSet.Fields[2].AsString)) = 'NOT IN') or
+                 (upperCase(convOperador(rSet.Fields[2].AsString)) = 'BETWEEN') or
+                 (upperCase(convOperador(rSet.Fields[2].AsString)) = 'NOT BETWEEN') then }
+              if (upperCase(convOperador(rSet[2, k])) = 'IN') or
+                 (upperCase(convOperador(rSet[2, k])) = 'NOT IN') or
+                 (upperCase(convOperador(rSet[2, k])) = 'BETWEEN') or
+                 (upperCase(convOperador(rSet[2, k])) = 'NOT BETWEEN') then
+                Caspa := '';
+              if (upperCase(ArrRegIndice[l].TIPOCAMPO) = 'DT') then
+                begin
+                try
+                  fSettings.ShortDateFormat := 'DD/MM/YYYY';
+                  ArgPesq := FormatDateTime('MM/DD/YYYY',StrToDate(ArgPesq));
+                except
+                  mensagem := 'Formato da data inválida.';
+                  //result := false;
+                  exit;
+                  end;
+                end;
+//              Query.SQL.Add(' WHERE '+rSet.Fields[1].AsString + '.VALOR ' + convOperador(rSet.Fields[2].AsString) + ' ' + Caspa + argPesq + Caspa + ' ');
+              Query.SQL.Add(' WHERE '+rSet[1, k] + '.VALOR ' + convOperador(rSet[2, k]) + ' ' + Caspa + argPesq + Caspa + ' ');
+              Break;
+              end;
+          Query.SQL.Add(' ORDER BY PAGINA, RELATIVO ');
+          //vitX.LogaLocal('SQL '+Query.SQL.Text);
+          try
+            Query.Open;
+          except
+            on e:exception do
+              begin
+              LogaLocal('abrirDados:'+e.Message);
+              LogaLocal('abrirDados - SQL:'+Query.SQL.Text);
+              end;
+          end;
+          Break; // Já fez? cai fora!
+          end;
+//        rSet.Next;
+        end;
+      end
+    else
+      //Stream := TFileStream.Create(ColetaDiretorioTemporario+objeto+'.Multicold',fmOpenRead);
+      Stream := TFileStream.Create(dirSecao+objeto+'.Multicold',fmOpenRead);
+  except
+    on e:exception do
+      begin
+      LogaLocal('abrirDados:'+e.Message);
+      if Query <> nil then
+        LogaLocal('abrirDados - SQL:'+Query.SQL.Text);
+      end;
+    end;
+  end;
+
+  procedure fechaArquivoTemp(var Query : TQuery; var Stream : TFileStream; operando : variant);
+  begin
+  try
+    if (Stream <> nil) then
+      begin
+      Stream.Free;
+      //deleteFile(ColetaDiretorioTemporario+operando+'.Multicold');
+      deleteFile(dirSecao+operando+'.Multicold');
+      end
+    else
+      Query.Close;
+  except
+    on e:exception do
+      LogaLocal('fechaArquivoTemp:'+e.Message);
+    end;
+  end;
+
+  procedure descarregaSolo();
+  var
+    s : String;
+  begin
+  s := '<?xml version="1.0" ?><DATAPACKET Version="2.0"><METADATA><FIELDS>'+
+       '<FIELD attrname="CAMPO" fieldtype="string" WIDTH="1" />'+
+       '<FIELD attrname="PAGINA" fieldtype="string" WIDTH="10" />'+
+       '<FIELD attrname="RELATIVO" fieldtype="string" WIDTH="10" />'+
+       '<FIELD attrname="LINHA" fieldtype="string" WIDTH="10" />'+
+       '</FIELDS><PARAMS /></METADATA><ROWDATA>';
+
+  abrirDados(Query1, objF1, oprnd1);
+  leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+
+  if reg1.Pagina = MAXINT then // EOF mesmo
+    s := s + '<ROW CAMPO="'+intToStr(MAXINT)+'" '+
+         'PAGINA="'+intToStr(MAXINT)+'" '+
+         'RELATIVO="'+intToStr(MAXINT)+'" '+
+         'LINHA="'+intToStr(MAXINT)+'" />'
+  else
+    s := s + '<ROW CAMPO="'+reg1.Campo+'" '+
+         'PAGINA="'+intToStr(reg1.Pagina)+'" '+
+         'RELATIVO="'+intToStr(reg1.Relativo)+'" '+
+         'LINHA="'+intToStr(reg1.Linha)+'" />';
+
+  while not ehEOF1 do
+    begin
+    leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+    if reg1.Pagina <> MAXINT then
+      s := s + '<ROW CAMPO="'+reg1.Campo+'" '+
+           'PAGINA="'+intToStr(reg1.Pagina)+'" '+
+           'RELATIVO="'+intToStr(reg1.Relativo)+'" '+
+           'LINHA="'+intToStr(reg1.Linha)+'" />';
+    end;
+
+  s := s + '</ROWDATA><METADATA><FIELDS>' +
+       '<FIELD attrname="CAMPO" fieldtype="string" WIDTH="1" />'+
+       '<FIELD attrname="PAGINA" fieldtype="string" WIDTH="10" />'+
+       '<FIELD attrname="RELATIVO" fieldtype="string" WIDTH="10" />'+
+       '<FIELD attrname="LINHA" fieldtype="string" WIDTH="10" />'+
+       '</FIELDS><PARAMS /></METADATA><ROWDATA /></DATAPACKET>';
+
+  xmlData := compressStringReturnHex(s);
+  LogaLocal('Query: '+xmlData);
+//  xmlData := s;
+
+  fechaArquivoTemp(Query1,objF1,oprnd1);
+  end;
+
+  procedure descarregaOR();
+  var
+    intArqNum : integer;
+  begin
+  abrirDados(Query1, objF1, oprnd1);
+  abrirDados(Query2, objF2, oprnd2);
+  intArqNum := 0;
+  while true do
+    begin
+    //t := ColetaDiretorioTemporario+intToStr(intArqNum)+'.Multicold';
+    t := dirsecao+intToStr(intArqNum)+'.Multicold';
+    if not fileExists(t) then
+      break;
+    inc(intArqNum);
+    end;
+  h := TFileStream.Create(t,fmCreate);
+  leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+  leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+  while (not ehEOF1) and (not ehEOF2) do
+    begin
+    if reg1.Pagina > reg2.Pagina then
+      begin
+      h.write(reg2,sizeOf(reg2));
+      leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+      end
+    else if reg1.Pagina < reg2.Pagina then
+      begin
+      h.write(reg1,sizeOf(reg1));
+      leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+      end
+    else
+      begin
+      h.write(reg1,sizeOf(reg1));
+      h.write(reg2,sizeOf(reg2));
+      leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+      leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+      end
+    end;
+  while (not ehEOF1) do
+    begin
+    if reg1.Pagina > reg2.Pagina then
+      begin
+      h.write(reg2,sizeOf(reg2));
+      reg2.Pagina := MAXINT;
+      end
+    else if reg1.Pagina < reg2.Pagina then
+      begin
+      h.write(reg1,sizeOf(reg1));
+      leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+      end
+    else
+      begin
+      h.write(reg1,sizeOf(reg1));
+      h.write(reg2,sizeOf(reg2));
+      leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+      reg2.Pagina := MAXINT;
+      end
+    end;
+  while (not ehEOF2) do
+    begin
+    if reg1.Pagina > reg2.Pagina then
+      begin
+      h.write(reg2,sizeOf(reg2));
+      leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+      end
+    else if reg1.Pagina < reg2.Pagina then
+      begin
+      h.write(reg1,sizeOf(reg1));
+      reg1.Pagina := MAXINT;
+      end
+    else
+      begin
+      h.write(reg1,sizeOf(reg1));
+      h.write(reg2,sizeOf(reg2));
+      leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+      reg1.Pagina := MAXINT;
+      end
+    end;
+  if reg1.Pagina > reg2.Pagina then
+    begin
+    if reg2.Pagina <> MAXINT then
+      h.write(reg2,sizeOf(reg2));
+    if reg1.Pagina <> MAXINT then
+      h.write(reg1,sizeOf(reg1));
+    end
+  else
+    begin
+    if reg1.Pagina <> MAXINT then
+      h.write(reg1,sizeOf(reg1));
+    if reg2.Pagina <> MAXINT then
+      h.write(reg2,sizeOf(reg2));
+    end;
+  h.Free;
+  fechaArquivoTemp(Query1,objF1,oprnd1);
+  fechaArquivoTemp(Query2,objF2,oprnd2);
+  pilhaExecucao.push(intArqNum);
+  end;
+
+  procedure descarregaAND;
+  var
+    intArqNum : integer;
+  begin
+  abrirDados(Query1, objF1, oprnd1);
+  abrirDados(Query2, objF2, oprnd2);
+  intArqNum := 0;
+  while true do
+    begin
+    //t := ColetaDiretorioTemporario+intToStr(intArqNum)+'.Multicold';
+    t := dirSecao+intToStr(intArqNum)+'.Multicold';
+    if not fileExists(t) then
+      break;
+    inc(intArqNum);
+    end;
+  h := TFileStream.Create(t,fmCreate);
+  leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+  leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+  if (ehEOF1) or (ehEOF2) then
+    begin
+    h.Free;
+    fechaArquivoTemp(Query1,objF1,oprnd1);
+    fechaArquivoTemp(Query2,objF2,oprnd2);
+    pilhaExecucao.push(j);
+    exit;
+    end;
+  while (not ehEOF1) and (not ehEOF2) do
+    begin
+    if reg1.Pagina > reg2.Pagina then
+      begin
+      leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+      end
+    else if reg1.Pagina < reg2.Pagina then
+      begin
+      leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+      end
+    else
+      begin
+      pgAux := reg1.Pagina;
+      while (reg1.Pagina = reg2.Pagina) and (not ehEOF1) do
+        begin
+        h.write(reg1,sizeOf(reg1));
+        leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+        end;
+      if (pgAux = reg1.Pagina) then
+        h.write(reg1,sizeOf(reg1));
+      while (pgAux = reg2.Pagina) and (not ehEOF2) do
+        begin
+        h.write(reg2,sizeOf(reg2));
+        leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+        end;
+      if (pgAux = reg2.Pagina) then
+        h.write(reg2,sizeOf(reg2));
+      end
+    end;
+  primeiraVez := true;
+  while (not ehEOF1) do
+    begin
+    if reg1.Pagina > reg2.Pagina then
+      begin
+      reg2.Pagina := MAXINT;
+      end
+    else if reg1.Pagina < reg2.Pagina then
+      begin
+      leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+      end
+    else
+      begin
+      h.write(reg1,sizeOf(reg1));
+      if primeiraVez then
+        begin
+        h.write(reg2,sizeOf(reg2));
+        primeiraVez := false;
+        end;
+      leRegistroFileStreamOuQuery(Query1,objF1,reg1,ehEOF1,oprnd1);
+      end
+    end;
+  primeiraVez := true;
+  while (not ehEOF2) do
+    begin
+    if reg1.Pagina > reg2.Pagina then
+      begin
+      leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+      end
+    else if reg1.Pagina < reg2.Pagina then
+      begin
+      reg1.Pagina := MAXINT;
+      end
+    else
+      begin
+      if primeiraVez then
+        begin
+        h.write(reg1,sizeOf(reg1));
+        primeiraVez := false;
+        end;
+      h.write(reg2,sizeOf(reg2));
+      leRegistroFileStreamOuQuery(Query2,objF2,reg2,ehEOF2,oprnd2);
+      end
+    end;
+  if (reg1.Pagina = reg2.Pagina) and (reg1.Pagina <> MAXINT) then
+    begin
+    h.write(reg2,sizeOf(reg2));
+    h.write(reg1,sizeOf(reg1));
+    end;
+  h.Free;
+  fechaArquivoTemp(Query1,objF1,oprnd1);
+  fechaArquivoTemp(Query2,objF2,oprnd2);
+  pilhaExecucao.push(intArqNum);
+  end;
+
+  procedure descarregaPilha(strPilha:string);
+  var
+    intPilha : integer;
+  begin
+  // Processa querys
+  pilhaExecucao.clear;
+  for intPilha := length(strPilha) downto 1 do
+    begin
+    if (strPilha[intPilha] = '(') or (strPilha[intPilha] = ')') then
+      continue;
+    if ehOperador(strPilha[intPilha]) then
+      pilhaExecucao.push(strPilha[intPilha])
+    else //if not ehOperador(strPilha[intPilha]) then
+      begin
+      if ehOperador(pilhaExecucao.peek) then
+        pilhaExecucao.push(strPilha[intPilha])
+      else
+        begin
+        pilhaExecucao.push(strPilha[intPilha]);
+        while true do
+          begin
+          oprnd1 := pilhaExecucao.pop;
+          oprnd2 := pilhaExecucao.pop;
+          oprdr := pilhaExecucao.pop;
+          if (not ehOperador(oprnd1)) and (not ehOperador(oprnd2)) and (ehOperador(oprdr)) then
+            begin
+            if oprdr = '*' then // AND
+              descarregaAnd
+            else if oprdr = '-' then // OR
+              descarregaOr
+            end
+          else
+            begin
+            pilhaExecucao.push(oprdr);
+            pilhaExecucao.push(oprnd2);
+            pilhaExecucao.push(oprnd1);
+            break;
+            end;
+          end;
+        end
+      end;
+    end;
+  strPilha := pilhaExecucao.pop; // Pega o último
+  descarregaSolo;
+  end;
+
+begin
+//vitX.LogaLocal('Entrou');
+
+fileMode := fmShareDenyNone;
+//dtLog := now;
+result := '0';
+
+dirSecao := ColetaDiretorioTemporario+'Multicold_'+formatDateTime('yyyymmddhhnnsszzzz',now)+'\';
+forceDirectories(dirSecao);
+
+
+//if dataModule = nil then
+//  dataModule := TDataModule1.Create(nil);
+
+//dataModule.Session1.PrivateDir := 'c:\bdeShared';
+//dataModule.Session1.NetFileDir := 'c:\bdeShared';
+//dataModule.Session1.Active := true;
+
+SessionM := TSession.Create(nil);
+SessionM.AutoSessionName := True;
+//SessionM.PrivateDir := dirSecao;
+SessionM.NetFileDir := dirSecao;
+//SessionM.SessionName := 'SESBANCO';
+Query1.Close;
+Query2.Close;
+
+SessionM.Active := True;
+
+Query1.SessionName := SessionM.SessionName;
+Query2.SessionName := SessionM.SessionName;
+
+If FileExists(ChangeFileExt(fileName,'.IAPX')) Then // Novo formato, candidato a segurança
+  Begin
+  AssignFile(ArqCNFG,ExtractFilePath(fileName)+SeArquivoSemExt(fileName)+'Dfn.Dfn');
+  Reset(ArqCNFG);
+  Read(ArqCNFG,RegDestinoII); // Lê o primeiro Destino, mas não checa a segurança por ele
+  i := 0;
+  FillChar(ArrRegIndice,SizeOf(ArrRegIndice),0);
+  While Not Eof(ArqCNFG) Do
+    Begin
+    Read(ArqCNFG,RegDestinoII);
+    Case RegDestinoII.TipoReg Of
+      2 : Begin
+          ArrRegIndice[i] := RegDestinoII;
+          Inc(i);
+          End;
+      End; // Case
+    End;
+  closeFile(ArqCNFG);
+  end;
+
+//vitX.LogaLocal('Vai entrar na montagem do array');
+
+try
+  //Query1 := TQuery.Create(nil);
+  //Query2 := TQuery.Create(nil);
+  pilhaExecucao := TPilha.create(nil);
+//  rSet := TClientDataSet.Create(nil);
+  try
+
+//    vitX.LogaLocal('Vai atribuir gridXML');
+//    vitX.LogaLocal(gridXML);
+//    rSet.XMLData := gridXML;
+
+  MaxLin := 0;
+  Tt := gridXML;
+//  vitX.LogaLocal(Tt);
+
+  While length(Tt) <> 0 Do
+    begin
+    Inc(MaxLin);
+    tam := StrToInt(Copy(Tt,1,3));
+    rSet[0, MaxLin] := Copy(Tt, 4, tam);
+    Delete(Tt, 1, tam+3);
+    tam := StrToInt(Copy(Tt,1,3));
+    rSet[1, MaxLin] := Copy(Tt, 4, tam);
+    Delete(Tt, 1, tam+3);
+    tam := StrToInt(Copy(Tt,1,3));
+    rSet[2, MaxLin] := Copy(Tt, 4, tam);
+    Delete(Tt, 1, tam+3);
+    tam := StrToInt(Copy(Tt,1,3));
+    rSet[3, MaxLin] := Copy(Tt, 4, tam);
+    Delete(Tt, 1, tam+3);
+    tam := StrToInt(Copy(Tt,1,3));
+    rSet[4, MaxLin] := Copy(Tt, 4, tam);
+    Delete(Tt, 1, tam+3);
+    end;
+//  vitX.LogaLocal('Array Pronto');
+
+//    vitX.LogaLocal('Vai abrir ClientDataSet');
+//    rSet.Open;
+  except
+    on e:exception do
+      begin
+      LogaLocal('Erro na execução da query fácil remota: '+e.Message);
+      LogaLocal(gridXML);
+      exit;
+      end;
+  end;
+
+//  if dataModule = nil then
+//    dataModule := TDataModule1.Create(nil);
+//  vitX.LogaLocal('Processar pilha: '+mensagem);
+  descarregaPilha(mensagem);    // mensagem vem com a posfixa do grid da query fácil
+//  vitX.LogaLocal('Processou pilha: '+xmlData);
+  result := '1' + '|' + xmlData;
+finally
+
+  SessionM.Active := false;
+  SessionM.DropConnections;
+  FreeAndNil(SessionM);
+  RemoveDir(dirSecao);
+
+  if findFirst(dirSecao+'*.*',faAnyFile,f) = 0 then
+    repeat
+      if (f.Name <> '.') and (f.Name <> '.') then
+        deleteFile(dirSecao+f.Name);
+    until findNext(f) <> 0;
+  findClose(f);
+
+  removeDir(dirSecao);
+  //dataModule.Query1.Free;
+  //Query2.Free;
+  //rSet.Free;
+  pilhaExecucao.Free;
+end;
+//LogaTempoExecucao('ExecutaNovaQueryFacil',dtLog);
+end;
 
 Procedure TServerMethods1.LogaLocal(Const Mens : String);
 Var
@@ -1035,7 +1720,7 @@ begin
     try
       ConectarBanco;
       FdQry.SQL.Text := SQL;
-      FdQry.SQL.SaveToFile('c:\rom\sql.sql');
+      //FdQry.SQL.SaveToFile('c:\rom\sql.sql');
       //if not Assigned(StrParam) then
       //  FdQry.Params := StrParam;
       FdQry.ExecSQL;

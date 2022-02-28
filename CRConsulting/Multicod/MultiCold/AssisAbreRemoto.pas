@@ -325,7 +325,8 @@ Else
                                             StrCampos,
                                             Rel64,
                                             Rel133,
-                                            CmprBrncs);
+                                            CmprBrncs,
+                                            1);
           Retorno := TStringList.Create;
           Retorno.Delimiter := '|';
           Retorno.DelimitedText := RetValStr;
@@ -338,6 +339,18 @@ Else
             Rel133     := StrToInt(Retorno.Strings[4]);
             CmprBrncs  := StrToInt(Retorno.Strings[5]);
           end;
+
+          RetValStr := formGeral.AbreRelatorio(LogInRemotoForm.UsuEdit.Text,
+                                            LogInRemotoForm.PassEdit.Text,
+                                            ConnectionID,
+                                            Copy(FullPaths[I], 21,Length(FullPaths[I])-20),
+                                            QtdPaginas,
+                                            StrCampos,
+                                            Rel64,
+                                            Rel133,
+                                            CmprBrncs,
+                                            2);
+          StrCampos  := RetValStr;
 
         Finally
           Screen.Cursor := crDefault;

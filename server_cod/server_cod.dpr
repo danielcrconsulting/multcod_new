@@ -18,7 +18,8 @@ uses
   SuTypGer in '..\CRConsulting\Multicod\Subrug\SuTypGer.pas',
   Subrug in '..\CRConsulting\Multicod\Subrug\Subrug.pas',
   SuTypMultiCold in '..\CRConsulting\Multicod\Subrug\SuTypMultiCold.pas',
-  Pilha in '..\CRConsulting\Multicod\CR CONSULTING\Pilha.pas';
+  Pilha in '..\CRConsulting\Multicod\CR CONSULTING\Pilha.pas',
+  dm in '..\CRConsulting\Multicod\MultiCold\MULTICOLDSERVER\SOAP\dm.pas' {DataModule1: TDataModule};
 
 {$R *.res}
 
@@ -28,5 +29,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);
   Application.CreateForm(TClientModule1, ClientModule1);
+  Application.CreateForm(TDataModule1, DataModule1);
   Application.Run;
 end.

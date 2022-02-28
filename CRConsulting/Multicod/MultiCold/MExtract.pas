@@ -304,8 +304,8 @@ begin
         arquivo.add(Trim(StringGrid4.Cells[J,I]));
       End;
 
-      arqComp := Compactar(arquivo.Text);
-
+      //arqComp := Compactar(arquivo.Text);
+      arqComp := arquivo.Text;
       SaveToDatabase;
 
   finally

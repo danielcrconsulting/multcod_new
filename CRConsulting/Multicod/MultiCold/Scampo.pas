@@ -24,7 +24,7 @@ Type
   TFooClass = Class(TControl);  {needed to get at protected font property }
 
 Var
-  SelCampo: TSelCampo;
+   SelCampo: TSelCampo;
   CampoSel : Byte;
 
 Implementation

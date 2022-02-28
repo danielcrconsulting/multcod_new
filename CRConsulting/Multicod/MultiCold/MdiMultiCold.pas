@@ -1881,6 +1881,8 @@ var
   objF2 : TFileStream;
   strXML,
   s : wideString;
+  strRetorno : String;
+  RetornoLst : TStringList;
 
   Function RepetiuCampo(CampoAtu : Integer) : Boolean;
   Var
@@ -2432,12 +2434,29 @@ Begin
           //changeFileExt(extractFileName(TEditForm(ActiveMdiChild).FileName),'')+
           //                      QueryDlg.GridPesq.Cells[1,k]+'" '+QueryDlg.GridPesq.Cells[1,k]);
 
+          {
           if not (formGeral.HTTPRIO1 as IMulticoldServer).ExecutaNovaQueryFacil(strXMLGrid, TEditForm(ActiveMdiChild).FileName, GetCurrentUserName, s, strXML) then
             begin
               AvisoP.Close;
               messageDlg('Relatório remoto temporariamente sem suporte a query fácil. Utilize a função localizar.',mtInformation, [mbOk],0);
               exit;
             end;
+          }
+          strRetorno := formGeral.ExecutaNovaQueryFacil(strXMLGrid, TEditForm(ActiveMdiChild).FileName, GetCurrentUserName, s, strXML);
+          RetornoLst := TStringList.Create;
+          RetornoLst.Delimiter := '|';
+          RetornoLst.DelimitedText := strRetorno;
+          if RetornoLst.Strings[0] = '1' then
+          begin
+            strXML  := RetornoLst.Strings[1];
+          end
+          else
+            begin
+              AvisoP.Close;
+              messageDlg('Relatório remoto temporariamente sem suporte a query fácil. Utilize a função localizar.',mtInformation, [mbOk],0);
+              exit;
+            end;
+
 
           TEditForm(ActiveMdiChild).ClientDataSet1.Close;
           TEditForm(ActiveMdiChild).ClientDataSet1.XMLData := deCompressHexReturnString(strXML);

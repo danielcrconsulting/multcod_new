@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 10/02/2022 14:24:56
+// 22/02/2022 19:16:44
 //
 
 unit ClientClassesUnit2;
@@ -27,6 +27,7 @@ type
     FGetPaginaCommand: TDSRestCommand;
     FLogInCommand: TDSRestCommand;
     FGetRelatorioCommand: TDSRestCommand;
+    FExecutaNovaQueryFacilCommand: TDSRestCommand;
   public
     constructor Create(ARestConnection: TDSRestConnection); overload;
     constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
@@ -40,12 +41,13 @@ type
     procedure PersistirBanco(SQL: string);
     function BaixarArquivo(arq: string; const ARequestFilter: string = ''): TJSONArray;
     function BaixarArquivo_Cache(arq: string; const ARequestFilter: string = ''): IDSRestCachedJSONArray;
-    function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; const ARequestFilter: string = ''): string;
+    function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; const ARequestFilter: string = ''): string;
     procedure InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
     procedure fazerumteste;
     function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; const ARequestFilter: string = ''): string;
     function LogIn(Usuario: WideString; Senha: WideString; ConnectionID: Integer; const ARequestFilter: string = ''): string;
     function GetRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString; tipo: Integer; const ARequestFilter: string = ''): string;
+    function ExecutaNovaQueryFacil(gridXML: WideString; fileName: WideString; usuario: WideString; mensagem: WideString; xmlData: WideString; const ARequestFilter: string = ''): string;
   end;
 
 const
@@ -106,7 +108,7 @@ const
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
   );
 
-  TServerMethods1_AbreRelatorio: array [0..9] of TDSRestParameterMetaData =
+  TServerMethods1_AbreRelatorio: array [0..10] of TDSRestParameterMetaData =
   (
     (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
     (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
@@ -117,6 +119,7 @@ const
     (Name: 'Rel64'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
     (Name: 'Rel133'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
     (Name: 'CmprBrncs'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
+    (Name: 'tipo'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
@@ -160,6 +163,16 @@ const
     (Name: 'ListaCodRel'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
     (Name: 'FullPaths'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
     (Name: 'tipo'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
+  );
+
+  TServerMethods1_ExecutaNovaQueryFacil: array [0..5] of TDSRestParameterMetaData =
+  (
+    (Name: 'gridXML'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'fileName'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'mensagem'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'xmlData'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
@@ -325,7 +338,7 @@ begin
   Result := TDSRestCachedJSONArray.Create(FBaixarArquivoCommand_Cache.Parameters[1].Value.GetString);
 end;
 
-function TServerMethods1Client.AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; const ARequestFilter: string): string;
+function TServerMethods1Client.AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; const ARequestFilter: string): string;
 begin
   if FAbreRelatorioCommand = nil then
   begin
@@ -343,8 +356,9 @@ begin
   FAbreRelatorioCommand.Parameters[6].Value.SetUInt8(Rel64);
   FAbreRelatorioCommand.Parameters[7].Value.SetUInt8(Rel133);
   FAbreRelatorioCommand.Parameters[8].Value.SetUInt8(CmprBrncs);
+  FAbreRelatorioCommand.Parameters[9].Value.SetInt32(tipo);
   FAbreRelatorioCommand.Execute(ARequestFilter);
-  Result := FAbreRelatorioCommand.Parameters[9].Value.GetWideString;
+  Result := FAbreRelatorioCommand.Parameters[10].Value.GetWideString;
 end;
 
 procedure TServerMethods1Client.InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
@@ -433,6 +447,24 @@ begin
   Result := FGetRelatorioCommand.Parameters[6].Value.GetWideString;
 end;
 
+function TServerMethods1Client.ExecutaNovaQueryFacil(gridXML: WideString; fileName: WideString; usuario: WideString; mensagem: WideString; xmlData: WideString; const ARequestFilter: string): string;
+begin
+  if FExecutaNovaQueryFacilCommand = nil then
+  begin
+    FExecutaNovaQueryFacilCommand := FConnection.CreateCommand;
+    FExecutaNovaQueryFacilCommand.RequestType := 'GET';
+    FExecutaNovaQueryFacilCommand.Text := 'TServerMethods1.ExecutaNovaQueryFacil';
+    FExecutaNovaQueryFacilCommand.Prepare(TServerMethods1_ExecutaNovaQueryFacil);
+  end;
+  FExecutaNovaQueryFacilCommand.Parameters[0].Value.SetWideString(gridXML);
+  FExecutaNovaQueryFacilCommand.Parameters[1].Value.SetWideString(fileName);
+  FExecutaNovaQueryFacilCommand.Parameters[2].Value.SetWideString(usuario);
+  FExecutaNovaQueryFacilCommand.Parameters[3].Value.SetWideString(mensagem);
+  FExecutaNovaQueryFacilCommand.Parameters[4].Value.SetWideString(xmlData);
+  FExecutaNovaQueryFacilCommand.Execute(ARequestFilter);
+  Result := FExecutaNovaQueryFacilCommand.Parameters[5].Value.GetWideString;
+end;
+
 constructor TServerMethods1Client.Create(ARestConnection: TDSRestConnection);
 begin
   inherited Create(ARestConnection);
@@ -460,6 +492,7 @@ begin
   FGetPaginaCommand.DisposeOf;
   FLogInCommand.DisposeOf;
   FGetRelatorioCommand.DisposeOf;
+  FExecutaNovaQueryFacilCommand.DisposeOf;
   inherited;
 end;
 

@@ -49,4 +49,26 @@ object ServerMethods1: TServerMethods1
     Left = 336
     Top = 168
   end
+  object Query1: TQuery
+    SessionName = 'SESBANCO'
+    SQL.Strings = (
+      'SELECT * FROM RELATORIO_20220221_205423')
+    Left = 328
+    Top = 32
+  end
+  object Query2: TQuery
+    SessionName = 'SESBANCO'
+    Left = 416
+    Top = 40
+  end
+  object Database1: TDatabase
+    SessionName = 'Default'
+    Left = 416
+    Top = 144
+  end
+  object Session1: TSession
+    NetFileDir = 'C:\TEMP'
+    Left = 392
+    Top = 8
+  end
 end

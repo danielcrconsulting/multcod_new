@@ -92,12 +92,13 @@ Type
     procedure Persistir( StrSql : String; StgParam : TFDParams);
     procedure JsonToDataset(aDataset : TDataSet; aJSON : string);
     function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString;
-                            Rel64: Byte; Rel133: Byte; CmprBrncs: Byte): String;
+                            Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo : Integer): String;
     function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer;
                          Pagina: WideString): WideString;
     function LogIn(Usuario, Senha: WideString;
       ConnectionID: Integer): String;
     function GetRelatorio(Usuario, Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString; tipo : Integer): String;
+    function ExecutaNovaQueryFacil(gridXML: WideString; fileName: WideString; usuario: WideString; mensagem: WideString; xmlData: WideString): String;
 
   End;
 
@@ -760,6 +761,13 @@ begin
   FreeAndNil(OMetodosServer);
 end;
 
+function TFormGeral.ExecutaNovaQueryFacil(gridXML, fileName, usuario, mensagem,
+  xmlData: WideString): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.ExecutaNovaQueryFacil(gridXML, fileName, usuario, mensagem,
+  xmlData);
+end;
+
 procedure TFormGeral.FormCreate(Sender: TObject);
 Begin
 {
@@ -882,10 +890,10 @@ end;
 
 function TFormGeral.AbreRelatorio(Usuario, Senha: WideString;
   ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer;
-  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte): String;
+  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte; tipo : Integer): String;
 begin
   result := OMetodosServer.ServerMethodsPrincipalClient.AbreRelatorio(Usuario, Senha,
-  ConnectionID, FullPath, QtdPaginas, StrCampos, Rel64, Rel133, CmprBrncs);
+  ConnectionID, FullPath, QtdPaginas, StrCampos, Rel64, Rel133, CmprBrncs, tipo);
 end;
 
 function TFormGeral.BaixarArquivo( arq : String) : TJSONArray;
