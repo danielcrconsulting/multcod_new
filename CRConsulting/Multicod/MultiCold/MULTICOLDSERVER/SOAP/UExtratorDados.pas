@@ -158,7 +158,8 @@ Var
   procedure IncLinha;
   begin
     Inc(Idx);
-    linha := listaTemplate[Idx];
+    if idx < (listaTemplate.Count-1) then
+      linha := listaTemplate[Idx];
   end;
 
 Begin
@@ -220,6 +221,11 @@ Begin
 
     For I := 0 To 98 Do
     Begin
+      if idx > (listaTemplate.Count-1) then
+      begin
+        break;
+        idx := idx;
+      end;
       For J := 0 To 1 Do
         Begin
         IncLinha;

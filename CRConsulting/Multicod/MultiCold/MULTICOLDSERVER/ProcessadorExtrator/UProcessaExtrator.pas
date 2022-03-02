@@ -195,7 +195,8 @@ begin
             pathrel,
             false);
 
-      template := DescompactarTemplate(FDMMain.MemPen.FieldByName('ArquivoTemplateComp').AsString);
+      //template := DescompactarTemplate(FDMMain.MemPen.FieldByName('ArquivoTemplateComp').AsString);
+      template := FDMMain.MemPen.FieldByName('ArquivoTemplateComp').AsString;
 
       try
         multicoldManager.ExecutarExtracaoDados(template, FOutputPath);

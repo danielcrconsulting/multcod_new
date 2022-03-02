@@ -1365,15 +1365,18 @@ function TFrmExtract.Compactar(s: String): String;
 var
   strInput,
   strOutput: TStringStream;
+  strInputNew : tmemorystream;
   Zipper: TZCompressionStream;
 begin
   Result:= '';
   strInput:= TStringStream.Create(s);
+  strInputNew:= Tmemorystream.Create;
+  strInputNew.LoadFromStream(strInput);
   strOutput:= TStringStream.Create;
   try
     Zipper:= TZCompressionStream.Create(strOutput);
     try
-      Zipper.CopyFrom(strInput, strInput.Size);
+      Zipper.CopyFrom(strInputNew, strInputNew.Size);
     finally
       Zipper.Free;
     end;
