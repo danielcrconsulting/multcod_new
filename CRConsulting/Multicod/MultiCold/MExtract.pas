@@ -1337,10 +1337,10 @@ var
   outputFile: String;
 begin
   LimparButton.Click; // Limpar
-  templateDescompactado := Descompactar(aTemplateCompactado);
-
+  //templateDescompactado := Descompactar(aTemplateCompactado);
+  templateDescompactado := aTemplateCompactado;
   if CreateGUID(MyGuid) = 0 then
-    outputFile := GetCurrentDir + StringReplace(StringReplace(GUIDToString(MyGuid),'{','', [rfReplaceAll]),'}','', [rfReplaceAll]) + '.txt';
+    outputFile := GetCurrentDir + '\' + StringReplace(StringReplace(GUIDToString(MyGuid),'{','', [rfReplaceAll]),'}','', [rfReplaceAll]) + '.txt';
 
   AssignFile(Arq, outputFile);
   ReWrite(Arq);

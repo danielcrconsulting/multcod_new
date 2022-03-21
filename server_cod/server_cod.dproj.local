@@ -6,9 +6,9 @@
     <Transaction>2021/07/05 08:14:10.000.288,=C:\delphi\server_cod\ServerContainerUnit1.pas</Transaction>
     <Transaction>2021/07/05 08:14:15.000.611,=C:\delphi\server_cod\WebModuleUnit1.pas</Transaction>
     <Transaction>2021/07/05 08:14:20.000.365,=C:\delphi\server_cod\js\base64-min.js</Transaction>
-    <Transaction>2021/07/05 08:14:20.000.206,=C:\delphi\server_cod\js\base64.js</Transaction>
-    <Transaction>2021/07/05 08:14:20.000.540,=C:\delphi\server_cod\js\connection.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.233,=C:\delphi\server_cod\js\serverfunctionexecutor.js</Transaction>
+    <Transaction>2021/07/05 08:14:20.000.540,=C:\delphi\server_cod\js\connection.js</Transaction>
+    <Transaction>2021/07/05 08:14:20.000.206,=C:\delphi\server_cod\js\base64.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.450,=C:\delphi\server_cod\js\serverfunctionexecutor-min.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.702,=C:\delphi\server_cod\css\serverfunctioninvoker.css</Transaction>
     <Transaction>2021/07/05 08:14:20.000.769,=C:\delphi\server_cod\templates\reversestring.html</Transaction>

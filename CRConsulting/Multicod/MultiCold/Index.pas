@@ -1091,6 +1091,7 @@ Var
 //  CodAlfa,
   SubGrupo,
   Ano : AnsiString;
+  strSql : TStringList;
 
   Function TrataPto1(Arquivo : AnsiString; LinRet : Integer; Var Linha : AnsiString; TrataErro : Boolean) : Boolean;
   Var
@@ -1170,24 +1171,30 @@ Var
   Result := 0;
 
 //  FormGeral.QueryDestinosDFN.Params[0].AsAnsiString := FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString;
-  FormGeral.QueryDestinosDFN.Parameters[0].Value := FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString;
-  FormGeral.QueryDestinosDFN.Open;
+  strSql.Clear;
+  strSql.Add(' SELECT     *             ');
+  strSql.Add(' FROM         DESTINOSDFN ');
+  strSql.Add(' WHERE     (CODREL = ' + FormGeral.Memtb.FieldByName('CodRel').AsAnsiString + ')  ');
+  strSql.Add(' AND TIPODESTINO = ' + QuotedStr('Dir') );
+  formGeral.ImportarDados(strSql.Text, nil);
+  //FormGeral.QueryDestinosDFN.Parameters[0].Value := FormGeral.Memtb.FieldByName('CodRel').AsAnsiString;
+  //FormGeral.QueryDestinosDFN.Open;
 //  FormGeral.TableDestinosDFN.Filter := 'CODREL = '''+FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString+''''+
 //            ' AND TIPODESTINO = ''Dir''';
 //  FormGeral.TableDestinosDFN.Filtered := True;
-  If FormGeral.QueryDestinosDFN.Eof Then
+  If FormGeral.Memtb.Eof Then
     Begin
     Result := 1;
-    FormGeral.QueryDestinosDFN.Close;     // Sem destino, sai fora...
+    FormGeral.Memtb.Close;     // Sem destino, sai fora...
     Exit;
     End;
 //  TrataAutoSubDir;
 //  DirDest := IncludeTrailingPathDelimiter(FormGeral.TableDestinosDFN.FieldByName('Destino').AsAnsiString) + CodAlfa + AutoSubDir;
-  If FormGeral.QueryDestinosDFN.FieldByName('DirExpl').AsAnsiString = 'S' Then
-    DirDest := IncludeTrailingPathDelimiter(FormGeral.QueryDestinosDFN.FieldByName('Destino').AsAnsiString)
+  If FormGeral.Memtb.FieldByName('DirExpl').AsAnsiString = 'S' Then
+    DirDest := IncludeTrailingPathDelimiter(FormGeral.Memtb.FieldByName('Destino').AsAnsiString)
   Else
-    DirDest := IncludeTrailingPathDelimiter(FormGeral.QueryDestinosDFN.FieldByName('Destino').AsAnsiString) + CodAlfa;
-  FormGeral.QueryDestinosDFN.Close;
+    DirDest := IncludeTrailingPathDelimiter(FormGeral.Memtb.FieldByName('Destino').AsAnsiString) + CodAlfa;
+  FormGeral.Memtb.Close;
 
   RichEdit1.Lines.Add('Verificando o número de dats no destino '+DirDest);
   NumDats := 0;
@@ -1224,43 +1231,47 @@ Var
     End;
 
 //  FormGeral.QueryIndicesDFN.Params[0].AsAnsiString := CodRel;
-  FormGeral.QueryIndicesDFN.Parameters[0].Value := CodRel;
-  FormGeral.QueryIndicesDFN.Open;
+  //FormGeral.QueryIndicesDFN.Parameters[0].Value := CodRel;
+  //FormGeral.QueryIndicesDFN.Open;
 //  FormGeral.TableIndicesDFN.Filter := 'CODREL = '''+CodRel+'''';
 //  FormGeral.TableIndicesDFN.Filtered := True;
-  While Not FormGeral.QueryIndicesDFN.Eof Do
-    FormGeral.QueryIndicesDFN.Next;
 
-  SetLength(IFusao,FormGeral.QueryIndicesDFN.RecordCount);
-  For J := 0 To FormGeral.QueryIndicesDFN.RecordCount-1 Do
+  strSql.Clear;
+  strSql.Add(' SELECT * FROM INDICESDFN WHERE (CODREL = ' + CodRel + ')');
+  FormGeral.ImportarDados(strSql.Text, nil);
+  While Not FormGeral.Memtb.Eof Do
+    FormGeral.Memtb.Next;
+
+  SetLength(IFusao,FormGeral.Memtb.RecordCount);
+  For J := 0 To FormGeral.Memtb.RecordCount-1 Do
     IFusao[J] := MaxInt;
 
-  FormGeral.QueryIndicesDFN.First;
+  FormGeral.Memtb.First;
   K := 0;
 
-  While Not FormGeral.QueryIndicesDFN.Eof Do
+  While Not FormGeral.Memtb.Eof Do
     Begin
-    If (K <> 0) And (Not VarIsNull(FormGeral.QueryIndicesDFN.FieldByName('Fusao').Value)) Then
+    If (K <> 0) And (Not VarIsNull(FormGeral.Memtb.FieldByName('Fusao').Value)) Then
       For J := 0 To K-1 Do
-        If (IFusao[J] = FormGeral.QueryIndicesDFN.FieldByName('Fusao').AsInteger) Then
+        If (IFusao[J] = FormGeral.Memtb.FieldByName('Fusao').AsInteger) Then
           Begin
           Inc(I);
           Break;
           End;
         
-    If (Not VarIsNull(FormGeral.QueryIndicesDFN.FieldByName('Fusao').Value)) Then
-      IFusao[K] := FormGeral.QueryIndicesDFN.FieldByName('Fusao').AsInteger;
+    If (Not VarIsNull(FormGeral.Memtb.FieldByName('Fusao').Value)) Then
+      IFusao[K] := FormGeral.Memtb.FieldByName('Fusao').AsInteger;
 
-    FormGeral.QueryIndicesDFN.Next;
+    FormGeral.Memtb.Next;
     Inc(K);
     End;
 
   SetLength(IFusao,0);
 
-  If FormGeral.QueryIndicesDFN.RecordCount <> I Then
+  If FormGeral.Memtb.RecordCount <> I Then
     Begin
 //    FormGeral.TableIndicesDFN.Filtered := False;
-    FormGeral.QueryIndicesDFN.Close;
+    FormGeral.Memtb.Close;
     CloseFile(ArqCNFGVJunta);
     Result := 4;  // Campo indexador antigo não existe mais...
     Exit;
@@ -1275,36 +1286,42 @@ Var
       Continue;
 //    FormGeral.QueryIndicesDFNII.Params[0].AsAnsiString := RegIndice.CODREL_;
 //    FormGeral.QueryIndicesDFNII.Params[1].AsAnsiString := RegIndice.NOMECAMPO;
-    FormGeral.QueryIndicesDFNII.Parameters[0].Value := RegIndice.CODREL_;
-    FormGeral.QueryIndicesDFNII.Parameters[1].Value := RegIndice.NOMECAMPO;
-    FormGeral.QueryIndicesDFNII.Open;
+    strSql.Clear;
+    strSql.Add(' SELECT * FROM INDICESDFN WHERE (CODREL = ' + RegIndice.CODREL_ + ')');
+    strSql.Add(' AND (NOMECAMPO = ' + RegIndice.NOMECAMPO + ')' );
+    FormGeral.ImportarDados(strSql.Text, nil);
+
+    //FormGeral.QueryIndicesDFNII.Parameters[0].Value := RegIndice.CODREL_;
+    //FormGeral.QueryIndicesDFNII.Parameters[1].Value := RegIndice.NOMECAMPO;
+
+    FormGeral.Memtb.Open;
 //    FormGeral.TableIndicesDFN.Filter := 'CODREL = '''+RegIndice.CODREL_+''''+
 //              ' AND NOMECAMPO = '''+RegIndice.NOMECAMPO+'''';
 //    FormGeral.TableIndicesDFN.Filtered := True;
-    If FormGeral.QueryIndicesDFNII.Eof Then
+    If FormGeral.Memtb.Eof Then
       Begin
 //      FormGeral.TableIndicesDFN.Filtered := False;
-      FormGeral.QueryIndicesDFNII.Close;
+      FormGeral.Memtb.Close;
       CloseFile(ArqCNFGVJunta);
       Result := 5;  // Campo indexador antigo não existe mais...
       Exit;
       End;
 
-    If (RegIndice.LINHAI <> FormGeral.QueryIndicesDFNII.FieldByName('LINHAI').AsInteger) Or
-       (RegIndice.LINHAF <> FormGeral.QueryIndicesDFNII.FieldByName('LINHAF').AsInteger) Or
-       (RegIndice.COLUNA <> FormGeral.QueryIndicesDFNII.FieldByName('COLUNA').AsInteger) Or
-       (RegIndice.TAMANHO <> FormGeral.QueryIndicesDFNII.FieldByName('TAMANHO').AsInteger) Or
-       (RegIndice.BRANCO <> FormGeral.QueryIndicesDFNII.FieldByName('BRANCO').AsAnsiString) Or
-       (RegIndice.TIPOCAMPO <> FormGeral.QueryIndicesDFNII.FieldByName('TIPO').AsAnsiString) Then
+    If (RegIndice.LINHAI <> FormGeral.Memtb.FieldByName('LINHAI').AsInteger) Or
+       (RegIndice.LINHAF <> FormGeral.Memtb.FieldByName('LINHAF').AsInteger) Or
+       (RegIndice.COLUNA <> FormGeral.Memtb.FieldByName('COLUNA').AsInteger) Or
+       (RegIndice.TAMANHO <> FormGeral.Memtb.FieldByName('TAMANHO').AsInteger) Or
+       (RegIndice.BRANCO <> FormGeral.Memtb.FieldByName('BRANCO').AsAnsiString) Or
+       (RegIndice.TIPOCAMPO <> FormGeral.Memtb.FieldByName('TIPO').AsAnsiString) Then
       Begin
 //      FormGeral.TableIndicesDFN.Filtered := False;
-      FormGeral.QueryIndicesDFNII.Close;
+      FormGeral.Memtb.Close;
       CloseFile(ArqCNFGVJunta);
       Result := 6;  // Definição anterior do campo foi modificada...
       Exit;
       End;
 //    FormGeral.TableIndicesDFN.Filtered := False;
-    FormGeral.QueryIndicesDFNII.Close;
+    FormGeral.Memtb.Close;
     End;
 
   CloseFile(ArqCNFGVJunta);
@@ -1321,83 +1338,87 @@ Var
   If Result Then;
 
   RegDFN.TipoReg := 1;
-  RegDFN.CODREL := FormGeral.QueryAux2.Fields[00].AsAnsiString;
-  RegDFN.NOMEREL := FormGeral.QueryAux2.Fields[01].AsAnsiString;
+  RegDFN.CODREL := FormGeral.MemAux2.Fields[00].AsAnsiString;
+  RegDFN.NOMEREL := FormGeral.MemAux2.Fields[01].AsAnsiString;
 
   RegSistema.TipoReg := 4;
-  RegSistema.CODSIS := FormGeral.QueryAux2.Fields[02].AsInteger;
+  RegSistema.CODSIS := FormGeral.MemAux2.Fields[02].AsInteger;
 
   RegSisAuto.TipoReg := 6;
-  RegSisAuto.SISAUTO := FormGeral.QueryAux2.FieldByName('SISAUTO').AsBoolean;
+  RegSisAuto.SISAUTO := FormGeral.MemAux2.FieldByName('SISAUTO').AsBoolean;
   RegSisAuto.CODSISREAL := CodigodoSistema;
 
-  RegDFN.CODGRUPO := FormGeral.QueryAux2.Fields[03].AsInteger;
-  RegDFN.CODSUBGRUPO := FormGeral.QueryAux2.Fields[04].AsInteger;
-  RegDFN.IDCOLUNA1 := FormGeral.QueryAux2.Fields[05].AsInteger;
-  RegDFN.IDLINHA1 := FormGeral.QueryAux2.Fields[06].AsInteger;
-  RegDFN.IDSTRING1 := FormGeral.QueryAux2.Fields[07].AsAnsiString;
+  RegDFN.CODGRUPO := FormGeral.MemAux2.Fields[03].AsInteger;
+  RegDFN.CODSUBGRUPO := FormGeral.MemAux2.Fields[04].AsInteger;
+  RegDFN.IDCOLUNA1 := FormGeral.MemAux2.Fields[05].AsInteger;
+  RegDFN.IDLINHA1 := FormGeral.MemAux2.Fields[06].AsInteger;
+  RegDFN.IDSTRING1 := FormGeral.MemAux2.Fields[07].AsAnsiString;
   Try
-    RegDFN.IDCOLUNA2 := FormGeral.QueryAux2.Fields[08].AsInteger;
-    RegDFN.IDLINHA2 := FormGeral.QueryAux2.Fields[09].AsInteger;
+    RegDFN.IDCOLUNA2 := FormGeral.MemAux2.Fields[08].AsInteger;
+    RegDFN.IDLINHA2 := FormGeral.MemAux2.Fields[09].AsInteger;
   Except
     End; // Try
-  RegDFN.IDSTRING2 := FormGeral.QueryAux2.Fields[10].AsAnsiString;
-  RegDFN.DIRENTRA := FormGeral.QueryAux2.Fields[11].AsAnsiString;
-  RegDFN.TIPOQUEBRA := FormGeral.QueryAux2.Fields[12].AsInteger;
+  RegDFN.IDSTRING2 := FormGeral.MemAux2.Fields[10].AsAnsiString;
+  RegDFN.DIRENTRA := FormGeral.MemAux2.Fields[11].AsAnsiString;
+  RegDFN.TIPOQUEBRA := FormGeral.MemAux2.Fields[12].AsInteger;
   Try
-    RegDFN.COLQUEBRASTR1 := FormGeral.QueryAux2.Fields[13].AsInteger;
+    RegDFN.COLQUEBRASTR1 := FormGeral.MemAux2.Fields[13].AsInteger;
   Except
     End; // Try
-  RegDFN.STRQUEBRASTR1 := FormGeral.QueryAux2.Fields[14].AsAnsiString;
+  RegDFN.STRQUEBRASTR1 := FormGeral.MemAux2.Fields[14].AsAnsiString;
   Try
-    RegDFN.COLQUEBRASTR2 := FormGeral.QueryAux2.Fields[15].AsInteger;
+    RegDFN.COLQUEBRASTR2 := FormGeral.MemAux2.Fields[15].AsInteger;
   Except
     End; // Try
-  RegDFN.STRQUEBRASTR2 := FormGeral.QueryAux2.Fields[16].AsAnsiString;
+  RegDFN.STRQUEBRASTR2 := FormGeral.MemAux2.Fields[16].AsAnsiString;
   Try
-    RegDFN.QUEBRAAFTERSTR := FormGeral.QueryAux2.Fields[17].AsBoolean;
+    RegDFN.QUEBRAAFTERSTR := FormGeral.MemAux2.Fields[17].AsBoolean;
   Except
     End;
   Try
-    RegDFN.NLINHASQUEBRALIN := FormGeral.QueryAux2.Fields[18].AsInteger;
+    RegDFN.NLINHASQUEBRALIN := FormGeral.MemAux2.Fields[18].AsInteger;
   Except
     End;
-  RegDFN.FILTROCAR := FormGeral.QueryAux2.Fields[19].AsBoolean;
-  RegDFN.COMPRBRANCOS := FormGeral.QueryAux2.Fields[20].AsBoolean;
-  RegDFN.JUNCAOAUTOM := FormGeral.QueryAux2.Fields[21].AsBoolean;
-  RegDFN.QTDPAGSAPULAR := FormGeral.QueryAux2.Fields[22].AsInteger;
-  RegDFN.CODGRUPAUTO := FormGeral.QueryAux2.Fields[23].AsBoolean;
+  RegDFN.FILTROCAR := FormGeral.MemAux2.Fields[19].AsBoolean;
+  RegDFN.COMPRBRANCOS := FormGeral.MemAux2.Fields[20].AsBoolean;
+  RegDFN.JUNCAOAUTOM := FormGeral.MemAux2.Fields[21].AsBoolean;
+  RegDFN.QTDPAGSAPULAR := FormGeral.MemAux2.Fields[22].AsInteger;
+  RegDFN.CODGRUPAUTO := FormGeral.MemAux2.Fields[23].AsBoolean;
   Try
-    RegDFN.COLGRUPAUTO := FormGeral.QueryAux2.Fields[24].AsInteger;
-    RegDFN.LINGRUPAUTO := FormGeral.QueryAux2.Fields[25].AsInteger;
-    RegDFN.TAMGRUPAUTO := FormGeral.QueryAux2.Fields[26].AsInteger;
-    RegDFN.TIPOGRUPAUTO := FormGeral.QueryAux2.Fields[27].AsAnsiString;
+    RegDFN.COLGRUPAUTO := FormGeral.MemAux2.Fields[24].AsInteger;
+    RegDFN.LINGRUPAUTO := FormGeral.MemAux2.Fields[25].AsInteger;
+    RegDFN.TAMGRUPAUTO := FormGeral.MemAux2.Fields[26].AsInteger;
+    RegDFN.TIPOGRUPAUTO := FormGeral.MemAux2.Fields[27].AsAnsiString;
   Except
     End;
-  RegDFN.BACKUP := FormGeral.QueryAux2.Fields[28].AsBoolean;
-  RegDFN.SUBDIRAUTO := FormGeral.QueryAux2.Fields[29].AsBoolean;
+  RegDFN.BACKUP := FormGeral.MemAux2.Fields[28].AsBoolean;
+  RegDFN.SUBDIRAUTO := FormGeral.MemAux2.Fields[29].AsBoolean;
 
 //  FormGeral.QueryIndicesDFN.Params[0].AsAnsiString := FormGeral.QueryAux2.FieldByName('CODREL').AsAnsiString;
-  FormGeral.QueryIndicesDFN.Parameters[0].Value := FormGeral.QueryAux2.FieldByName('CODREL').AsAnsiString;
-  FormGeral.QueryIndicesDFN.Open;
+  //FormGeral.QueryIndicesDFN.Parameters[0].Value := FormGeral.QueryAux2.FieldByName('CODREL').AsAnsiString;
+  //FormGeral.QueryIndicesDFN.Open;
+
+  strSql.Clear;
+  strSql.Add(' SELECT * FROM INDICESDFN WHERE (CODREL = ' + FormGeral.MemAux2.FieldByName('CODREL').AsAnsiString + ')');
+  FormGeral.ImportarDados(strSql.Text, nil);
 //  FormGeral.TableIndicesDFN.Filter := 'CODREL = '''+FormGeral.QueryAux2.FieldByName('CODREL').AsAnsiString+'''';
 //  FormGeral.TableIndicesDFN.Filtered := True;
 
-  While Not FormGeral.QueryIndicesDFN.Eof Do     //Romero
-    FormGeral.QueryIndicesDFN.Next;
-  FormGeral.QueryIndicesDFN.First;
+  While Not FormGeral.Memtb.Eof Do     //Romero
+    FormGeral.Memtb.Next;
+  FormGeral.Memtb.First;
 
-  SetLength(TabelaBde, FormGeral.QueryIndicesDFN.RecordCount);  // Começaremos a base do array em 0, Atenção!!!
-  SetLength(TabelaAds, FormGeral.QueryIndicesDFN.RecordCount);  // Começaremos a base do array em 0, Atenção!!!
-  SetLength(Indices,( 5 * FormGeral.QueryIndicesDFN.RecordCount )); // Há 5 campos numéricos nos índices
-  SetLength(TiposDeCampos, FormGeral.QueryIndicesDFN.RecordCount);
-  SetLength(NomesDeCampos, FormGeral.QueryIndicesDFN.RecordCount);
-  SetLength(Mascaras, FormGeral.QueryIndicesDFN.RecordCount);
-  SetLength(Fusao, FormGeral.QueryIndicesDFN.RecordCount);
-  SetLength(FiltroObj.FiltroIn, FormGeral.QueryIndicesDFN.RecordCount);
-  SetLength(FiltroObj.FiltroOut, FormGeral.QueryIndicesDFN.RecordCount);
-  SetLength(FiltroObj.StrInc, FormGeral.QueryIndicesDFN.RecordCount);
-  SetLength(FiltroObj.StrExc, FormGeral.QueryIndicesDFN.RecordCount);
+  SetLength(TabelaBde, FormGeral.Memtb.RecordCount);  // Começaremos a base do array em 0, Atenção!!!
+  SetLength(TabelaAds, FormGeral.Memtb.RecordCount);  // Começaremos a base do array em 0, Atenção!!!
+  SetLength(Indices,( 5 * FormGeral.Memtb.RecordCount )); // Há 5 campos numéricos nos índices
+  SetLength(TiposDeCampos, FormGeral.Memtb.RecordCount);
+  SetLength(NomesDeCampos, FormGeral.Memtb.RecordCount);
+  SetLength(Mascaras, FormGeral.Memtb.RecordCount);
+  SetLength(Fusao, FormGeral.Memtb.RecordCount);
+  SetLength(FiltroObj.FiltroIn, FormGeral.Memtb.RecordCount);
+  SetLength(FiltroObj.FiltroOut, FormGeral.Memtb.RecordCount);
+  SetLength(FiltroObj.StrInc, FormGeral.Memtb.RecordCount);
+  SetLength(FiltroObj.StrExc, FormGeral.Memtb.RecordCount);
 
   For J := 0 To Length(Indices)-1 Do
     Indices[J] := 0;
@@ -1417,42 +1438,42 @@ Var
   For K := 0 To FormGeral.QueryIndicesDFN.RecordCount-1 Do
     Begin
 
-    If (K <> 0) And (Not VarIsNull(FormGeral.QueryIndicesDFN.FieldByName('Fusao').Value)) Then
+    If (K <> 0) And (Not VarIsNull(FormGeral.Memtb.FieldByName('Fusao').Value)) Then
       For L := 0 To K-1 Do
-        If (FormGeral.QueryIndicesDFN.FieldByName('Fusao').AsInteger = Fusao[L].CodFusao) And
-           (FormGeral.QueryIndicesDFN.FieldByName('Tipo').AsAnsiString = ArrRegIndice[L].TIPOCAMPO) Then
+        If (FormGeral.Memtb.FieldByName('Fusao').AsInteger = Fusao[L].CodFusao) And
+           (FormGeral.Memtb.FieldByName('Tipo').AsAnsiString = ArrRegIndice[L].TIPOCAMPO) Then
           Begin
           Fusao[K].IndRef := L;
           Fusao[K].IndiceGerado := False;
           Break;
           End;
 
-    If (Not VarIsNull(FormGeral.QueryIndicesDFN.FieldByName('Fusao').Value)) Then
-      Fusao[K].CodFusao := FormGeral.QueryIndicesDFN.FieldByName('Fusao').AsInteger;
+    If (Not VarIsNull(FormGeral.Memtb.FieldByName('Fusao').Value)) Then
+      Fusao[K].CodFusao := FormGeral.Memtb.FieldByName('Fusao').AsInteger;
 
     If K < 200 Then
       Begin
       ArrRegIndice[K].TipoReg := 2;
-      ArrRegIndice[K].CODREL_ := FormGeral.QueryIndicesDFN.FieldByName('CodRel').AsAnsiString;
-      ArrRegIndice[K].NOMECAMPO := FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString;
-      ArrRegIndice[K].LINHAI := FormGeral.QueryIndicesDFN.FieldByName('LinhaI').AsInteger;
-      ArrRegIndice[K].LINHAF := FormGeral.QueryIndicesDFN.FieldByName('LinhaF').AsInteger;
-      ArrRegIndice[K].COLUNA := FormGeral.QueryIndicesDFN.FieldByName('Coluna').AsInteger;
-      ArrRegIndice[K].TAMANHO := FormGeral.QueryIndicesDFN.FieldByName('Tamanho').AsInteger;
-      ArrRegIndice[K].BRANCO := FormGeral.QueryIndicesDFN.FieldByName('Branco').AsAnsiString;
-      ArrRegIndice[K].TIPOCAMPO := FormGeral.QueryIndicesDFN.FieldByName('Tipo').AsAnsiString;
-      ArrRegIndice[K].MASCARA := FormGeral.QueryIndicesDFN.FieldByName('Mascara').AsAnsiString;
-      ArrRegIndice[K].CHARINC := FormGeral.QueryIndicesDFN.FieldByName('CharInc').AsAnsiString;
-      ArrRegIndice[K].CHAREXC := FormGeral.QueryIndicesDFN.FieldByName('CharExc').AsAnsiString;
-      ArrRegIndice[K].STRINC := FormGeral.QueryIndicesDFN.FieldByName('StrInc').AsAnsiString;
-      ArrRegIndice[K].STREXC := FormGeral.QueryIndicesDFN.FieldByName('StrExc').AsAnsiString;
+      ArrRegIndice[K].CODREL_ := FormGeral.Memtb.FieldByName('CodRel').AsAnsiString;
+      ArrRegIndice[K].NOMECAMPO := FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString;
+      ArrRegIndice[K].LINHAI := FormGeral.Memtb.FieldByName('LinhaI').AsInteger;
+      ArrRegIndice[K].LINHAF := FormGeral.Memtb.FieldByName('LinhaF').AsInteger;
+      ArrRegIndice[K].COLUNA := FormGeral.Memtb.FieldByName('Coluna').AsInteger;
+      ArrRegIndice[K].TAMANHO := FormGeral.Memtb.FieldByName('Tamanho').AsInteger;
+      ArrRegIndice[K].BRANCO := FormGeral.Memtb.FieldByName('Branco').AsAnsiString;
+      ArrRegIndice[K].TIPOCAMPO := FormGeral.Memtb.FieldByName('Tipo').AsAnsiString;
+      ArrRegIndice[K].MASCARA := FormGeral.Memtb.FieldByName('Mascara').AsAnsiString;
+      ArrRegIndice[K].CHARINC := FormGeral.Memtb.FieldByName('CharInc').AsAnsiString;
+      ArrRegIndice[K].CHAREXC := FormGeral.Memtb.FieldByName('CharExc').AsAnsiString;
+      ArrRegIndice[K].STRINC := FormGeral.Memtb.FieldByName('StrInc').AsAnsiString;
+      ArrRegIndice[K].STREXC := FormGeral.Memtb.FieldByName('StrExc').AsAnsiString;
       End;
 
-    Indices[K*5] := FormGeral.QueryIndicesDFN.FieldByName('LinhaI').AsInteger;
-    Indices[(K*5)+1] := FormGeral.QueryIndicesDFN.FieldByName('LinhaF').AsInteger;
-    Indices[(K*5)+2] := FormGeral.QueryIndicesDFN.FieldByName('Coluna').AsInteger;
-    Indices[(K*5)+3] := FormGeral.QueryIndicesDFN.FieldByName('Tamanho').AsInteger;
-    Indices[(K*5)+4] := FormGeral.QueryIndicesDFN.FieldByName('Branco').AsInteger;
+    Indices[K*5] := FormGeral.Memtb.FieldByName('LinhaI').AsInteger;
+    Indices[(K*5)+1] := FormGeral.Memtb.FieldByName('LinhaF').AsInteger;
+    Indices[(K*5)+2] := FormGeral.Memtb.FieldByName('Coluna').AsInteger;
+    Indices[(K*5)+3] := FormGeral.Memtb.FieldByName('Tamanho').AsInteger;
+    Indices[(K*5)+4] := FormGeral.Memtb.FieldByName('Branco').AsInteger;
 
     For J := Indices[K*5] To Indices[(K*5)+1] Do   // Da LinhaI até a LinhaF
       LinhasInd[J] := True;
@@ -1469,9 +1490,9 @@ Var
     TabelaBde[K].DatabaseName := viDirTrabApl + 'Temp\';
 
     TabelaBde[K].TableName := SeArquivoSemExt(ReportRec.Name) + StatusBar1.Panels[0].Text +
-                           FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString + '.dbf'; // Romero em 23/07/2013 para evitar os problemsa dos múltiplos pontos da Caixa!!!
+                           FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString + '.dbf'; // Romero em 23/07/2013 para evitar os problemsa dos múltiplos pontos da Caixa!!!
     TabelaAds[K].TableName := SeArquivoSemExt(ReportRec.Name) + StatusBar1.Panels[0].Text +
-                           FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString + '.dbf'; // Romero em 23/07/2013 para evitar os problemsa dos múltiplos pontos da Caixa!!!
+                           FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString + '.dbf'; // Romero em 23/07/2013 para evitar os problemsa dos múltiplos pontos da Caixa!!!
 
     TabelaBde[K].TableType := ttDbase;
     TabelaAds[K].TableType := ttDbase;
@@ -1481,22 +1502,22 @@ Var
     TabelaAds[K].FieldDefs.Clear;
     TabelaAds[K].IndexDefs.Clear;
 
-    TiposDeCampos[K] := FormGeral.QueryIndicesDFN.FieldByName('Tipo').AsAnsiString;
-    NomesDeCampos[K] := FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString;
-    If FormGeral.QueryIndicesDFN.FieldByName('Tipo').AsAnsiString = 'C' Then
+    TiposDeCampos[K] := FormGeral.Memtb.FieldByName('Tipo').AsAnsiString;
+    NomesDeCampos[K] := FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString;
+    If FormGeral.Memtb.FieldByName('Tipo').AsAnsiString = 'C' Then
       Begin
       TabelaBde[K].FieldDefs.Add('VALOR',ftString,Indices[(K*5)+3],False);    // Tamanho do Campo
       TabelaAds[K].FieldDefs.Add('VALOR',ftString,Indices[(K*5)+3],False)    // Tamanho do Campo
       End
     Else
-    If (FormGeral.QueryIndicesDFN.FieldByName('Tipo').AsAnsiString = 'F') Or
-       (FormGeral.QueryIndicesDFN.FieldByName('Tipo').AsAnsiString = 'D') Then
+    If (FormGeral.Memtb.FieldByName('Tipo').AsAnsiString = 'F') Or
+       (FormGeral.Memtb.FieldByName('Tipo').AsAnsiString = 'D') Then
       Begin
       TabelaBde[K].FieldDefs.Add('VALOR',ftFloat,0,False);
       TabelaAds[K].FieldDefs.Add('VALOR',ftFloat,0,False)
       End
     Else
-    If (FormGeral.QueryIndicesDFN.FieldByName('Tipo').AsAnsiString = 'N') Then // Lá na frente será usado um create table para os casos destes campos numéricos...
+    If (FormGeral.Memtb.FieldByName('Tipo').AsAnsiString = 'N') Then // Lá na frente será usado um create table para os casos destes campos numéricos...
       Begin                                                                // Este código ficará obsoleto...
       If Indices[(K*5)+3] <= 4 Then                                        // hummmm acho que vamos tirar lá por causa do Advantage!!!
         Begin
@@ -1516,9 +1537,9 @@ Var
           End
       End
     Else
-    If FormGeral.QueryIndicesDFN.FieldByName('Tipo').AsAnsiString = 'Dt' Then
+    If FormGeral.Memtb.FieldByName('Tipo').AsAnsiString = 'Dt' Then
       Begin
-      auxStr := UpperCase(FormGeral.QueryIndicesDFN.FieldByName('Mascara').AsAnsiString);
+      auxStr := UpperCase(FormGeral.Memtb.FieldByName('Mascara').AsAnsiString);
       Mascaras[K].PosAno := Pos('A',auxStr);
       Mascaras[K].PosMes := Pos('M',auxStr);
       Mascaras[K].PosDia := Pos('D',auxStr);
@@ -1557,11 +1578,11 @@ Var
          (Not (Mascaras[K].TamMes In [1,2])) Or
          (Not (Mascaras[K].TamDia In [1,2])) Then
         Begin
-        FormGeral.InsereLog(FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString,
+        FormGeral.InsereLog(FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString,
                   'Máscara de Campo Dt Inválida, Índice descartado. Valor Original = '+
                   FormGeral.QueryIndicesDFN.FieldByName('Mascara').AsAnsiString);
         Indices[K*5] := -1;  // -1 Indica índice descartado;
-        FormGeral.QueryIndicesDFN.Next;
+        FormGeral.Memtb.Next;
         Continue;
         End;
 
@@ -1570,67 +1591,67 @@ Var
       End
     Else
       Begin
-      FormGeral.InsereLog(FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString,
+      FormGeral.InsereLog(FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString,
                 'Tipo de Campo Inválido, Índice descartado. Valor Original = '+
-                FormGeral.QueryIndicesDFN.FieldByName('Tipo').AsAnsiString);
+                FormGeral.Memtb.FieldByName('Tipo').AsAnsiString);
       Indices[K*5] := -1;  // -1 Indica índice descartado;
-      FormGeral.QueryIndicesDFN.Next;
+      FormGeral.Memtb.Next;
       Continue;
       End;
 
     FiltroObj.FiltroIn[K] := [];
-    If FormGeral.QueryIndicesDFN.FieldByName('CharInc').AsAnsiString <> '' then
-      If Not FiltroObj.EncheFiltro(FormGeral.QueryIndicesDFN.FieldByName('CharInc').AsAnsiString, ReportRec.Name,
+    If FormGeral.Memtb.FieldByName('CharInc').AsAnsiString <> '' then
+      If Not FiltroObj.EncheFiltro(FormGeral.Memtb.FieldByName('CharInc').AsAnsiString, ReportRec.Name,
                                    FiltroObj.FiltroIn[K],K) Then
         Begin
-        FormGeral.InsereLog(FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString,
+        FormGeral.InsereLog(FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString,
                   'CharInc Inválido, Índice descartado. Valor Original = '+
-                  FormGeral.QueryIndicesDFN.FieldByName('CharInc').AsAnsiString);
+                  FormGeral.Memtb.FieldByName('CharInc').AsAnsiString);
         Indices[K*5] := -1;  // -1 Indica índice descartado;
-        FormGeral.QueryIndicesDFN.Next;
+        FormGeral.Memtb.Next;
         Continue;
         End;
 
     FiltroObj.FiltroOut[K] := [];
-    If FormGeral.QueryIndicesDFN.FieldByName('CharExc').AsAnsiString <> '' then
-      If Not FiltroObj.EncheFiltro(FormGeral.QueryIndicesDFN.FieldByName('CharExc').AsAnsiString, ReportRec.Name,
+    If FormGeral.Memtb.FieldByName('CharExc').AsAnsiString <> '' then
+      If Not FiltroObj.EncheFiltro(FormGeral.Memtb.FieldByName('CharExc').AsAnsiString, ReportRec.Name,
                                    FiltroObj.FiltroOut[K],K) Then
         Begin
-        FormGeral.InsereLog(FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString,
+        FormGeral.InsereLog(FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString,
                   'CharExc Inválido, Índice descartado. Valor Original = '+
-                  FormGeral.QueryIndicesDFN.FieldByName('CharExc').AsAnsiString);
+                  FormGeral.Memtb.FieldByName('CharExc').AsAnsiString);
         Indices[K*5] := -1;  // -1 Indica índice descartado;
-        FormGeral.QueryIndicesDFN.Next;
+        FormGeral.Memtb.Next;
         Continue;
         End;
 
     FiltroObj.StrInc[K].Col := 0;
     FiltroObj.StrInc[K].Tam := 0;
     FiltroObj.StrInc[K].FilStr := '';
-    If FormGeral.QueryIndicesDFN.FieldByName('StrInc').AsAnsiString <> '' then
-      If Not FiltroObj.EncheStr(FormGeral.QueryIndicesDFN.FieldByName('StrInc').AsAnsiString, ReportRec.Name,
+    If FormGeral.Memtb.FieldByName('StrInc').AsAnsiString <> '' then
+      If Not FiltroObj.EncheStr(FormGeral.Memtb.FieldByName('StrInc').AsAnsiString, ReportRec.Name,
                                 FiltroObj.StrInc[K],K) Then
         Begin
-        FormGeral.InsereLog(FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString,
+        FormGeral.InsereLog(FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString,
                   'StrInc Inválido, Índice descartado. Valor Original = '+
-                  FormGeral.QueryIndicesDFN.FieldByName('StrInc').AsAnsiString);
+                  FormGeral.Memtb.FieldByName('StrInc').AsAnsiString);
         Indices[K*5] := -1;  // -1 Indica índice descartado;
-        FormGeral.QueryIndicesDFN.Next;
+        FormGeral.Memtb.Next;
         Continue;
         End;
 
     FiltroObj.StrExc[K].Col := 0;
     FiltroObj.StrExc[K].Tam := 0;
     FiltroObj.StrExc[K].FilStr := '';
-    If FormGeral.QueryIndicesDFN.FieldByName('StrExc').AsAnsiString <> '' then
-      If Not FiltroObj.EncheStr(FormGeral.QueryIndicesDFN.FieldByName('StrExc').AsAnsiString, ReportRec.Name,
+    If FormGeral.Memtb.FieldByName('StrExc').AsAnsiString <> '' then
+      If Not FiltroObj.EncheStr(FormGeral.Memtb.FieldByName('StrExc').AsAnsiString, ReportRec.Name,
                                 FiltroObj.StrExc[K],K) Then
         Begin
-        FormGeral.InsereLog(FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString,
+        FormGeral.InsereLog(FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString,
                   'StrExc Inválido, Índice descartado. Valor Original = '+
-                  FormGeral.QueryIndicesDFN.FieldByName('StrExc').AsAnsiString);
+                  FormGeral.Memtb.FieldByName('StrExc').AsAnsiString);
         Indices[K*5] := -1;  // -1 Indica índice descartado;
-        FormGeral.QueryIndicesDFN.Next;
+        FormGeral.Memtb.Next;
         Continue;
         End;
 
@@ -1669,16 +1690,21 @@ Var
 
     If JuncaoAutomatica Then      // Vai inserir os registros das tabelas anteriores...
       Begin
-      If FindFirst(DirDest+NomeDat+FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString+'*.dbf', FaAnyFile, SearchRec) = 0 Then     // Copia os dbfs
+      If FindFirst(DirDest+NomeDat+FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString+'*.dbf', FaAnyFile, SearchRec) = 0 Then     // Copia os dbfs
         Begin
         RichEdit1.Lines.Add('Copiando valores do índice '+FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString);
 
-        Query1.Close;
-        Query1.Sql.Clear;
-        Query1.Sql.Add('INSERT INTO "' + viDirTrabApl + 'Temp\'+SeArquivoSemExt(ReportRec.Name) + StatusBar1.Panels[0].Text +
-                        FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString+'"');
-        Query1.Sql.Add('SELECT * FROM "'+DirDest+SearchRec.Name+'"');
-        Query1.ExecSQL;
+        //Query1.Close;
+        //Query1.Sql.Clear;
+        strsql.Clear;
+        strsql.Add('INSERT INTO "' + viDirTrabApl + 'Temp\'+SeArquivoSemExt(ReportRec.Name) + StatusBar1.Panels[0].Text +
+                        FormGeral.Memtb.FieldByName('NomeCampo').AsAnsiString+'"');
+        FormGeral.Persistir(strsql.Text,nil);
+        //Query1.Sql.Add('INSERT INTO "' + viDirTrabApl + 'Temp\'+SeArquivoSemExt(ReportRec.Name) + StatusBar1.Panels[0].Text +
+        //                FormGeral.QueryIndicesDFN.FieldByName('NomeCampo').AsAnsiString+'"');
+        //Query1.Sql.Add('SELECT * FROM "'+DirDest+SearchRec.Name+'"');
+
+        //Query1.ExecSQL;
         End;
       SysUtils.FindClose(SearchRec);
       End;
@@ -1686,9 +1712,9 @@ Var
     If Fusao[K].IndiceGerado Then
       TabelaBde[K].Open;
 
-    FormGeral.QueryIndicesDFN.Next;
+    FormGeral.Memtb.Next;
     End;
-  FormGeral.QueryIndicesDFN.Close;
+  FormGeral.Memtb.Close;
 
   Result := True;
 
@@ -1712,7 +1738,22 @@ Var
       AvisoP.Label1.Caption := 'Indexando '+NomesDeCampos[I];
       AvisoP.Show;
       AvisoP.RePaint;
+      strsql.Clear;
+      strsql.Add(' INSERT INTO PROTOCOLO VALUES (');
+      strsql.Add( QuotedStr(FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString)  + ',');
+      strsql.Add( QuotedStr(FormGeral.MemAux2.FieldByName('NomeRel').AsAnsiString) + ',');
+      strsql.Add( FormGeral.MemAux2.FieldByName('CodSis').AsString     + ',');
+      strsql.Add( FormGeral.MemAux2.FieldByName('CodGrupo').AsString   + ',');
+      strsql.Add( FormGeral.MemAux2.FieldByName('CodSubGrupo').AsString+ ',');
+      strsql.Add( IntToStr(CodGrupo) + ',');
+      strsql.Add( ExtractFileName(Arquivos.Cells[1,1]) + ',');
+      strsql.Add( StatusBar1.Panels[0].Text + ',');
+      strsql.Add( ExtractFileName(TabelaBde[I].TableName) + ',');
+      strsql.Add( FormatDateTime('yyyy-mm-dd', now) + ',');
+      strsql.Add( FormatDateTime('yyyy-mm-dd', now) + ',');
 
+
+      {
       FormGeral.QueryInsertProtocolo.Parameters[0].Value := FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString;
       FormGeral.QueryInsertProtocolo.Parameters[1].Value := FormGeral.QueryAux2.FieldByName('NomeRel').AsAnsiString;
       FormGeral.QueryInsertProtocolo.Parameters[2].Value := FormGeral.QueryAux2.FieldByName('CodSis').AsInteger;
@@ -1724,7 +1765,7 @@ Var
       FormGeral.QueryInsertProtocolo.Parameters[8].Value := ExtractFileName(TabelaBde[I].TableName);
       FormGeral.QueryInsertProtocolo.Parameters[9].Value := Now;
       FormGeral.QueryInsertProtocolo.Parameters[10].Value := Now;
-
+      }
 {      If TiposDeCampos[I] = 'C' Then
         Begin
         HalcyonDataSet1.DatabaseName := Tabela[I].DatabaseName;
@@ -1744,8 +1785,8 @@ Var
       TabelaAds[I].Open;
       RichEdit1.Lines.Add('Índice '+NomesDeCampos[I]+' '+IntToStr(TabelaAds[I].RecordCount)+' Registros Gerados');
 
-      FormGeral.QueryInsertProtocolo.Parameters[11].Value := TabelaAds[I].RecordCount;
-
+      //FormGeral.QueryInsertProtocolo.Parameters[11].Value := TabelaAds[I].RecordCount;
+      strsql.Add(IntToStr(TabelaAds[I].RecordCount) + ',');
       TabelaAds[I].AddIndex('INDVALOR','VALOR',[]); {indexa no final}
       TabelaAds[I].FieldDefs[0].Index := 0;
 
@@ -1766,15 +1807,22 @@ Var
       CloseFile(ArqTam);
 
       TotTamInd := TotTamInd + TamInd;
-
+      {
       FormGeral.QueryInsertProtocolo.Parameters[12].Value := Null;
       FormGeral.QueryInsertProtocolo.Parameters[13].Value := Null;
       FormGeral.QueryInsertProtocolo.Parameters[14].Value := TamInd;
       FormGeral.QueryInsertProtocolo.Parameters[15].Value := Null;
       FormGeral.QueryInsertProtocolo.Parameters[16].Value := Null;
+      }
+      strsql.Add(' Null,');
+      strsql.Add(' Null,');
+      strsql.Add( IntToStr(TamInd) + ',');
+      strsql.Add(' Null,');
+      strsql.Add(' Null)');
 
       Try
-        FormGeral.QueryInsertProtocolo.ExecSQL;
+        //FormGeral.QueryInsertProtocolo.ExecSQL;
+        FormGeral.Persistir(strsql.Text, nil);
       Except
         FormGeral.InsereLog(Arquivos.Cells[1,1],'Erro de inserção de registro de protocolo, índices');
         End; // Try
@@ -1799,18 +1847,18 @@ Var
     Begin
     FillChar(RegDestino,SizeOf(RegDestino),0);
     RegDestino.TipoReg := 3;
-    RegDestino.CODREL_0 := FormGeral.QueryDestinosDFN.FieldByName('CodRel').AsAnsiString;
-    RegDestino.DESTINO := FormGeral.QueryDestinosDFN.FieldByName('Destino').AsAnsiString;
-    RegDestino.TIPODESTINO := FormGeral.QueryDestinosDFN.FieldByName('TipoDestino').AsAnsiString;
-    RegDestino.DIREXPL := FormGeral.QueryDestinosDFN.FieldByName('DirExpl').AsAnsiString = 'S';
-    RegDestino.SEGURANCA := FormGeral.QueryDestinosDFN.FieldByName('Seguranca').AsAnsiString = 'S';
+    RegDestino.CODREL_0 := FormGeral.Memtb.FieldByName('CodRel').AsAnsiString;
+    RegDestino.DESTINO := FormGeral.Memtb.FieldByName('Destino').AsAnsiString;
+    RegDestino.TIPODESTINO := FormGeral.Memtb.FieldByName('TipoDestino').AsAnsiString;
+    RegDestino.DIREXPL := FormGeral.Memtb.FieldByName('DirExpl').AsAnsiString = 'S';
+    RegDestino.SEGURANCA := FormGeral.Memtb.FieldByName('Seguranca').AsAnsiString = 'S';
     Try
-      RegDestino.QTDPERIODOS := FormGeral.QueryDestinosDFN.FieldByName('QtdPeriodos').AsInteger;
+      RegDestino.QTDPERIODOS := FormGeral.Memtb.FieldByName('QtdPeriodos').AsInteger;
     Except
       End;
-    RegDestino.TIPOPERIODO := FormGeral.QueryDestinosDFN.FieldByName('TipoPeriodo').AsAnsiString;
-    RegDestino.USUARIO := FormGeral.QueryDestinosDFN.FieldByName('Usuario').AsAnsiString;
-    RegDestino.SENHA := FormGeral.QueryDestinosDFN.FieldByName('Senha').AsAnsiString;
+    RegDestino.TIPOPERIODO := FormGeral.Memtb.FieldByName('TipoPeriodo').AsAnsiString;
+    RegDestino.USUARIO := FormGeral.Memtb.FieldByName('Usuario').AsAnsiString;
+    RegDestino.SENHA := FormGeral.Memtb.FieldByName('Senha').AsAnsiString;
     End;
 
     Procedure TrataGrupoAutomatico;
@@ -2518,13 +2566,14 @@ except
 end;
 }
   // Força reconexão com o banco de dados
+  {
   if not FormGeral.DatabaseMultiCold.Connected then
     FormGeral.DatabaseMultiCold.Open;
   if not FormGeral.DatabaseEventos.Connected then
     FormGeral.DatabaseEventos.Open;
   if not FormGeral.DatabaseLog.Connected then
     FormGeral.DatabaseLog.Open;
-
+  }
 Agora := Now;  // Determina o Espaço tempo necessário...
 
 StatusBar1.Panels[1].Text := 'Preparando para indexar relatórios...';

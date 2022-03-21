@@ -2224,8 +2224,8 @@ Else
 //    FastImageReload;
 //    End;
   End;
-
-VerificaAnotacao;
+if RelRemoto then
+  VerificaAnotacao;
 End;
 
 Procedure TEditForm.FormCreate(Sender: TObject);

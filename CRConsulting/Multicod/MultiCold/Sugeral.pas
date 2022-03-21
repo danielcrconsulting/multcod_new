@@ -65,6 +65,7 @@ Type
     ADOQryGetIdDescomp: TADOQuery;
     ADOCmdInsertExecutionDescomp: TADOCommand;
     Memtb: TFDMemTable;
+    MemAux2: TFDMemTable;
     Procedure FormCreate(Sender: TObject);
     procedure CDSProcessadorTemplateCalcFields(DataSet: TDataSet);
   Private
@@ -926,6 +927,7 @@ end;
 
 Procedure TFormGeral.LerIni;
   var strlst : TStringList;
+      valorCampo : String;
 Begin
 
   //QueryAux1.SQL.Clear;
@@ -934,8 +936,8 @@ Begin
   //QueryAux1.SQL.Add('WHERE (A.codUsuario = ''ADM'') ');
   //QueryAux1.SQL.Add('ORDER BY A.campoID');
   //QueryAux1.Open;
-
-  strlst.Add('SELECT B.nomeCampo, A.valorCampo, A.campoID, A.codUsuario');
+  strlst := TStringList.Create;
+  strlst.Add('SELECT B.nomeCampo, replace(A.valorCampo,' + quotedStr('\') + ',' + QuotedStr('/') + ') valorCampo, A.campoID, A.codUsuario');
   strlst.Add('FROM CONFIGURACAO A INNER JOIN NOMECAMPO B ON A.campoID = B.campoID');
   strlst.Add('WHERE (A.codUsuario = ''ADM'') ');
   strlst.Add('ORDER BY A.campoID');
@@ -943,65 +945,67 @@ Begin
 
   While Not memtb.Eof Do
     Begin
+    valorCampo := StringReplace(memtb.Fields[1].AsString, '/', '\', [rfIgnoreCase, rfReplaceAll]);
+
     If memtb.Fields[0].AsString = 'DIASPERMANENCIA' Then
-      viNDiasPerm := stringReplace(memtb.Fields[1].AsString, '/', '', [rfReplaceAll])
+      viNDiasPerm := stringReplace(valorCampo, '/', '', [rfReplaceAll])
     Else
     If memtb.Fields[0].AsString = 'DIRETORIOTRABALHO' Then
-      viDirTrabApl := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+      viDirTrabApl := IncludeTrailingPathDelimiter(valorCampo)
     Else
     If memtb.Fields[0].AsString = 'DIRENTRA' Then
-      viDirEntraFil := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+      viDirEntraFil := IncludeTrailingPathDelimiter(valorCampo)
     Else
     If memtb.Fields[0].AsString = 'DIRSAI' Then
-      viDirSaiFil := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+      viDirSaiFil := IncludeTrailingPathDelimiter(valorCampo)
     Else
     If memtb.Fields[0].AsString = 'BACKUPAUTOMATICO' Then
-      viBackAutoSN := memtb.Fields[1].AsString
+      viBackAutoSN := valorCampo
     Else
     If memtb.Fields[0].AsString = 'DIRETORIOBACKUP' Then
-      viDirBackAuto := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+      viDirBackAuto := IncludeTrailingPathDelimiter(valorCampo)
     Else
     If memtb.Fields[0].AsString = 'REMOVERS1' Then
-      viRemoveS1SN := memtb.Fields[1].AsString
+      viRemoveS1SN := valorCampo
     Else
     If memtb.Fields[0].AsString = 'EXECUCAOAUTOMATICA' Then
-      viExecAutoSN := memtb.Fields[1].AsString
+      viExecAutoSN := valorCampo
     Else
     If memtb.Fields[0].AsString = 'INTERVALO' Then
-      viInterExecSeg := memtb.Fields[1].AsString
+      viInterExecSeg := valorCampo
     Else
     If memtb.Fields[0].AsString = 'EXTENSAOAUTOMATICA' Then
-      viExtAutoSN := memtb.Fields[1].AsString
+      viExtAutoSN := valorCampo
     Else
-    If QueryAux1.Fields[0].AsString = 'FORMATOEXTENSAO' Then
-      viFormExtAuto := QueryAux1.Fields[1].AsString
+    If memtb.Fields[0].AsString = 'FORMATOEXTENSAO' Then
+      viFormExtAuto := valorCampo
     Else
     If memtb.Fields[0].AsString = 'SEPARACAOAUTOMATICA' Then
-      viSeparacaoAutoSN := memtb.Fields[1].AsString
+      viSeparacaoAutoSN := valorCampo
     Else
     If memtb.Fields[0].AsString = 'DECIMALCARACTEREQUEBRA' Then
-      viDecDoCarac := memtb.Fields[1].AsString
+      viDecDoCarac := valorCampo
     Else
     If memtb.Fields[0].AsString = 'COLUNACARACTEREQUEBRA' Then
-      viColDoCarac := memtb.Fields[1].AsString
+      viColDoCarac := valorCampo
     Else
     If memtb.Fields[0].AsString = 'LIMPEZAAUTOMATICA' Then
-      viLimpaAutoSN := memtb.Fields[1].AsString
+      viLimpaAutoSN := valorCampo
     Else
     If memtb.Fields[0].AsString = 'GRUPO' Then
-      viGrupo := memtb.Fields[1].AsString
+      viGrupo := valorCampo
     Else
     If memtb.Fields[0].AsString = 'SUBGRUPO' Then
-      viSubGrupo := memtb.Fields[1].AsString
+      viSubGrupo := valorCampo
     Else
     If memtb.Fields[0].AsString = 'DIRETORIOENTRADA' Then
-      viLimpEntra := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+      viLimpEntra := IncludeTrailingPathDelimiter(valorCampo)
     Else
-    If QueryAux1.Fields[0].AsString = 'DIRETORIOSAIDA' Then
-      viLimpSai := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString)
+    If memtb.Fields[0].AsString = 'DIRETORIOSAIDA' Then
+      viLimpSai := IncludeTrailingPathDelimiter(valorCampo)
     Else
     If memtb.Fields[0].AsString = 'DIRETORIOGRAVACAO' Then
-      viDirGravCd := IncludeTrailingPathDelimiter(memtb.Fields[1].AsString);
+      viDirGravCd := IncludeTrailingPathDelimiter(valorCampo);
     memtb.Next;
   End;
 

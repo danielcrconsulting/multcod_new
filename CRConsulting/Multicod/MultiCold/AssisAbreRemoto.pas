@@ -34,7 +34,7 @@ Var
 
 Implementation
 
-Uses MdiMultiCold, Subrug, LogInForm, Sugeral, Avisoi, zLib, MultiColdServerUnit1;
+Uses MdiMultiCold, Subrug, LogInForm, Sugeral, Avisoi, zLib{, MultiColdServerUnit1};
 
 {$R *.DFM}
 
@@ -266,7 +266,7 @@ Var
   I,
   RetVal : Integer;
   RetValStr : String;
-  frmMultiColdServer : TMultiColdServerForm;
+  //frmMultiColdServer : TMultiColdServerForm;
   Retorno : TStringList;
 Begin
 If ListBox2.SelCount = 0 Then

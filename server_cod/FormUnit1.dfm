@@ -1,9 +1,9 @@
 object Form1: TForm1
   Left = 271
   Top = 114
-  Caption = 'Configurar Server'
+  Caption = 'Configurar Server V1.0.0 08/03/2022'
   ClientHeight = 235
-  ClientWidth = 399
+  ClientWidth = 443
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
