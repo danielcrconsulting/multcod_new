@@ -66,6 +66,8 @@ Type
     ADOCmdInsertExecutionDescomp: TADOCommand;
     Memtb: TFDMemTable;
     MemAux2: TFDMemTable;
+    MemAux1: TFDMemTable;
+    MemAux3: TFDMemTable;
     Procedure FormCreate(Sender: TObject);
     procedure CDSProcessadorTemplateCalcFields(DataSet: TDataSet);
   Private
@@ -88,9 +90,9 @@ Type
 //  Procedure CriarAliasEventos;
 //  Procedure CriarAliasLog;     //   'S' = substituir; '+' = somar
   Procedure InsereAtualizaCompila(Operacao, CodRel : AnsiString; CodSis, CodGrupo, CodSubGrupo, Cont : Integer);
-    procedure ImportarDados( StrSql : String; strPar : TFDParams);
+    procedure ImportarDados( StrSql : String; strPar : TFDParams; tb : Integer = 0; bd : Integer = 0);
     function BaixarArquivo( arq : String) : TJSONArray;
-    procedure Persistir( StrSql : String; StgParam : TFDParams);
+    procedure Persistir( StrSql : String; StgParam : TFDParams; bd : Integer = 0);
     procedure JsonToDataset(aDataset : TDataSet; aJSON : string);
     function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString;
                             Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo : Integer): String;
@@ -902,27 +904,47 @@ begin
   result := OMetodosServer.ServerMethodsPrincipalClient.BaixarArquivo(arq);
 end;
 
-procedure TFormGeral.ImportarDados( StrSql : String; strPar : TFDParams);
+procedure TFormGeral.ImportarDados( StrSql : String; strPar : TFDParams; tb : Integer = 0; bd : Integer = 0);
 var
   LDataSetList: TFDJSONDataSets;
   json : String;
 begin
     MemTb.Close;
     //LDataSetList := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql);
-    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql);
+    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql,bd);
     if json = ']' then
       json := '[]';
-    JsonToDataset(MemTb, json);
+    if tb = 0 then
+    begin
+      JsonToDataset(MemTb, json);
+      if json <> '[]' then
+        MemTb.Open;
+    end
+    else if tb = 1 then
+    begin
+      JsonToDataset(MemAux1, json);
+      if json <> '[]' then
+        MemAux1.Open;
+    end
+    else if tb = 2 then
+    begin
+      JsonToDataset(MemAux2, json);
+      if json <> '[]' then
+        MemAux2.Open;
+    end
+    else
+    begin
+      JsonToDataset(MemAux3, json);
+      if json <> '[]' then
+        MemAux3.Open;
+    end;
 
-    //MemTb.AppendData(
-    //  TFDJSONDataSetsReader.GetListValue(LDataSetList, 0));
-    if json <> '[]' then
-      MemTb.Open;
+
 end;
 
-procedure TFormGeral.Persistir( StrSql : String; StgParam : TFDParams);
+procedure TFormGeral.Persistir( StrSql : String; StgParam : TFDParams; bd : Integer = 0);
 begin
-  OMetodosServer.ServerMethodsPrincipalClient.PersistirBanco(StrSql);
+  OMetodosServer.ServerMethodsPrincipalClient.PersistirBanco(StrSql, bd);
 end;
 
 Procedure TFormGeral.LerIni;
@@ -1079,7 +1101,7 @@ Begin
   If Operacao = '+' Then
     Begin
 
-      ImportarDados(strlst.Text, nil);
+      ImportarDados(strlst.Text, nil, 0, 2);
       Try
         if Memtb.Active then
           Inc(Cont,Memtb.Fields[0].AsInteger);
@@ -1101,7 +1123,7 @@ Begin
   strlst.add(IntToStr(CodSubGrupo)+ ',');
   strlst.add(IntToStr(Cont) + ')');
   Try
-    Persistir(strlst.Text, nil);
+    Persistir(strlst.Text, nil,2);
     Exit;
   Except
   End;

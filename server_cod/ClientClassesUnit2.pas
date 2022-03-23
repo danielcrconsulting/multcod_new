@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 22/02/2022 19:16:44
+// 23/03/2022 19:00:20
 //
 
 unit ClientClassesUnit2;
@@ -37,8 +37,8 @@ type
     function EchoString(Value: string; const ARequestFilter: string = ''): string;
     function ReverseString(Value: string; const ARequestFilter: string = ''): string;
     function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
-    function RetornarDadosBanco(SQL: string; const ARequestFilter: string = ''): string;
-    procedure PersistirBanco(SQL: string);
+    function RetornarDadosBanco(SQL: string; bd: Integer; const ARequestFilter: string = ''): string;
+    procedure PersistirBanco(SQL: string; bd: Integer);
     function BaixarArquivo(arq: string; const ARequestFilter: string = ''): TJSONArray;
     function BaixarArquivo_Cache(arq: string; const ARequestFilter: string = ''): IDSRestCachedJSONArray;
     function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; const ARequestFilter: string = ''): string;
@@ -85,15 +85,17 @@ const
     (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
   );
 
-  TServerMethods1_RetornarDadosBanco: array [0..1] of TDSRestParameterMetaData =
+  TServerMethods1_RetornarDadosBanco: array [0..2] of TDSRestParameterMetaData =
   (
     (Name: 'SQL'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'bd'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
-  TServerMethods1_PersistirBanco: array [0..0] of TDSRestParameterMetaData =
+  TServerMethods1_PersistirBanco: array [0..1] of TDSRestParameterMetaData =
   (
-    (Name: 'SQL'; Direction: 1; DBXType: 26; TypeName: 'string')
+    (Name: 'SQL'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'bd'; Direction: 1; DBXType: 6; TypeName: 'Integer')
   );
 
   TServerMethods1_BaixarArquivo: array [0..1] of TDSRestParameterMetaData =
@@ -283,7 +285,7 @@ begin
   Result := FRetornarParametrosConnCommand.Parameters[7].Value.GetBoolean;
 end;
 
-function TServerMethods1Client.RetornarDadosBanco(SQL: string; const ARequestFilter: string): string;
+function TServerMethods1Client.RetornarDadosBanco(SQL: string; bd: Integer; const ARequestFilter: string): string;
 begin
   if FRetornarDadosBancoCommand = nil then
   begin
@@ -293,11 +295,12 @@ begin
     FRetornarDadosBancoCommand.Prepare(TServerMethods1_RetornarDadosBanco);
   end;
   FRetornarDadosBancoCommand.Parameters[0].Value.SetWideString(SQL);
+  FRetornarDadosBancoCommand.Parameters[1].Value.SetInt32(bd);
   FRetornarDadosBancoCommand.Execute(ARequestFilter);
-  Result := FRetornarDadosBancoCommand.Parameters[1].Value.GetWideString;
+  Result := FRetornarDadosBancoCommand.Parameters[2].Value.GetWideString;
 end;
 
-procedure TServerMethods1Client.PersistirBanco(SQL: string);
+procedure TServerMethods1Client.PersistirBanco(SQL: string; bd: Integer);
 begin
   if FPersistirBancoCommand = nil then
   begin
@@ -307,6 +310,7 @@ begin
     FPersistirBancoCommand.Prepare(TServerMethods1_PersistirBanco);
   end;
   FPersistirBancoCommand.Parameters[0].Value.SetWideString(SQL);
+  FPersistirBancoCommand.Parameters[1].Value.SetInt32(bd);
   FPersistirBancoCommand.Execute;
 end;
 

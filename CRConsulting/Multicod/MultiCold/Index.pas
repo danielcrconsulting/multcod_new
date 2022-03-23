@@ -767,6 +767,7 @@ Var
   Var
     Erro : Integer;
     f : TFileStream;
+    strSql : TStringList;
   Begin
   InicProc := False;
 
@@ -824,42 +825,43 @@ Var
 
   ExtrairDados := False;
   IFrmExtract := 0;
-  FormGeral.QueryAux1.Close;
-  FormGeral.QueryAux1.Sql.Clear;
-  FormGeral.QueryAux1.Sql.Add('SELECT * FROM EXTRATOR A ');
-  FormGeral.QueryAux1.Sql.Add('WHERE A.CODGRUPO = '+IntToStr(CodGrupo));
-  FormGeral.QueryAux1.Sql.Add('AND A.CODREL = '''+FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString+'''');
-  FormGeral.QueryAux1.Open;
-  If (FormGeral.QueryAux1.RecordCount <> 0) Then
-    While Not FormGeral.QueryAux1.Eof Do
+  strSql := TStringList.Create;
+  strSql.Clear;
+  //strSql.QueryAux1.Close;
+  strSql.Add('SELECT * FROM EXTRATOR A ');
+  strSql.Add('WHERE A.CODGRUPO = '+IntToStr(CodGrupo));
+  strSql.Add('AND A.CODREL = '''+FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString+'''');
+  formgeral.ImportarDados(strsql.Text,nil,1);
+  If (FormGeral.MemAux1.RecordCount <> 0) Then
+    While Not FormGeral.MemAux1.Eof Do
       Begin
-      If (FileExists(FormGeral.QueryAux1.FieldByName('XTR').AsAnsiString)) Then
+      If (FileExists(FormGeral.MemAux1.FieldByName('XTR').AsAnsiString)) Then
         Begin
         // Prepara o path de destino
         Inc(IFrmExtract);
         IndexFrmExtract[IFrmExtract] := TFrmExtract.Create(Self);
         IndexFrmExtract[IFrmExtract].DirDestinoExtract := IncludeTrailingPathDelimiter(FormGeral.QueryAux1.FieldByName('DESTINO').AsAnsiString);
-        If FormGeral.QueryAux1.FieldByName('DIREXPL').AsAnsiString = 'N' Then
+        If FormGeral.MemAux1.FieldByName('DIREXPL').AsAnsiString = 'N' Then
           IndexFrmExtract[IFrmExtract].DirDestinoExtract := IndexFrmExtract[IFrmExtract].DirDestinoExtract + CodAlfa;
-        If Trim(FormGeral.QueryAux1.FieldByName('SUBDIR').AsAnsiString) <> '' Then
+        If Trim(FormGeral.MemAux1.FieldByName('SUBDIR').AsAnsiString) <> '' Then
           IndexFrmExtract[IFrmExtract].DirDestinoExtract := IndexFrmExtract[IFrmExtract].DirDestinoExtract +
                                IncludeTrailingPathDelimiter(LimpaNomArq(FormGeral.QueryAux1.FieldByName('SUBDIR').AsAnsiString));
-        IndexFrmExtract[IFrmExtract].OperacaoExtract := FormGeral.QueryAux1.FieldByName('OPERACAO').AsAnsiString;
+        IndexFrmExtract[IFrmExtract].OperacaoExtract := FormGeral.MemAux1.FieldByName('OPERACAO').AsAnsiString;
         IndexFrmExtract[IFrmExtract].LimparButton.Click; // Limpar a área do script de extração
-        IndexFrmExtract[IFrmExtract].LeScript(FormGeral.QueryAux1.FieldByName('XTR').AsAnsiString);
+        IndexFrmExtract[IFrmExtract].LeScript(FormGeral.MemAux1.FieldByName('XTR').AsAnsiString);
         IndexFrmExtract[IFrmExtract].OrigemDeExecucao := 'I';
-        If Trim(FormGeral.QueryAux1.FieldByName('ARQUIVO').AsAnsiString) = '' Then
+        If Trim(FormGeral.MemAux1.FieldByName('ARQUIVO').AsAnsiString) = '' Then
           IndexFrmExtract[IFrmExtract].NomeArqTxt := ''
         Else
-          IndexFrmExtract[IFrmExtract].NomeArqTxt := Trim(FormGeral.QueryAux1.FieldByName('ARQUIVO').AsAnsiString);
+          IndexFrmExtract[IFrmExtract].NomeArqTxt := Trim(FormGeral.MemAux1.FieldByName('ARQUIVO').AsAnsiString);
         IndexFrmExtract[IFrmExtract].SaveDialog2.FileName := ChangeFileExt(Arquivos.Cells[1,2],
-                                     SeArquivoSemExt(FormGeral.QueryAux1.FieldByName('XTR').AsAnsiString)+'.TXT');
+                                     SeArquivoSemExt(FormGeral.MemAux1.FieldByName('XTR').AsAnsiString)+'.TXT');
         IndexFrmExtract[IFrmExtract].ExecutarButton.Click;
         ExtrairDados := True;
         End;
-      FormGeral.QueryAux1.Next;
+      FormGeral.MemAux1.Next;
       End;
-  FormGeral.QueryAux1.Close;
+  FormGeral.MemAux1.Close;
 
   Paginas := 1;
   PosArq := 0;
@@ -1359,7 +1361,7 @@ Var
   Except
     End; // Try
   RegDFN.IDSTRING2 := FormGeral.MemAux2.Fields[10].AsAnsiString;
-  RegDFN.DIRENTRA := FormGeral.MemAux2.Fields[11].AsAnsiString;
+  RegDFN.DIRENTRA := StringReplace(FormGeral.MemAux2.Fields[11].AsAnsiString,'/','\',[rfReplaceAll, rfIgnoreCase]);
   RegDFN.TIPOQUEBRA := FormGeral.MemAux2.Fields[12].AsInteger;
   Try
     RegDFN.COLQUEBRASTR1 := FormGeral.MemAux2.Fields[13].AsInteger;
@@ -1399,7 +1401,7 @@ Var
   //FormGeral.QueryIndicesDFN.Open;
 
   strSql.Clear;
-  strSql.Add(' SELECT * FROM INDICESDFN WHERE (CODREL = ' + FormGeral.MemAux2.FieldByName('CODREL').AsAnsiString + ')');
+  strSql.Add(' SELECT * FROM INDICESDFN WHERE (CODREL = ' + QuotedStr(FormGeral.MemAux2.FieldByName('CODREL').AsAnsiString) + ')');
   FormGeral.ImportarDados(strSql.Text, nil);
 //  FormGeral.TableIndicesDFN.Filter := 'CODREL = '''+FormGeral.QueryAux2.FieldByName('CODREL').AsAnsiString+'''';
 //  FormGeral.TableIndicesDFN.Filtered := True;
@@ -1435,10 +1437,12 @@ Var
 
   FillChar(ArrRegIndice,SizeOf(ArrRegIndice),0);
 
-  For K := 0 To FormGeral.QueryIndicesDFN.RecordCount-1 Do
+  For K := 0 To FormGeral.Memtb.RecordCount-1 Do
     Begin
 
-    If (K <> 0) And (Not VarIsNull(FormGeral.Memtb.FieldByName('Fusao').Value)) Then
+    If (K <> 0) and (not FormGeral.Memtb.FieldByName('Fusao').IsNull) and
+       (FormGeral.Memtb.FieldByName('Fusao').AsString <> '') then
+    //And (Not VarIsNull(FormGeral.Memtb.FieldByName('Fusao').Value)) Then
       For L := 0 To K-1 Do
         If (FormGeral.Memtb.FieldByName('Fusao').AsInteger = Fusao[L].CodFusao) And
            (FormGeral.Memtb.FieldByName('Tipo').AsAnsiString = ArrRegIndice[L].TIPOCAMPO) Then
@@ -1448,7 +1452,9 @@ Var
           Break;
           End;
 
-    If (Not VarIsNull(FormGeral.Memtb.FieldByName('Fusao').Value)) Then
+    //If (Not VarIsNull(FormGeral.Memtb.FieldByName('Fusao').Value)) Then
+    if (not FormGeral.Memtb.FieldByName('Fusao').IsNull) and
+       (FormGeral.Memtb.FieldByName('Fusao').AsString <> '') then
       Fusao[K].CodFusao := FormGeral.Memtb.FieldByName('Fusao').AsInteger;
 
     If K < 200 Then
@@ -1746,11 +1752,11 @@ Var
       strsql.Add( FormGeral.MemAux2.FieldByName('CodGrupo').AsString   + ',');
       strsql.Add( FormGeral.MemAux2.FieldByName('CodSubGrupo').AsString+ ',');
       strsql.Add( IntToStr(CodGrupo) + ',');
-      strsql.Add( ExtractFileName(Arquivos.Cells[1,1]) + ',');
-      strsql.Add( StatusBar1.Panels[0].Text + ',');
-      strsql.Add( ExtractFileName(TabelaBde[I].TableName) + ',');
-      strsql.Add( FormatDateTime('yyyy-mm-dd', now) + ',');
-      strsql.Add( FormatDateTime('yyyy-mm-dd', now) + ',');
+      strsql.Add( QuotedStr(ExtractFileName(Arquivos.Cells[1,1])) + ',');
+      strsql.Add( QuotedStr(StatusBar1.Panels[0].Text) + ',');
+      strsql.Add( QuotedStr(ExtractFileName(TabelaBde[I].TableName)) + ',');
+      strsql.Add( QuotedStr(FormatDateTime('dd-mm-yyyy', now)) + ',');
+      strsql.Add( QuotedStr(FormatDateTime('dd-mm-yyyy', now)) + ',');
 
 
       {
@@ -1822,7 +1828,7 @@ Var
 
       Try
         //FormGeral.QueryInsertProtocolo.ExecSQL;
-        FormGeral.Persistir(strsql.Text, nil);
+        FormGeral.Persistir(strsql.Text, nil, 1);
       Except
         FormGeral.InsereLog(Arquivos.Cells[1,1],'Erro de inserção de registro de protocolo, índices');
         End; // Try
@@ -1980,36 +1986,50 @@ Var
         End;
 
 //  FormGeral.QueryDestinosDFN.Params[0].AsAnsiString := FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString;
-  FormGeral.QueryDestinosDFN.Parameters[0].Value := FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString;
-  FormGeral.QueryDestinosDFN.Open;
+  //FormGeral.QueryDestinosDFN.Parameters[0].Value := FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString;
+  //FormGeral.QueryDestinosDFN.Open;
+  strSql.Clear;
+  strSql.Add(' SELECT replace(DESTINO,' + quotedStr('\') + ',' + QuotedStr('/') + ') DESTINO, ');
+  strSql.Add(' TIPODESTINO, SEGURANCA, QTDPERIODOS, TIPOPERIODO, USUARIO, SENHA, DIREXPL ');
+  strSql.Add(' FROM         DESTINOSDFN ');
+  strSql.Add(' WHERE     (CODREL = ' + Quotedstr(FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString) + ')  ');
+  strSql.Add(' AND TIPODESTINO = ' + QuotedStr('Dir') );
+  formGeral.ImportarDados(strSql.Text, nil);
 //  FormGeral.TableDestinosDFN.Filter := 'CODREL = '''+FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString+''''+
 //            ' AND TIPODESTINO = ''Dir''';
 //  FormGeral.TableDestinosDFN.Filtered := True;
 
-  While Not FormGeral.QueryDestinosDFN.Eof do         //Conta
-    FormGeral.QueryDestinosDFN.Next;
+  //While Not FormGeral.Memtb.Eof do         //Conta
+  //  FormGeral.Memtb.Next;
 
-  Counter := FormGeral.QueryDestinosDFN.RecordCount;
+  Counter := FormGeral.Memtb.RecordCount;
 
   If Counter = 0 Then  // Nenhum destino, sai fora....
     Begin
-    FormGeral.QueryDestinosDFN.Close;
-    FormGeral.InsereLog(FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString,'Relatório sem destino');
+    FormGeral.Memtb.Close;
+    FormGeral.InsereLog(FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString,'Relatório sem destino');
     Exit;
     End;
 
-  FormGeral.QueryDestinosDFN.First;                  // Volta ao início
+  //FormGeral.Memtb.First;                  // Volta ao início
 
   // Verifica a necessidade de geração de uma cópia no diretório de cd...
-  FormGeral.QueryAux1.Close;
-  FormGeral.QueryAux1.Sql.Clear;
-  FormGeral.QueryAux1.Sql.Add('SELECT * FROM RELATOCD A ');
-  FormGeral.QueryAux1.Sql.Add('WHERE A.CODGRUPO = '+IntToStr(CodGrupo));
-  FormGeral.QueryAux1.Sql.Add('AND A.CODREL = '''+FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString+'''');
-  FormGeral.QueryAux1.Open;
-  If FormGeral.QueryAux1.RecordCount <> 0 Then  // Tem que copiar para futura gravação de CD
+  strsql.Clear;
+  //FormGeral.QueryAux1.Close;
+  //FormGeral.QueryAux1.Sql.Clear;
+  //FormGeral.QueryAux1.Sql.Add('SELECT * FROM RELATOCD A ');
+  //FormGeral.QueryAux1.Sql.Add('WHERE A.CODGRUPO = '+IntToStr(CodGrupo));
+  //FormGeral.QueryAux1.Sql.Add('AND A.CODREL = '''+FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString+'''');
+  //FormGeral.QueryAux1.Open;
+
+  strsql.Add('SELECT * FROM RELATOCD A ');
+  strsql.Add('WHERE A.CODGRUPO = '+IntToStr(CodGrupo));
+  strsql.Add('AND A.CODREL = '''+FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString+'''');
+  formgeral.ImportarDados(strsql.Text,nil,1);
+
+  If FormGeral.MemAux1.RecordCount <> 0 Then  // Tem que copiar para futura gravação de CD
     Begin
-    If FormGeral.QueryAux1.FieldByName('DirExpl').AsAnsiString = 'S' Then
+    If FormGeral.MemAux1.FieldByName('DirExpl').AsAnsiString = 'S' Then
       DirDest := IncludeTrailingPathDelimiter(viDirGravCd)
     Else
       DirDest := IncludeTrailingPathDelimiter(viDirGravCd + CodAlfa);
@@ -2021,7 +2041,7 @@ Var
 
     CriaDestino;
     RegDestino.DESTINO := viDirGravCd;
-    RegDestino.SEGURANCA := FormGeral.QueryAux1.FieldByName('Seguranca').AsAnsiString = 'S';
+    RegDestino.SEGURANCA := FormGeral.MemAux1.FieldByName('Seguranca').AsAnsiString = 'S';
 
     DescarregaCNFG;
 
@@ -2035,14 +2055,20 @@ Var
       Until FindNext(SearchRec) <> 0;
     SysUtils.FindClose(SearchRec);
     End;
-  FormGeral.QueryAux1.Close;
-
-  While (Not FormGeral.QueryDestinosDFN.Eof) Do  // Varre todos os destinos = Dir
+  FormGeral.MemAux1.Close;
+  strSql.Clear;
+  strSql.Add(' SELECT codrel, replace(DESTINO,' + quotedStr('\') + ',' + QuotedStr('/') + ') DESTINO, ');
+  strSql.Add(' TIPODESTINO, SEGURANCA, QTDPERIODOS, TIPOPERIODO, USUARIO, SENHA, DIREXPL ');
+  strSql.Add(' FROM         DESTINOSDFN ');
+  strSql.Add(' WHERE     (CODREL = ' + Quotedstr(FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString) + ')  ');
+  strSql.Add(' AND TIPODESTINO = ' + QuotedStr('Dir') );
+  formGeral.ImportarDados(strSql.Text, nil);
+  While (Not FormGeral.Memtb.Eof) Do  // Varre todos os destinos = Dir
     Begin
-    If FormGeral.QueryDestinosDFN.FieldByName('DirExpl').AsAnsiString = 'S' Then
-      DirDest := IncludeTrailingPathDelimiter(FormGeral.QueryDestinosDFN.FieldByName('Destino').AsAnsiString)
+    If FormGeral.Memtb.FieldByName('DirExpl').AsAnsiString = 'S' Then
+      DirDest := IncludeTrailingPathDelimiter(stringReplace(FormGeral.Memtb.FieldByName('Destino').AsAnsiString,'/','\',[rfReplaceAll, rfIgnoreCase]))
     Else
-      DirDest := IncludeTrailingPathDelimiter(FormGeral.QueryDestinosDFN.FieldByName('Destino').AsAnsiString) + CodAlfa;
+      DirDest := IncludeTrailingPathDelimiter(stringReplace(FormGeral.Memtb.FieldByName('Destino').AsAnsiString,'/','\',[rfReplaceAll, rfIgnoreCase])) + CodAlfa;
     ForceDirectories(DirDest);  // Cria o diretório de destino, se já não existe...
 
     TrataGrupoAutomatico;
@@ -2094,10 +2120,10 @@ Var
         Until FindNext(SearchRec) <> 0;
       SysUtils.FindClose(SearchRec);
       End;
-    FormGeral.QueryDestinosDFN.Next;
+    FormGeral.Memtb.Next;
     Dec(Counter);
     End;
-  FormGeral.QueryDestinosDFN.Close;
+  FormGeral.Memtb.Close;
   End;
 
   Procedure LimpaMensagens;
@@ -2122,26 +2148,35 @@ Var
 
   Result := False;
 
-  FormGeral.QueryAux1.Close;
-  FormGeral.QueryAux1.Sql.Clear;
-  FormGeral.QueryAux1.Sql.Add('SELECT * FROM SUBGRUPOSDFN A ');
-  FormGeral.QueryAux1.Sql.Add('WHERE A.CODSIS = '+
-                         FormGeral.QueryAux2.FieldByName('CodSis').AsAnsiString);
-  FormGeral.QueryAux1.Sql.Add('AND A.CODGRUPO = '+
-                         FormGeral.QueryAux2.FieldByName('CodGrupo').AsAnsiString);
-  FormGeral.QueryAux1.Sql.Add('AND A.CODSUBGRUPO = '+
-                         FormGeral.QueryAux2.FieldByName('CodSubGrupo').AsAnsiString);
+  //FormGeral.QueryAux1.Close;
+  //FormGeral.QueryAux1.Sql.Clear;
+  //FormGeral.QueryAux1.Sql.Add('SELECT * FROM SUBGRUPOSDFN A ');
+  //FormGeral.QueryAux1.Sql.Add('WHERE A.CODSIS = '+
+  //                       FormGeral.QueryAux2.FieldByName('CodSis').AsAnsiString);
+  //FormGeral.QueryAux1.Sql.Add('AND A.CODGRUPO = '+
+  //                       FormGeral.QueryAux2.FieldByName('CodGrupo').AsAnsiString);
+  //FormGeral.QueryAux1.Sql.Add('AND A.CODSUBGRUPO = '+
+  //                       FormGeral.QueryAux2.FieldByName('CodSubGrupo').AsAnsiString);
+  strsql.Clear;
+  strsql.Add('SELECT * FROM SUBGRUPOSDFN A ');
+  strsql.Add('WHERE A.CODSIS = '+
+                         FormGeral.MemAux2.FieldByName('CodSis').AsAnsiString);
+  strsql.Add('AND A.CODGRUPO = '+
+                         FormGeral.MemAux2.FieldByName('CodGrupo').AsAnsiString);
+  strsql.Add('AND A.CODSUBGRUPO = '+
+                         FormGeral.MemAux2.FieldByName('CodSubGrupo').AsAnsiString);
   Try
-    FormGeral.QueryAux1.Open;
-    If FormGeral.QueryAux1.RecordCount = 0 Then
+    //FormGeral.Memtb.Open;
+    formgeral.ImportarDados(strsql.Text, nil, 1);
+    If FormGeral.MemAux1.RecordCount = 0 Then
       Begin
-      FormGeral.QueryAux1.Close;
+      FormGeral.MemAux1.Close;
       FormGeral.InsereLog(ReportRec.Name,'Query Sub Grupo Vazia');
       MoveDelete(DirIn+ReportRec.Name,viDirTrabApl+'NaoProcessados\'+ReportRec.Name);
       Exit; // 07/09/2000
       End;
-    SubGrupo := FormGeral.QueryAux1.FieldByName('NomeSubGrupo').AsAnsiString;
-    FormGeral.QueryAux1.Close;
+    SubGrupo := FormGeral.MemAux1.FieldByName('NomeSubGrupo').AsAnsiString;
+    FormGeral.MemAux1.Close;
   Except
     FormGeral.InsereLog(ReportRec.Name,'Erro de Query Sub Grupo');
     MoveDelete(DirIn+ReportRec.Name,viDirTrabApl+'NaoProcessados\'+ReportRec.Name);
@@ -2155,21 +2190,21 @@ Var
   Begin
   Result := False;
   Try
-    FormGeral.QueryAux1.Open;
-    If FormGeral.QueryAux1.RecordCount = 0 Then
+    FormGeral.MemAux1.Open;
+    If FormGeral.MemAux1.RecordCount = 0 Then
       Begin
-      FormGeral.QueryAux1.Close;
+      FormGeral.MemAux1.Close;
       Exit // 07/09/2000
       End
     Else
       Begin
-      CodAlfa := LimpaNomArq(FormGeral.QueryAux1.FieldByName('NomeSis').AsAnsiString)+'\'+
-                 LimpaNomArq(FormGeral.QueryAux1.FieldByName('NomeGrupo').AsAnsiString)+'\'+
+      CodAlfa := LimpaNomArq(FormGeral.MemAux1.FieldByName('NomeSis').AsAnsiString)+'\'+
+                 LimpaNomArq(FormGeral.MemAux1.FieldByName('NomeGrupo').AsAnsiString)+'\'+
                  LimpaNomArq(SubGrupo) + '\' + //  07/09/2000
-                 LimpaNomArq(FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString)+'\';
-      CodGrupo := FormGeral.QueryAux1.FieldByName('CodGrupo').AsInteger;
+                 LimpaNomArq(FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString)+'\';
+      CodGrupo := FormGeral.MemAux1.FieldByName('CodGrupo').AsInteger;
       End;
-    FormGeral.QueryAux1.Close;
+    FormGeral.MemAux1.Close;
   Except
     FormGeral.InsereLog(ReportRec.Name,'Erro de Query Grupo');
     MoveDelete(DirIn+ReportRec.Name,viDirTrabApl+'NaoProcessados\'+ReportRec.Name);
@@ -2183,23 +2218,23 @@ Var
   Begin
   Result := False;
   Try
-    FormGeral.QueryAux1.Open;
-    If FormGeral.QueryAux1.RecordCount = 0 Then
+    FormGeral.MemAux1.Open;
+    If FormGeral.MemAux1.RecordCount = 0 Then
       Begin
-      FormGeral.QueryAux1.Close;
+      FormGeral.MemAux1.Close;
       FormGeral.InsereLog(ReportRec.Name,'Query Grupo Aux Vazia');
       MoveDelete(DirIn+ReportRec.Name,viDirTrabApl+'NaoProcessados\'+ReportRec.Name);
       Exit;
       End
     Else
       Begin
-      CodAlfa := LimpaNomArq(FormGeral.QueryAux1.FieldByName('NomeSis').AsAnsiString)+'\'+
-                 LimpaNomArq(FormGeral.QueryAux1.FieldByName('NomeGrupo').AsAnsiString)+'\'+
+      CodAlfa := LimpaNomArq(FormGeral.MemAux1.FieldByName('NomeSis').AsAnsiString)+'\'+
+                 LimpaNomArq(FormGeral.MemAux1.FieldByName('NomeGrupo').AsAnsiString)+'\'+
                  LimpaNomArq(SubGrupo) + '\' +
-                 LimpaNomArq(FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString)+'\';
-      CodGrupo := FormGeral.QueryAux1.FieldByName('CodGrupo').AsInteger;
+                 LimpaNomArq(FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString)+'\';
+      CodGrupo := FormGeral.MemAux1.FieldByName('CodGrupo').AsInteger;
       End;
-    FormGeral.QueryAux1.Close;
+    FormGeral.MemAux1.Close;
   Except
     FormGeral.InsereLog(ReportRec.Name,'Erro de Query Grupo Aux');
     MoveDelete(DirIn+ReportRec.Name,viDirTrabApl+'NaoProcessados\'+ReportRec.Name);
@@ -2231,21 +2266,21 @@ Var
   //if FormGeral.QueryAux2.FieldByName('IDString1').AsAnsiString = 'DIARIO' then
   //  application.ProcessMessages;
 
-  If Not TrataPto1(DirIn+ReportRec.Name, FormGeral.QueryAux2.FieldByName('IDLinha1').AsInteger, Linha, True) Then
+  If Not TrataPto1(DirIn+ReportRec.Name, FormGeral.MemAux2.FieldByName('IDLinha1').AsInteger, Linha, True) Then
     Exit;
 
-  Result := Copy(Linha, FormGeral.QueryAux2.FieldByName('IDColuna1').AsInteger,
-            Length(FormGeral.QueryAux2.FieldByName('IDString1').AsAnsiString)) =
-            FormGeral.QueryAux2.FieldByName('IDString1').AsAnsiString;
+  Result := Copy(Linha, FormGeral.MemAux2.FieldByName('IDColuna1').AsInteger,
+            Length(FormGeral.MemAux2.FieldByName('IDString1').AsAnsiString)) =
+            FormGeral.MemAux2.FieldByName('IDString1').AsAnsiString;
 
-  If FormGeral.QueryAux2.FieldByName('IDColuna2').AsAnsiString <> '' Then
+  If FormGeral.MemAux2.FieldByName('IDColuna2').AsAnsiString <> '' Then
     Begin
-    If Not TrataPto1(DirIn+ReportRec.Name, FormGeral.QueryAux2.FieldByName('IDLinha2').AsInteger, Linha2, True) Then
+    If Not TrataPto1(DirIn+ReportRec.Name, FormGeral.MemAux2.FieldByName('IDLinha2').AsInteger, Linha2, True) Then
       Exit;
     Result := Result And
-              (Copy(Linha2,FormGeral.QueryAux2.FieldByName('IDColuna2').AsInteger,
-              Length(FormGeral.QueryAux2.FieldByName('IDString2').AsAnsiString)) =
-              FormGeral.QueryAux2.FieldByName('IDString2').AsAnsiString);
+              (Copy(Linha2,FormGeral.MemAux2.FieldByName('IDColuna2').AsInteger,
+              Length(FormGeral.MemAux2.FieldByName('IDString2').AsAnsiString)) =
+              FormGeral.MemAux2.FieldByName('IDString2').AsAnsiString);
     End;
   End;
 
@@ -2257,12 +2292,12 @@ Var
   TotTamInd := 0;
   CodAlfa := '';
   SubGrupo := '';
-  GrupoAutomatico := FormGeral.QueryAux2.FieldByName('CodGrupAuto').AsBoolean;
-  SubDirAutomatico := FormGeral.QueryAux2.FieldByName('SubDirAuto').AsBoolean;
-  SistemaAutomatico := FormGeral.QueryAux2.FieldByName('SisAuto').AsBoolean;
+  GrupoAutomatico := FormGeral.MemAux2.FieldByName('CodGrupAuto').AsBoolean;
+  SubDirAutomatico := FormGeral.MemAux2.FieldByName('SubDirAuto').AsBoolean;
+  SistemaAutomatico := FormGeral.MemAux2.FieldByName('SisAuto').AsBoolean;
   If SubDirAutomatico Then
     Begin       // Montagem do path dos relatórios automáticos
-    If Not TrataPto1(DirIn+ReportRec.Name, FormGeral.QueryAux2.FieldByName('LinGrupAuto').AsInteger, Linha2, True) Then
+    If Not TrataPto1(DirIn+ReportRec.Name, FormGeral.MemAux2.FieldByName('LinGrupAuto').AsInteger, Linha2, True) Then
       Exit;
 //    If ISubDirAuto <> -1 Then
 //      CodAlfa := ArrSubDirAuto[ISubDirAuto]
@@ -2283,16 +2318,18 @@ Var
       End; // Try
     If Not ObtemSubGrupo Then
       Exit;
-    FormGeral.QueryAux1.Close;
-    FormGeral.QueryAux1.Sql.Clear;
+    //FormGeral.QueryAux1.Close;
+    //FormGeral.QueryAux1.Sql.Clear;
 //    FormGeral.QueryAux1.Sql.Add('SELECT * GRUPOSDFN A ');
 //    FormGeral.QueryAux1.Sql.Add('WHERE A.CODGRUPO = '+CodAlfa);
-    FormGeral.QueryAux1.Sql.Add('SELECT * FROM SISTEMA B INNER JOIN GRUPOSDFN A ON B.CODSIS = A.CODSIS');
-    FormGeral.QueryAux1.Sql.Add('WHERE A.CODSIS = '+ArrSubDirAuto[ISubDirAuto].CodSis + ' AND ');
-    FormGeral.QueryAux1.Sql.Add('      A.CODGRUPO = ' + ArrSubDirAuto[ISubDirAuto].CodGrupo);
+    strsql.Clear;
+    strsql.Add('SELECT * FROM SISTEMA B INNER JOIN GRUPOSDFN A ON B.CODSIS = A.CODSIS');
+    strsql.Add('WHERE A.CODSIS = '+ArrSubDirAuto[ISubDirAuto].CodSis + ' AND ');
+    strsql.Add('      A.CODGRUPO = ' + ArrSubDirAuto[ISubDirAuto].CodGrupo);
+    FormGeral.ImportarDados(strsql.Text,nil,1);
     If Not ObtemGrupo Then
       Begin
-      FormGeral.QueryAux1.Close;
+      FormGeral.MemAux1.Close;
       FormGeral.InsereLog(ReportRec.Name,'Nao foi possivel obter Grupo, SubDirAutomatico');
       MoveDelete(DirIn+ReportRec.Name,viDirTrabApl+'NaoProcessados\'+ReportRec.Name);
       Exit;
@@ -2303,17 +2340,17 @@ Var
     End
   Else If GrupoAutomatico Then
     Begin       // Montagem do path dos relatórios automáticos
-    If Not TrataPto1(DirIn+ReportRec.Name, FormGeral.QueryAux2.FieldByName('LinGrupAuto').AsInteger, Linha2, True) Then
+    If Not TrataPto1(DirIn+ReportRec.Name, FormGeral.MemAux2.FieldByName('LinGrupAuto').AsInteger, Linha2, True) Then
       Exit;
     Try
-      CodAlfa := Copy(Linha2,FormGeral.QueryAux2.FieldByName('ColGrupAuto').AsInteger,
-                             FormGeral.QueryAux2.FieldByName('TamGrupAuto').AsInteger);
+      CodAlfa := Copy(Linha2,FormGeral.MemAux2.FieldByName('ColGrupAuto').AsInteger,
+                             FormGeral.MemAux2.FieldByName('TamGrupAuto').AsInteger);
     Except
       FormGeral.InsereLog(ReportRec.Name,'CodGrupoAuto Não pode ser obtido, Erro de Copy');
       MoveDelete(DirIn+ReportRec.Name,viDirTrabApl+'NaoProcessados\'+ReportRec.Name);
       Exit;  // 31/08/2000
       End; // Try
-    If FormGeral.QueryAux2.FieldByName('TipoGrupAuto').AsAnsiString = 'N' Then
+    If FormGeral.MemAux2.FieldByName('TipoGrupAuto').AsAnsiString = 'N' Then
       Try
         CodAlfa := IntToStr(StrToInt(CodAlfa));
       Except
@@ -2323,35 +2360,38 @@ Var
         End; // Try
     If Not ObtemSubGrupo Then
       Exit;
-    FormGeral.QueryAux1.Close;
-    FormGeral.QueryAux1.Sql.Clear;
-    FormGeral.QueryAux1.Sql.Add('SELECT * FROM SISTEMA B INNER JOIN GRUPOSDFN A ON B.CODSIS = A.CODSIS');
-    If FormGeral.QueryAux2.FieldByName('TipoGrupAuto').AsAnsiString = 'N' Then
-      FormGeral.QueryAux1.Sql.Add('WHERE A.CODGRUPO = '+CodAlfa)
+    //FormGeral.MemAux1.Close;
+    strsql.Clear;
+    strsql.Add('SELECT * FROM SISTEMA B INNER JOIN GRUPOSDFN A ON B.CODSIS = A.CODSIS');
+    If FormGeral.MemAux2.FieldByName('TipoGrupAuto').AsAnsiString = 'N' Then
+      strsql.Add('WHERE A.CODGRUPO = '+CodAlfa)
     Else
-      FormGeral.QueryAux1.Sql.Add('WHERE A.CODGRUPOALFA = '''+CodAlfa+'''');
-    FormGeral.QueryAux1.Sql.Add('AND A.CODSIS ='+FormGeral.QueryAux2.FieldByName('CodSis').AsAnsiString);
+      strsql.Add('WHERE A.CODGRUPOALFA = '''+CodAlfa+'''');
+    strsql.Add('AND A.CODSIS ='+FormGeral.MemAux2.FieldByName('CodSis').AsAnsiString);
+    FormGeral.ImportarDados(strsql.Text,nil,1);
     If Not ObtemGrupo Then
       Begin
-      FormGeral.QueryAux1.Close;
-      FormGeral.QueryAux1.Sql.Clear;
-      If FormGeral.QueryAux2.FieldByName('TipoGrupAuto').AsAnsiString = 'N' Then
-        FormGeral.QueryAux1.Sql.Add('SELECT * FROM GRUPOSAUXNUMDFN A INNER JOIN ')
+      strsql.Clear;
+      //FormGeral.QueryAux1.Close;
+      //FormGeral.QueryAux1.Sql.Clear;
+      If FormGeral.MemAux2.FieldByName('TipoGrupAuto').AsAnsiString = 'N' Then
+        strsql.Add('SELECT * FROM GRUPOSAUXNUMDFN A INNER JOIN ')
       Else
-        FormGeral.QueryAux1.Sql.Add('SELECT * FROM GRUPOSAUXALFADFN A INNER JOIN ');
-      FormGeral.QueryAux1.Sql.Add('GRUPOSDFN B ON A.CODGRUPO = B.CODGRUPO AND A.CODSIS = B.CODSIS INNER JOIN ');
-      FormGeral.QueryAux1.Sql.Add('SISTEMA C ON A.CODSIS = C.CODSIS ');
-      If FormGeral.QueryAux2.FieldByName('TipoGrupAuto').AsAnsiString = 'N' Then
+        strsql.Add('SELECT * FROM GRUPOSAUXALFADFN A INNER JOIN ');
+      strsql.Add('GRUPOSDFN B ON A.CODGRUPO = B.CODGRUPO AND A.CODSIS = B.CODSIS INNER JOIN ');
+      strsql.Add('SISTEMA C ON A.CODSIS = C.CODSIS ');
+      If FormGeral.MemAux2.FieldByName('TipoGrupAuto').AsAnsiString = 'N' Then
 //        Begin
 //        FormGeral.QueryAux1.Sql.Add('SELECT * FROM GRUPOSAUXNUMDFN A, GRUPOSDFN B ');
-        FormGeral.QueryAux1.Sql.Add('WHERE A.CODAUXGRUPO = '+CodAlfa)
+        strsql.Add('WHERE A.CODAUXGRUPO = '+CodAlfa)
 //        End
       Else
 //        Begin
 //        FormGeral.QueryAux1.Sql.Add('SELECT * FROM GRUPOSAUXALFADFN A, GRUPOSDFN B ');
-        FormGeral.QueryAux1.Sql.Add('WHERE A.CODAUXGRUPO = '''+CodAlfa+'''');
+        strsql.Add('WHERE A.CODAUXGRUPO = '''+CodAlfa+'''');
 //        End;
 //      FormGeral.QueryAux1.Sql.Add('AND A.CODGRUPO = B.CODGRUPO');
+      FormGeral.ImportarDados(strsql.Text,nil,1);
       If Not ObtemGrupoAux Then
         Exit;
       End;
@@ -2366,20 +2406,21 @@ Var
       Exit;
 
     IdTesteSis := False;
-    FormGeral.QueryAux3.Sql.Clear;
-    FormGeral.QueryAux3.Sql.Add('SELECT * FROM SISAUXDFN A');
-    FormGeral.QueryAux3.Sql.Add('WHERE A.CODREL = '''+FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString+'''');
-    FormGeral.QueryAux3.Open;              // Procura o dono do relatório
+    strsql.Clear;
+    //FormGeral.QueryAux3.Sql.Clear;
+    strsql.Add('SELECT * FROM SISAUXDFN A');
+    strsql.Add('WHERE A.CODREL = '''+FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString+'''');
+    FormGeral.ImportarDados(strsql.Text,nil,3);
 
-    While (Not (FormGeral.QueryAux3.Eof)) Do
+    While (Not (FormGeral.MemAux3.Eof)) Do
       Begin
-      If FormGeral.QueryAux3.FieldByName('Tipo').AsAnsiString = 'A' Then // Tipo alfa, testa os caracteres de acordo com o tamanho digitado
-        For L := FormGeral.QueryAux3.FieldByName('LinI').AsInteger To FormGeral.QueryAux3.FieldByName('LinF').AsInteger Do  // Pode informar ranges de linhas
+      If FormGeral.MemAux3.FieldByName('Tipo').AsAnsiString = 'A' Then // Tipo alfa, testa os caracteres de acordo com o tamanho digitado
+        For L := FormGeral.MemAux3.FieldByName('LinI').AsInteger To FormGeral.MemAux3.FieldByName('LinF').AsInteger Do  // Pode informar ranges de linhas
           Begin
           Try
-            IdTesteSis := Copy(arPagina[L],FormGeral.QueryAux3.FieldByName('Col').AsInteger,
-                               Length(FormGeral.QueryAux3.FieldByName('CodAux').AsAnsiString)) =
-                                                 FormGeral.QueryAux3.FieldByName('CodAux').AsAnsiString;
+            IdTesteSis := Copy(arPagina[L],FormGeral.MemAux3.FieldByName('Col').AsInteger,
+                               Length(FormGeral.MemAux3.FieldByName('CodAux').AsAnsiString)) =
+                                                 FormGeral.MemAux3.FieldByName('CodAux').AsAnsiString;
           Except
           End; // Try
           If IdTesteSis Then
@@ -2388,12 +2429,12 @@ Var
             End;
           End
       Else
-        For L := FormGeral.QueryAux3.FieldByName('LinI').AsInteger To FormGeral.QueryAux3.FieldByName('LinF').AsInteger Do  // Pode informar ranges de linhas
+        For L := FormGeral.MemAux3.FieldByName('LinI').AsInteger To FormGeral.MemAux3.FieldByName('LinF').AsInteger Do  // Pode informar ranges de linhas
           Begin
           Try
-            IdTesteSis := StrToInt64(Trim(Copy(arPagina[L],FormGeral.QueryAux3.FieldByName('Col').AsInteger,
-                            Length(FormGeral.QueryAux3.FieldByName('CodAux').AsAnsiString)))) =
-                               StrToInt64(Trim(FormGeral.QueryAux3.FieldByName('CodAux').AsAnsiString));
+            IdTesteSis := StrToInt64(Trim(Copy(arPagina[L],FormGeral.MemAux3.FieldByName('Col').AsInteger,
+                            Length(FormGeral.MemAux3.FieldByName('CodAux').AsAnsiString)))) =
+                               StrToInt64(Trim(FormGeral.MemAux3.FieldByName('CodAux').AsAnsiString));
           Except
           End; // Try
           If IdTesteSis Then
@@ -2403,21 +2444,22 @@ Var
           End;
       If IdTesteSis Then // O teste está aqui para que a próxima instrução não seja executada quando achou Uma SisAux para a dfn
         Break;
-      FormGeral.QueryAux3.Next;
+      FormGeral.MemAux3.Next;
       End;
     If Not IdTesteSis Then
       Begin
-      FormGeral.QueryAux3.Close;
+      FormGeral.MemAux3.Close;
       Exit;
       End;
-    CodAlfa := FormGeral.QueryAux3.FieldByName('CodGrupo').AsAnsiString;
-    CodigoDoSistema := FormGeral.QueryAux3.FieldByName('CodSis').asInteger;
-    FormGeral.QueryAux1.Close;
-    FormGeral.QueryAux1.Sql.Clear;
-    FormGeral.QueryAux1.Sql.Add('SELECT * FROM SISTEMA B INNER JOIN GRUPOSDFN A ON B.CODSIS = A.CODSIS');
-    FormGeral.QueryAux1.Sql.Add('WHERE A.CODGRUPO = '+CodAlfa);
-    FormGeral.QueryAux1.Sql.Add('AND A.CODSIS ='+FormGeral.QueryAux3.FieldByName('CodSis').AsAnsiString);
-    FormGeral.QueryAux3.Close;
+    CodAlfa := FormGeral.MemAux3.FieldByName('CodGrupo').AsAnsiString;
+    CodigoDoSistema := FormGeral.MemAux3.FieldByName('CodSis').asInteger;
+    //FormGeral.QueryAux1.Close;
+    strsql.Clear;
+    strsql.Add('SELECT * FROM SISTEMA B INNER JOIN GRUPOSDFN A ON B.CODSIS = A.CODSIS');
+    strsql.Add('WHERE A.CODGRUPO = '+CodAlfa);
+    strsql.Add('AND A.CODSIS ='+FormGeral.MemAux3.FieldByName('CodSis').AsAnsiString);
+    FormGeral.MemAux3.Close;
+    FormGeral.ImportarDados(strsql.Text,nil,1);
     If Not ObtemGrupo Then
       Exit;
     End
@@ -2425,41 +2467,43 @@ Var
     Begin                        // Montagem da árvore dos relatórios normais
     If Not ObtemSubGrupo Then
       Exit;
-    FormGeral.QueryAux1.Close;
-    FormGeral.QueryAux1.Sql.Clear;
+    FormGeral.MemAux1.Close;
+    strsql.Clear;
+    //FormGeral.QueryAux1.Sql.Clear;
 //    FormGeral.QueryAux1.Sql.Add('SELECT * FROM GRUPOSDFN A ');
 //    FormGeral.QueryAux1.Sql.Add('WHERE A.CODGRUPO = '+
 //                        FormGeral.QueryAux2.FieldByName('CODGRUPO').AsAnsiString);
-    FormGeral.QueryAux1.Sql.Add('SELECT * FROM SISTEMA B INNER JOIN GRUPOSDFN A ON B.CODSIS = A.CODSIS');
-    FormGeral.QueryAux1.Sql.Add('WHERE A.CODSIS = ' + FormGeral.QueryAux2.FieldByName('CODSIS').AsAnsiString + ' AND ');
-    FormGeral.QueryAux1.Sql.Add('      A.CODGRUPO = ' + FormGeral.QueryAux2.FieldByName('CODGRUPO').AsAnsiString);
+    strsql.Add('SELECT * FROM SISTEMA B INNER JOIN GRUPOSDFN A ON B.CODSIS = A.CODSIS');
+    strsql.Add('WHERE A.CODSIS = ' + FormGeral.MemAux2.FieldByName('CODSIS').AsAnsiString + ' AND ');
+    strsql.Add('      A.CODGRUPO = ' + FormGeral.MemAux2.FieldByName('CODGRUPO').AsAnsiString);
+    FormGeral.ImportarDados(strsql.Text,nil,1);
     If Not ObtemGrupo Then
       Exit;
     End;
   QuebraMod := 10;
-  TipoQuebra := FormGeral.QueryAux2.FieldByName('TipoQuebra').AsInteger; // Colocamos estes valores em variáveis por
+  TipoQuebra := FormGeral.MemAux2.FieldByName('TipoQuebra').AsInteger; // Colocamos estes valores em variáveis por
                                                                         // motivos de eficiência no Loop Principal
-  QtdPgsAPular := FormGeral.QueryAux2.FieldByName('QtdPagsAPular').AsInteger;
+  QtdPgsAPular := FormGeral.MemAux2.FieldByName('QtdPagsAPular').AsInteger;
   Case TipoQuebra Of
     1 : Begin End; // 133 CC
     2 : Begin End; // Ctrl L
-    3 : NLinhasQuebraLin := FormGeral.QueryAux2.FieldByName('NLinhasQuebraLin').AsInteger;
+    3 : NLinhasQuebraLin := FormGeral.MemAux2.FieldByName('NLinhasQuebraLin').AsInteger;
     4 : Begin
-        PulaAntes := FormGeral.QueryAux2.FieldByName('QuebraAfterStr').AsBoolean;
-        ColQuebraStr1 := FormGeral.QueryAux2.FieldByName('ColQuebraStr1').AsInteger;
+        PulaAntes := FormGeral.MemAux2.FieldByName('QuebraAfterStr').AsBoolean;
+        ColQuebraStr1 := FormGeral.MemAux2.FieldByName('ColQuebraStr1').AsInteger;
         ColQuebraStr2 := 0;
         Try
-          ColQuebraStr2 := FormGeral.QueryAux2.FieldByName('ColQuebraStr2').AsInteger;
+          ColQuebraStr2 := FormGeral.MemAux2.FieldByName('ColQuebraStr2').AsInteger;
         Except
           End;
-        StrQuebraStr1 := FormGeral.QueryAux2.FieldByName('StrQuebraStr1').AsAnsiString;
-        StrQuebraStr2 := FormGeral.QueryAux2.FieldByName('StrQuebraStr2').AsAnsiString;
+        StrQuebraStr1 := FormGeral.MemAux2.FieldByName('StrQuebraStr1').AsAnsiString;
+        StrQuebraStr2 := FormGeral.MemAux2.FieldByName('StrQuebraStr2').AsAnsiString;
         End;
     End; // Case
-  ComprBrancos := FormGeral.QueryAux2.FieldByName('ComprBrancos').AsBoolean;
-  FiltraCar := FormGeral.QueryAux2.FieldByName('FiltroCar').AsBoolean;
-  JuncaoAutomatica := FormGeral.QueryAux2.FieldByName('JuncaoAutom').AsBoolean;
-  If FormGeral.QueryAux2.FieldByName('BackupRel').AsAnsiString = 'F' Then
+  ComprBrancos := FormGeral.MemAux2.FieldByName('ComprBrancos').AsBoolean;
+  FiltraCar := FormGeral.MemAux2.FieldByName('FiltroCar').AsBoolean;
+  JuncaoAutomatica := FormGeral.MemAux2.FieldByName('JuncaoAutom').AsBoolean;
+  If FormGeral.MemAux2.FieldByName('BackupRel').AsAnsiString = 'F' Then
     BackupFonte := False
   Else
     BackupFonte := True;  // = 'T' ou = null
@@ -2506,37 +2550,43 @@ Var
   AtuEst;
   Distribui; // Distribui o relatório indexado e cria a versão segurança
   Processou := True;
-  FormGeral.QueryInsertProtocolo.Parameters[0].Value := FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString;
-  FormGeral.QueryInsertProtocolo.Parameters[1].Value := FormGeral.QueryAux2.FieldByName('NomeRel').AsAnsiString;
-  FormGeral.QueryInsertProtocolo.Parameters[2].Value := FormGeral.QueryAux2.FieldByName('CodSis').AsInteger;
-  FormGeral.QueryInsertProtocolo.Parameters[3].Value := FormGeral.QueryAux2.FieldByName('CodGrupo').AsInteger;
-  FormGeral.QueryInsertProtocolo.Parameters[4].Value := FormGeral.QueryAux2.FieldByName('CodSubGrupo').AsInteger;
-  FormGeral.QueryInsertProtocolo.Parameters[5].Value := CodGrupo;
-  FormGeral.QueryInsertProtocolo.Parameters[6].Value := ExtractFileName(Arquivos.Cells[1,1]);
-  FormGeral.QueryInsertProtocolo.Parameters[7].Value := StatusBar1.Panels[0].Text;
-  FormGeral.QueryInsertProtocolo.Parameters[8].Value := '';
-  FormGeral.QueryInsertProtocolo.Parameters[9].Value := Now;
-  FormGeral.QueryInsertProtocolo.Parameters[10].Value := Now;
-  FormGeral.QueryInsertProtocolo.Parameters[11].Value := Paginas;
-  FormGeral.QueryInsertProtocolo.Parameters[12].Value := Divisor;
-  FormGeral.QueryInsertProtocolo.Parameters[13].Value := TotOut;
-  FormGeral.QueryInsertProtocolo.Parameters[14].Value := TotTamInd;
-  FormGeral.QueryInsertProtocolo.Parameters[15].Value := TotTamExt;
-  FormGeral.QueryInsertProtocolo.Parameters[16].Value := TotTam;
+
+  strsql.Clear;
+  strsql.Add('INSERT INTO PROTOCOLO VALUES (  ');
+
+
+  strsql.Add(QuotedStr(FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString)  + ',');
+  strsql.Add(QuotedStr(FormGeral.MemAux2.FieldByName('NomeRel').AsAnsiString) + ',');
+  strsql.Add(FormGeral.MemAux2.FieldByName('CodSis').AsString      + ',');
+  strsql.Add(FormGeral.MemAux2.FieldByName('CodGrupo').AsString    + ',');
+  strsql.Add(FormGeral.MemAux2.FieldByName('CodSubGrupo').AsString + ',');
+  strsql.Add(IntToStr(CodGrupo) + ',');
+  strsql.Add(QuotedStr(ExtractFileName(Arquivos.Cells[1,1])) + ',');
+  strsql.Add(QuotedStr(StatusBar1.Panels[0].Text)+ ',');
+  strsql.Add(QuotedStr('')  + ',');
+  strsql.Add(QuotedStr(FormatDateTime('dd-mm-yyyy hh:mm:ss',Now)) + ',');
+  strsql.Add(QuotedStr(FormatDateTime('dd-mm-yyyy hh:mm:ss',Now)) + ',');
+  strsql.Add( IntToStr(Paginas) + ',');
+  strsql.Add( IntToStr(Divisor) + ',');
+  strsql.Add( IntToStr(TotOut) + ',');
+  strsql.Add( IntToStr(TotTamInd) + ',');
+  strsql.Add( IntToStr(TotTamExt) + ',');
+  strsql.Add( IntToStr(TotTam) + ')');
   Try
-    FormGeral.QueryInsertProtocolo.ExecSQL;
+    FormGeral.Persistir(strsql.Text, nil,1);
+    //FormGeral.QueryInsertProtocolo.ExecSQL;
   Except
     FormGeral.InsereLog(Arquivos.Cells[1,1],'Erro de inserção de registro de protocolo, Resumo final');
     End; // Try
   try
-    if FormGeral.QueryAux2.FieldByName('CodSis').AsInteger > 0 then
-      CodigoDoSistema := FormGeral.QueryAux2.FieldByName('CodSis').AsInteger;
+    if FormGeral.MemAux2.FieldByName('CodSis').AsInteger > 0 then
+      CodigoDoSistema := FormGeral.MemAux2.FieldByName('CodSis').AsInteger;
 
     FormGeral.InsereAtualizaCompila('+',
-                                    FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString,
+                                    FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString,
                                     CodigoDoSistema,
                                     CodGrupo,
-                                    FormGeral.QueryAux2.FieldByName('CodSubGrupo').AsInteger, 1);
+                                    FormGeral.MemAux2.FieldByName('CodSubGrupo').AsInteger, 1);
   except
     showMessage('Erro em InsereAtualizaCompila');
   end;
@@ -2555,6 +2605,7 @@ Var
   End;
 
 Begin
+strSql := TStringList.Create;
 Timer1.Enabled := False;
 
 { *** Reversão da alteração realizada em 26/12/2007 ***
@@ -2580,10 +2631,10 @@ StatusBar1.Panels[1].Text := 'Preparando para indexar relatórios...';
 //Edit3.Text := '1';
 Application.ProcessMessages;
 
-FormGeral.QueryInsertProtocolo.Close;
-FormGeral.QueryInsertProtocolo.Sql.Clear;
-FormGeral.QueryInsertProtocolo.Sql.Add('INSERT INTO PROTOCOLO (CODREL,NOMEREL,CODSIS,CODGRUPO,CODSUBGRUPO,CODGRUPOAUTO,ARQUIVO,EXTENSAO,INDICE,DTFIMPROC,HRFIMPROC,PAGINAS,TAMORI,TAMCMP,TAMIND,TAMEXT,TAMTOT)');
-FormGeral.QueryInsertProtocolo.Sql.Add('VALUES (:A, :B, :C, :D, :E, :F, :G, :H, :I, :J, :K, :L, :M, :N, :O, :P, :Q) ');
+//FormGeral.QueryInsertProtocolo.Close;
+//FormGeral.QueryInsertProtocolo.Sql.Clear;
+//FormGeral.QueryInsertProtocolo.Sql.Add('INSERT INTO PROTOCOLO (CODREL,NOMEREL,CODSIS,CODGRUPO,CODSUBGRUPO,CODGRUPOAUTO,ARQUIVO,EXTENSAO,INDICE,DTFIMPROC,HRFIMPROC,PAGINAS,TAMORI,TAMCMP,TAMIND,TAMEXT,TAMTOT)');
+//FormGeral.QueryInsertProtocolo.Sql.Add('VALUES (:A, :B, :C, :D, :E, :F, :G, :H, :I, :J, :K, :L, :M, :N, :O, :P, :Q) ');
 //FormGeral.QueryInsertProtocolo.Prepared := True
 
 //if not FormGeral.DatabaseMultiCold.Connected then
@@ -2656,23 +2707,25 @@ try
   //Application.ProcessMessages;
   // ********** Carga de grupos de relatórios **********
   ISubDirAuto := -1;
-  FormGeral.QueryAux1.Close;
-  FormGeral.QueryAux1.Sql.Clear;
-  FormGeral.QueryAux1.Sql.Add('SELECT * FROM GRUPOSDFN A ORDER BY CODGRUPO ');
+  //FormGeral.QueryAux1.Close;
+  strsql.Clear;
+  //FormGeral.QueryAux1.Sql.Clear;
+  strsql.Add('SELECT * FROM GRUPOSDFN A ORDER BY CODGRUPO ');
   Try
-    FormGeral.QueryAux1.Open;
-    If FormGeral.QueryAux1.RecordCount <> 0 Then
+    //FormGeral.QueryAux1.Open;
+    Formgeral.ImportarDados(strsql.Text,nil,1);
+    If FormGeral.MemAux1.RecordCount <> 0 Then
       Begin
       ISubDirAuto := 1;
-      While Not FormGeral.QueryAux1.Eof Do
+      While Not FormGeral.MemAux1.Eof Do
         Begin
 //      ArrSubDirAuto[ISubDirAuto] := FormGeral.QueryAux1.Fields[0].AsAnsiString;
-        ArrSubDirAuto[ISubDirAuto].CodSis := FormGeral.QueryAux1.Fields[0].AsAnsiString;
-        ArrSubDirAuto[ISubDirAuto].CodGrupo := FormGeral.QueryAux1.Fields[1].AsAnsiString;
+        ArrSubDirAuto[ISubDirAuto].CodSis := FormGeral.MemAux1.Fields[0].AsAnsiString;
+        ArrSubDirAuto[ISubDirAuto].CodGrupo := FormGeral.MemAux1.Fields[1].AsAnsiString;
         Inc(ISubDirAuto);
-        FormGeral.QueryAux1.Next;
+        FormGeral.MemAux1.Next;
         End;
-      FormGeral.QueryAux1.Close;
+      FormGeral.MemAux1.Close;
       ISubDirAuto := 0; // aponta para o começo do array carregado...
       End;
   Except
@@ -2696,16 +2749,55 @@ try
     Processou := False; // marca não processado
     // Parte 1
     //
-    // Nesta parte do loop, os relatórios *.1 do diretório principal são processados
+    // Nesta parte do loop, os lrelatórios *.1 do diretório principal são processados
     DirIn := IncludeTrailingPathDelimiter(UpperCase(viDirTrabApl)); // Apontar para o diretório de trabalho
-    FormGeral.QueryAux2.Close;
-    FormGeral.QueryAux2.Sql.Clear;
-    FormGeral.QueryAux2.Sql.Add('SELECT * FROM DFN ');
-    FormGeral.QueryAux2.Sql.Add('WHERE (STATUS = ''A'') AND (CODREL <> ''*'') AND ');
-    FormGeral.QueryAux2.Sql.Add(' (SUBDIRAUTO = ''F'') AND ');
-    FormGeral.QueryAux2.Sql.Add(' ((UPPER(DIRENTRA) = '''+DirIn+''') OR '); // Pega com barra e sem barra...
-    FormGeral.QueryAux2.Sql.Add('  (UPPER(DIRENTRA) = '''+Copy(DirIn,1,Length(DirIn)-1)+''')) ');
-    FormGeral.QueryAux2.Sql.Add('ORDER BY CODREL');
+    strsql.Clear;
+    //FormGeral.QueryAux2.Close;
+    //FormGeral.QueryAux2.Sql.Clear;
+    strsql.Add('SELECT ' );
+    strsql.Add('CODREL ,');
+    strsql.Add('NOMEREL,');
+    strsql.Add('CODSIS,');
+    strsql.Add('CODGRUPO,');
+    strsql.Add('CODSUBGRUPO,');
+    strsql.Add('IDCOLUNA1,');
+    strsql.Add('IDLINHA1,');
+    strsql.Add('IDSTRING1,');
+    strsql.Add('IDCOLUNA2,');
+    strsql.Add('IDLINHA2,');
+    strsql.Add('IDSTRING2,');
+    strsql.Add('replace(DIRENTRA,' + quotedStr('\') + ',' + QuotedStr('/') + ') DIRENTRA,');
+    strsql.Add('TIPOQUEBRA,');
+    strsql.Add('COLQUEBRASTR1,');
+    strsql.Add('STRQUEBRASTR1,');
+    strsql.Add('COLQUEBRASTR2,');
+    strsql.Add('STRQUEBRASTR2,');
+    strsql.Add('QUEBRAAFTERSTR,');
+    strsql.Add('NLINHASQUEBRALIN,');
+    strsql.Add('FILTROCAR,');
+    strsql.Add('COMPRBRANCOS,');
+    strsql.Add('JUNCAOAUTOM,');
+    strsql.Add('QTDPAGSAPULAR,');
+    strsql.Add('CODGRUPAUTO,');
+    strsql.Add('COLGRUPAUTO,');
+    strsql.Add('LINGRUPAUTO,');
+    strsql.Add('TAMGRUPAUTO,');
+    strsql.Add('TIPOGRUPAUTO,');
+    strsql.Add('BACKUPREL,');
+    strsql.Add('SUBDIRAUTO,');
+    strsql.Add('STATUS,');
+    strsql.Add('DTCRIACAO,');
+    strsql.Add('HRCRIACAO,');
+    strsql.Add('DTALTERACAO,');
+    strsql.Add('HRALTERACAO,');
+    strsql.Add('REMOVE,');
+    strsql.Add('SISAUTO,');
+    strsql.Add('DTULTPROC FROM DFN ');
+    strsql.Add('WHERE (STATUS = ''A'') AND (CODREL <> ''*'') AND ');
+    strsql.Add(' (SUBDIRAUTO = ''F'') AND ');
+    strsql.Add(' ((UPPER(DIRENTRA) = '''+DirIn+''') OR '); // Pega com barra e sem barra...
+    strsql.Add('  (UPPER(DIRENTRA) = '''+Copy(DirIn,1,Length(DirIn)-1)+''')) ');
+    strsql.Add('ORDER BY CODREL');
     Reports1Str := DirIn + '*.1';
     If (FindFirst(Reports1Str,FaAnyFile,Reports1Rec) = 0) Then
       Repeat
@@ -2713,17 +2805,17 @@ try
         ReportRec := Reports1Rec;
         If Not TestaAcessoExclusivo(DirIn + ReportRec.Name) Then
           Continue;   // Pula o arquivo que está sendo copiado no momento
-        FormGeral.QueryAux2.Open;
-        While Not FormGeral.QueryAux2.Eof Do
+        FormGeral.ImportarDados(strsql.Text,nil,2);
+        While Not FormGeral.MemAux2.Eof Do
           Begin
           If IdTeste Then
             Begin
             ProcessaPrincipal;
             Break;
             End;
-          FormGeral.QueryAux2.Next;
+          FormGeral.MemAux2.Next;
           End; // While Not Eof
-        FormGeral.QueryAux2.Close;
+        FormGeral.MemAux2.Close;
         If FileExists(DirIn + ReportRec.Name) Then // não foi processado, sai fora!!!
           //MoveDelete(DirIn + Reports1Rec.Name, DirIn + 'NaoIdentificados\' + Reports1Rec.Name);
           MoveRename(DirIn + Reports1Rec.Name, DirIn + 'NaoIdentificados\' + Reports1Rec.Name);
@@ -2731,32 +2823,72 @@ try
     SysUtils.FindClose(Reports1Rec);
     If Not Separou Then
       Begin
-      FormGeral.QueryAux2.Close;
-      FormGeral.QueryAux2.Sql.Clear;
-      FormGeral.QueryAux2.Sql.Add('SELECT * FROM DFN WHERE (STATUS = ''A'') AND (CODREL <> ''*'') ORDER BY CODREL');
-      FormGeral.QueryAux2.Open;
-      While Not FormGeral.QueryAux2.Eof Do
+      strsql.Clear;
+      //FormGeral.QueryAux2.Close;
+      //FormGeral.QueryAux2.Sql.Clear;
+      strsql.Add('SELECT ' );
+      strsql.Add('CODREL ,');
+      strsql.Add('NOMEREL,');
+      strsql.Add('CODSIS,');
+      strsql.Add('CODGRUPO,');
+      strsql.Add('CODSUBGRUPO,');
+      strsql.Add('IDCOLUNA1,');
+      strsql.Add('IDLINHA1,');
+      strsql.Add('IDSTRING1,');
+      strsql.Add('IDCOLUNA2,');
+      strsql.Add('IDLINHA2,');
+      strsql.Add('IDSTRING2,');
+      strsql.Add('replace(DIRENTRA,' + quotedStr('\') + ',' + QuotedStr('/') + ') DIRENTRA,');
+      strsql.Add('TIPOQUEBRA,');
+      strsql.Add('COLQUEBRASTR1,');
+      strsql.Add('STRQUEBRASTR1,');
+      strsql.Add('COLQUEBRASTR2,');
+      strsql.Add('STRQUEBRASTR2,');
+      strsql.Add('QUEBRAAFTERSTR,');
+      strsql.Add('NLINHASQUEBRALIN,');
+      strsql.Add('FILTROCAR,');
+      strsql.Add('COMPRBRANCOS,');
+      strsql.Add('JUNCAOAUTOM,');
+      strsql.Add('QTDPAGSAPULAR,');
+      strsql.Add('CODGRUPAUTO,');
+      strsql.Add('COLGRUPAUTO,');
+      strsql.Add('LINGRUPAUTO,');
+      strsql.Add('TAMGRUPAUTO,');
+      strsql.Add('TIPOGRUPAUTO,');
+      strsql.Add('BACKUPREL,');
+      strsql.Add('SUBDIRAUTO,');
+      strsql.Add('STATUS,');
+      strsql.Add('DTCRIACAO,');
+      strsql.Add('HRCRIACAO,');
+      strsql.Add('DTALTERACAO,');
+      strsql.Add('HRALTERACAO,');
+      strsql.Add('REMOVE,');
+      strsql.Add('SISAUTO,');
+      strsql.Add('DTULTPROC');
+      strsql.Add('FROM DFN WHERE (STATUS = ''A'') AND (CODREL <> ''*'') ORDER BY CODREL');
+      FormGeral.ImportarDados(strsql.Text,nil,2);
+      While Not FormGeral.MemAux2.Eof Do
         Begin
-        StatusBar1.Panels[1].Text := 'Indexando Relatórios. DFN '+FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString;
-        DirIn := IncludeTrailingPathDelimiter(FormGeral.QueryAux2.FieldByName('DirEntra').AsAnsiString);
+        StatusBar1.Panels[1].Text := 'Indexando Relatórios. DFN '+FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString;
+        DirIn := IncludeTrailingPathDelimiter(StringReplace(FormGeral.MemAux2.FieldByName('DirEntra').AsAnsiString,'/','\',[rfReplaceAll, rfIgnoreCase]));
         Reports1Str := DirIn + '*.1';
-        If (ISubDirAuto <> -1) And (FormGeral.QueryAux2.FieldByName('SubDirAuto').AsBoolean) Then
+        If (ISubDirAuto <> -1) And (FormGeral.MemAux2.FieldByName('SubDirAuto').AsBoolean) Then
           Begin
           Inc(IsubDirAuto);
   //      If ArrSubDirAuto[ISubDirAuto] = '' Then // fim do array...
           If ArrSubDirAuto[ISubDirAuto].CodSis = '' Then // fim do array...
             Begin
-            FormGeral.QueryAux2.Next;
+            FormGeral.MemAux2.Next;
             ISubDirAuto := 0;
             Continue;
             End
           Else       // Se CodSis ou CodGrupo está fixo, rejeita as posições de ArrSubDirAuto que diferem...
             Begin
-            If FormGeral.QueryAux2.FieldByName('CodSis').AsInteger <> -1 Then
-              If ArrSubDirAuto[ISubDirAuto].CodSis <> FormGeral.QueryAux2.FieldByName('CodSis').AsAnsiString Then
+            If FormGeral.MemAux2.FieldByName('CodSis').AsInteger <> -1 Then
+              If ArrSubDirAuto[ISubDirAuto].CodSis <> FormGeral.MemAux2.FieldByName('CodSis').AsAnsiString Then
                 Continue;
-            If FormGeral.QueryAux2.FieldByName('CodGrupo').AsInteger <> -1 Then
-              If ArrSubDirAuto[ISubDirAuto].CodGrupo <> FormGeral.QueryAux2.FieldByName('CodGrupo').AsAnsiString Then
+            If FormGeral.MemAux2.FieldByName('CodGrupo').AsInteger <> -1 Then
+              If ArrSubDirAuto[ISubDirAuto].CodGrupo <> FormGeral.MemAux2.FieldByName('CodGrupo').AsAnsiString Then
                 Continue;
             // Gabriel 29/06/2005
 //            If FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString = 'EPI' then
@@ -2767,7 +2899,7 @@ try
                              ArrSubDirAuto[ISubDirAuto].CodGrupo + '\' +
                              ArrSubDirAuto[ISubDirAuto].CodSis + '\';
             Reports1Str := DirIn + '*.1';
-            StatusBar1.Panels[1].Text := 'Indexando Relatórios. DFN '+FormGeral.QueryAux2.FieldByName('CodRel').AsAnsiString+' - ' +
+            StatusBar1.Panels[1].Text := 'Indexando Relatórios. DFN '+FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString+' - ' +
                           ArrSubDirAuto[ISubDirAuto].CodSis + '\' + ArrSubDirAuto[ISubDirAuto].CodGrupo;
             End;
           End;
@@ -2779,10 +2911,10 @@ try
               ProcessaPrincipal;
           Until FindNext(Reports1Rec) <> 0;
         SysUtils.FindClose(Reports1Rec);
-        If Not FormGeral.QueryAux2.FieldByName('SubDirAuto').AsBoolean Then
-          FormGeral.QueryAux2.Next;
+        If Not FormGeral.MemAux2.FieldByName('SubDirAuto').AsBoolean Then
+          FormGeral.MemAux2.Next;
         End; // While Not FormGeral.QueryAux2.Eof Do
-      FormGeral.QueryAux2.Close;
+      FormGeral.MemAux2.Close;
       Screen.Cursor := crDefault;
       End;
 {    StatusBar1.Panels[1].Text := 'Executando separação...';

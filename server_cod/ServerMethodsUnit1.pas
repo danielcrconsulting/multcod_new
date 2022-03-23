@@ -42,7 +42,7 @@ type
     { Private declarations }
     Fmemo : TStringList;
     dataModule : TDataModule1;
-    procedure ConectarBanco;
+    procedure ConectarBanco(bd : integer = 0);
     procedure DesconectarBanco;
     procedure ConectarBanco_eve;
     procedure DesconectarBanco_eve;
@@ -61,8 +61,8 @@ type
                                     var porta : String ; var banco : String;
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
-    function RetornarDadosBanco(SQL : String) : String;
-    procedure PersistirBanco(SQL : String);
+    function RetornarDadosBanco(SQL : String ; bd : Integer = 0) : String;
+    procedure PersistirBanco(SQL : String; bd : Integer = 0);
     function BaixarArquivo( arq : String) : TJSONArray;
     function AbreRelatorio(Usuario: WideString; Senha: WideString;
                            ConnectionID: Integer; FullPath: WideString;
@@ -975,7 +975,7 @@ begin
 end;
 
 
-procedure TServerMethods1.ConectarBanco;
+procedure TServerMethods1.ConectarBanco(bd : integer = 0);
 var
   servidor, driverservidor, porta, banco, usuario,
   senha, NomeEstacao : String;
@@ -997,7 +997,12 @@ begin
   FdCon.Params.Clear;
   FdCon.Params.Values['DriverID']  := 'MSSQL';
   FdCon.Params.Values['Server'] := servidor;
-  FdCon.Params.Values['Database'] := banco;
+  if bd = 0 then
+    FdCon.Params.Values['Database'] := banco
+  else if bd = 1 then
+     FdCon.Params.Values['Database'] := banco + '_log'
+  else
+     FdCon.Params.Values['Database'] := banco + '_evento';
   FdCon.Params.Values['User_name'] := usuario;
   FdCon.Params.Values['Password'] := senha;
   FdCon.Open;
@@ -1714,11 +1719,11 @@ result := result + '|' + '1';
 End;
 
 
-procedure TServerMethods1.PersistirBanco(SQL : String);
+procedure TServerMethods1.PersistirBanco(SQL : String ; bd : Integer = 0);
 begin
   try
     try
-      ConectarBanco;
+      ConectarBanco(bd);
       FdQry.SQL.Text := SQL;
       //FdQry.SQL.SaveToFile('c:\rom\sql.sql');
       //if not Assigned(StrParam) then
@@ -2187,11 +2192,11 @@ except
 end;
 End;
 
-function TServerMethods1.RetornarDadosBanco(SQL: String): String;
+function TServerMethods1.RetornarDadosBanco(SQL: String; bd : Integer = 0): String;
 begin
   try
     try
-      ConectarBanco;
+      ConectarBanco(bd);
       Result := RetornaRegistros(SQL);
       DesconectarBanco;
     except
