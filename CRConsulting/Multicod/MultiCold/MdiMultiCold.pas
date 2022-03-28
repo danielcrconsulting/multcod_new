@@ -1095,6 +1095,7 @@ Var
   CodRel,
   CodGrupo : AnsiString;
   OldFileMode : Integer;
+  strSql : TStringList;
 Begin
 Result := True;
 
@@ -1149,32 +1150,38 @@ If FileExists(ChangeFileExt(NomeRel,'.IAPX')) Then // Novo formato, candidato a 
   CloseFile(ArqCNFG);  // End;
   If RegDestino.SEGURANCA Then
     Begin
-    FormGeral.QueryLocal1.Close;
-    FormGeral.QueryLocal1.Sql.Clear;
-    FormGeral.QueryLocal1.Sql.Add('SELECT * FROM USUARIOS A,');
-    FormGeral.QueryLocal1.Sql.Add('              USUARIOSEGRUPOS B');
-    FormGeral.QueryLocal1.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''') ');
-    FormGeral.QueryLocal1.Sql.Add('AND (A.CODUSUARIO = B.CODUSUARIO) ');
+    strsql := TStringList.Create;
+    //FormGeral.QueryLocal1.Close;
+    strsql.Clear;
+    strsql.Add('SELECT * FROM USUARIOS A,');
+    strsql.Add('              USUARIOSEGRUPOS B');
+    strsql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''') ');
+    strsql.Add('AND (A.CODUSUARIO = B.CODUSUARIO) ');
     Try
-      FormGeral.QueryLocal1.Open;
+      FormGeral.ImportarDados(strsql.Text,nil);
     Except
       FormGeral.MostraMensagem('Base de segurança não encontrada. Impossível autenticar usuário');
       Result := False;
       Exit;
       End; //Try
-
+    if formGeral.Memtb.RecordCount = 0 then
+    begin
+      FormGeral.MostraMensagem('Base de segurança não encontrada. Impossível autenticar usuário');
+      Result := False;
+      Exit;
+    end;
     CodRel := UpperCase(RegDFN.CodRel); // Código do relatório em questão
-    CodGrupo := FormGeral.QueryLocal1.FieldByName('NomeGrupoUsuario').AsString;
+    CodGrupo := FormGeral.Memtb.FieldByName('NomeGrupoUsuario').AsString;
 
     If CodGrupo = 'ADMSIS' Then
       Begin
-      FormGeral.QueryLocal1.Close;   // Usuario admsis pode ver tudo
+      FormGeral.Memtb.Close;   // Usuario admsis pode ver tudo
       FormGeral.InsereEventosVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
                                   UpperCase(GetCurrentUserName), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 01);
       Exit;
       End;
 
-    FormGeral.QueryLocal1.Close;
+    FormGeral.memtb.Close;
 
     If Not CarregaDadosDfnIncExc Then
       Begin
@@ -1195,33 +1202,35 @@ If FileExists(ChangeFileExt(NomeRel,'.IAPX')) Then // Novo formato, candidato a 
       Exit;
       End;
 
-  FormGeral.QueryLocal1.Close;
-  FormGeral.QueryLocal1.Sql.Clear;
+  strsql.Clear;
+  //FormGeral.QueryLocal1.Close;
+  //FormGeral.QueryLocal1.Sql.Clear;
 
   SetLength(ArrBloqCampos,0);
 
-  FormGeral.QueryLocal1.Sql.Add('SELECT *');
-  FormGeral.QueryLocal1.Sql.Add('FROM USUARIOMASCARA A INNER JOIN');
-  FormGeral.QueryLocal1.Sql.Add('     MASCARACAMPO B ON A.CODREL = B.CODREL AND A.NOMECAMPO = B.NOMECAMPO');
-  FormGeral.QueryLocal1.Sql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''') AND');
-  FormGeral.QueryLocal1.Sql.Add('(A.CODREL = '''+RegDFN.CODREL+''')');
+  strsql.Add('SELECT *');
+  strsql.Add('FROM USUARIOMASCARA A INNER JOIN');
+  strsql.Add('     MASCARACAMPO B ON A.CODREL = B.CODREL AND A.NOMECAMPO = B.NOMECAMPO');
+  strsql.Add('WHERE (A.CODUSUARIO = '''+UpperCase(GetCurrentUserName)+''') AND');
+  strsql.Add('(A.CODREL = '''+RegDFN.CODREL+''')');
   Try
-    FormGeral.QueryLocal1.Open;
-    SetLength(ArrBloqCampos, FormGeral.QueryLocal1.RecordCount);
-    For J := 0 To FormGeral.QueryLocal1.RecordCount-1 Do
+    //FormGeral.QueryLocal1.Open;
+    FormGeral.ImportarDados(strsql.Text,nil);
+    SetLength(ArrBloqCampos, FormGeral.memtb.RecordCount);
+    For J := 0 To FormGeral.memtb.RecordCount-1 Do
       Begin
-      ArrBloqCampos[J].CODREL := FormGeral.QueryLocal1.Fields[0].AsString;
-      ArrBloqCampos[J].NOMECAMPO := FormGeral.QueryLocal1.Fields[1].AsString;
-      ArrBloqCampos[J].CODUSUARIO := FormGeral.QueryLocal1.Fields[2].AsString;
-      ArrBloqCampos[J].CODREL_ := FormGeral.QueryLocal1.Fields[3].AsString;
-      ArrBloqCampos[J].NOMECAMPO_ := FormGeral.QueryLocal1.Fields[4].AsString;
-      ArrBloqCampos[J].LINHAI := FormGeral.QueryLocal1.Fields[5].AsInteger;
-      ArrBloqCampos[J].LINHAF := FormGeral.QueryLocal1.Fields[6].AsInteger;
-      ArrBloqCampos[J].COLUNA := FormGeral.QueryLocal1.Fields[7].AsInteger;
-      ArrBloqCampos[J].TAMANHO := FormGeral.QueryLocal1.Fields[8].AsInteger;
-      FormGeral.QueryLocal1.Next;
+      ArrBloqCampos[J].CODREL := FormGeral.memtb.Fields[0].AsString;
+      ArrBloqCampos[J].NOMECAMPO := FormGeral.memtb.Fields[1].AsString;
+      ArrBloqCampos[J].CODUSUARIO := FormGeral.memtb.Fields[2].AsString;
+      ArrBloqCampos[J].CODREL_ := FormGeral.memtb.Fields[3].AsString;
+      ArrBloqCampos[J].NOMECAMPO_ := FormGeral.memtb.Fields[4].AsString;
+      ArrBloqCampos[J].LINHAI := FormGeral.memtb.Fields[5].AsInteger;
+      ArrBloqCampos[J].LINHAF := FormGeral.memtb.Fields[6].AsInteger;
+      ArrBloqCampos[J].COLUNA := FormGeral.memtb.Fields[7].AsInteger;
+      ArrBloqCampos[J].TAMANHO := FormGeral.memtb.Fields[8].AsInteger;
+      FormGeral.memtb.Next;
       End;
-    FormGeral.QueryLocal1.Close;
+    FormGeral.memtb.Close;
 
     //*************************
     //showMessage(ArrBloqCampos[0].NOMECAMPO);

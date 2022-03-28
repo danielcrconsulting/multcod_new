@@ -60,7 +60,6 @@ object FrameForm: TFrameForm
     ParentShowHint = False
     ShowHint = True
     TabOrder = 3
-    ExplicitWidth = 118
     object PlusZoom: TSpeedButton
       Left = 0
       Top = 0

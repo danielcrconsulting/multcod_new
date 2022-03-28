@@ -42,7 +42,7 @@ type
     { Private declarations }
     Fmemo : TStringList;
     dataModule : TDataModule1;
-    procedure ConectarBanco;
+    procedure ConectarBanco(bd : integer = 0);
     procedure DesconectarBanco;
     procedure ConectarBanco_eve;
     procedure DesconectarBanco_eve;
@@ -61,8 +61,8 @@ type
                                     var porta : String ; var banco : String;
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
-    function RetornarDadosBanco(SQL : String) : String;
-    procedure PersistirBanco(SQL : String);
+    function RetornarDadosBanco(SQL : String ; bd : Integer = 0) : String;
+    procedure PersistirBanco(SQL : String; bd : Integer = 0);
     function BaixarArquivo( arq : String) : TJSONArray;
     function AbreRelatorio(Usuario: WideString; Senha: WideString;
                            ConnectionID: Integer; FullPath: WideString;
@@ -95,9 +95,8 @@ Var
   Agora : TDateTime;
 Begin
 try
-  exit;
   Agora := Now;
-  ConectarBanco_eve;
+  ConectarBanco(2);
   FDQryE.Close;
   FDQryE.Sql.Clear;
   FDQryE.Sql.Add('INSERT INTO EVENTOS_VISU VALUES (:a, :b, :c, :d, :e, :f, :g, :h, :i, :j)');
@@ -113,7 +112,7 @@ try
   FDQryE.Params[9].Value := CodMens;
   Try
     FDQryE.ExecSql;
-    DesconectarBanco_eve;
+    DesconectarBanco;
   Except
     on e:exception do
       logaLocal('TMultiColdDataServer.InsereEventosVisu '+e.Message);
@@ -381,12 +380,12 @@ var
         if rSet[0, k] = objeto then
           begin
           try
-            Query1.Close;
+            Query.Close;
           except
             end; // try
-          Query1.DatabaseName := extractFilePath(FileName);
-          Query1.SQL.Clear;
-          Query1.SQL.Add(' SELECT * FROM "'+changeFileExt(extractFileName(FileName),'')+
+          Query.DatabaseName := extractFilePath(FileName);
+          Query.SQL.Clear;
+          Query.SQL.Add(' SELECT * FROM "'+changeFileExt(extractFileName(FileName),'')+
 //                        rSet.Fields[1].AsString+'" '+rSet.Fields[1].AsString); // Montar SELECT
                         rSet[1, k]+'" '+rSet[1, k]); // Montar SELECT
           for l := 0 to high(ArrRegIndice) do
@@ -416,19 +415,18 @@ var
                   ArgPesq := FormatDateTime('MM/DD/YYYY',StrToDate(ArgPesq));
                 except
                   mensagem := 'Formato da data inválida.';
-                  result := '0' + '|' + mensagem;
+                  //result := false;
                   exit;
                   end;
                 end;
 //              Query.SQL.Add(' WHERE '+rSet.Fields[1].AsString + '.VALOR ' + convOperador(rSet.Fields[2].AsString) + ' ' + Caspa + argPesq + Caspa + ' ');
-              Query1.SQL.Add(' WHERE '+rSet[1, k] + '.VALOR ' + convOperador(rSet[2, k]) + ' ' + Caspa + argPesq + Caspa + ' ');
+              Query.SQL.Add(' WHERE '+rSet[1, k] + '.VALOR ' + convOperador(rSet[2, k]) + ' ' + Caspa + argPesq + Caspa + ' ');
               Break;
               end;
-          Query1.SQL.Add(' ORDER BY PAGINA, RELATIVO ');
-          query1.SQL.SaveToFile('c:\temp\sql.sql');
+          Query.SQL.Add(' ORDER BY PAGINA, RELATIVO ');
           //vitX.LogaLocal('SQL '+Query.SQL.Text);
           try
-            //Query1.Open;
+            Query.Open;
           except
             on e:exception do
               begin
@@ -436,7 +434,7 @@ var
               LogaLocal('abrirDados - SQL:'+Query.SQL.Text);
               end;
           end;
-          //Break; // Já fez? cai fora!
+          Break; // Já fez? cai fora!
           end;
 //        rSet.Next;
         end;
@@ -728,7 +726,7 @@ var
   pilhaExecucao.push(intArqNum);
   end;
 
-  procedure descarregaPilha(strPilha : string);
+  procedure descarregaPilha(strPilha:string);
   var
     intPilha : integer;
   begin
@@ -976,7 +974,7 @@ begin
 end;
 
 
-procedure TServerMethods1.ConectarBanco;
+procedure TServerMethods1.ConectarBanco(bd : integer = 0);
 var
   servidor, driverservidor, porta, banco, usuario,
   senha, NomeEstacao : String;
@@ -998,7 +996,12 @@ begin
   FdCon.Params.Clear;
   FdCon.Params.Values['DriverID']  := 'MSSQL';
   FdCon.Params.Values['Server'] := servidor;
-  FdCon.Params.Values['Database'] := banco;
+  if bd = 0 then
+    FdCon.Params.Values['Database'] := banco
+  else if bd = 1 then
+     FdCon.Params.Values['Database'] := banco + '_log'
+  else
+     FdCon.Params.Values['Database'] := banco + '_evento';
   FdCon.Params.Values['User_name'] := usuario;
   FdCon.Params.Values['Password'] := senha;
   FdCon.Open;
@@ -1715,11 +1718,11 @@ result := result + '|' + '1';
 End;
 
 
-procedure TServerMethods1.PersistirBanco(SQL : String);
+procedure TServerMethods1.PersistirBanco(SQL : String ; bd : Integer = 0);
 begin
   try
     try
-      ConectarBanco;
+      ConectarBanco(bd);
       FdQry.SQL.Text := SQL;
       //FdQry.SQL.SaveToFile('c:\rom\sql.sql');
       //if not Assigned(StrParam) then
@@ -2188,11 +2191,11 @@ except
 end;
 End;
 
-function TServerMethods1.RetornarDadosBanco(SQL: String): String;
+function TServerMethods1.RetornarDadosBanco(SQL: String; bd : Integer = 0): String;
 begin
   try
     try
-      ConectarBanco;
+      ConectarBanco(bd);
       Result := RetornaRegistros(SQL);
       DesconectarBanco;
     except

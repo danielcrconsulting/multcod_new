@@ -95,7 +95,6 @@ Var
   Agora : TDateTime;
 Begin
 try
-  exit;
   Agora := Now;
   ConectarBanco_eve;
   FDQryE.Close;

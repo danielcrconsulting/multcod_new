@@ -1222,7 +1222,7 @@ Try
   EventosQuery1.ExecSql;
   DatabaseEventos.CommitTrans;
   }
-  Persistir(strLst.Text, nil);
+  Persistir(strLst.Text, nil,2);
 Except
   //DatabaseEventos.RollbackTrans;
   End; // Try

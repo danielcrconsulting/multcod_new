@@ -2943,6 +2943,7 @@ try
            (UpperCase(ExtractFileExt(Reports1Rec.Name)) = '.EXE') Or
            (UpperCase(ExtractFileExt(Reports1Rec.Name)) = '.UDL') Or
            (UpperCase(ExtractFileExt(Reports1Rec.Name)) = '.DAT') Or
+           (UpperCase(ExtractFileExt(Reports1Rec.Name)) = '.INI') Or
            (UpperCase(ExtractFileExt(Reports1Rec.Name)) = '.DLL') Then
           Begin
           // Deixa estes arquivos na raiz....
