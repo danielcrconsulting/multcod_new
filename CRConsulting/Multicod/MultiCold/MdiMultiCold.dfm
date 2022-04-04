@@ -1,7 +1,7 @@
 object FrameForm: TFrameForm
   Left = 246
   Top = 159
-  Caption = 'MultiCold - Viewer V10.0.0 - 08/03/2022'
+  Caption = 'MultiCold - Viewer V10.0.1 - 04/04/2022'
   ClientHeight = 57
   ClientWidth = 144
   Color = clWhite
@@ -559,6 +559,7 @@ object FrameForm: TFrameForm
       object AbrirAssistido1: TMenuItem
         Caption = 'Abrir Assistido...'
         ShortCut = 16450
+        Visible = False
         OnClick = AbrirAssistido1Click
       end
       object AbrirRemoto1: TMenuItem

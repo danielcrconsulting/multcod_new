@@ -52,7 +52,7 @@ type
     procedure Comprimir(ArquivoCompacto: TFileName; Arquivos: array of TFileName);
     Procedure LogaLocal(Const Mens : String);
     Function VerificaSeguranca(NomeRel, Usuario : String; Var Rel133CC, CmprBrncs : Boolean;
-                               Var ArrRegIndice : TgRegIndice) : Boolean;
+                               Var ArrRegIndice : TgRegIndice; log : Boolean) : Boolean;
   public
     { Public declarations }
     function EchoString(Value: string): string;
@@ -67,7 +67,7 @@ type
     function AbreRelatorio(Usuario: WideString; Senha: WideString;
                            ConnectionID: Integer; FullPath: WideString;
                            QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte;
-                           Rel133: Byte; CmprBrncs: Byte; tipo : Integer): String;
+                           Rel133: Byte; CmprBrncs: Byte; tipo : Integer; log : Boolean): String;
     Procedure InsereEventosVisu(Arquivo, Diretorio, CodRel, CodUsuario, NomeGrupoUsuario : String;
                                 Grupo, SubGrupo, CodMens : Integer);
     procedure fazerumteste;
@@ -102,7 +102,7 @@ try
   FDQryE.Sql.Add('INSERT INTO EVENTOS_VISU VALUES (:a, :b, :c, :d, :e, :f, :g, :h, :i, :j)');
   FDQryE.Params[0].Value := Agora;
   FDQryE.Params[1].Value := Agora;
-  FDQryE.Params[2].Value := Arquivo;
+  FDQryE.Params[2].Value := copy(Arquivo,1,70);
   FDQryE.Params[3].Value := Copy(Diretorio,1,70);
   FDQryE.Params[4].Value := CodRel;
   FDQryE.Params[5].Value := Grupo;
@@ -125,7 +125,7 @@ End;
 
 function TServerMethods1.AbreRelatorio(Usuario, Senha: WideString;
   ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer;
-  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte; tipo : Integer): String;
+  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte; tipo : Integer; log : Boolean): String;
 Var
   Arq : File;
   I : Integer;
@@ -138,7 +138,7 @@ Result := '99999'; // Código para o erro não detectado
 try
   Fmemo.Add('Requisição de abertura de relatório, Usuario = '+Usuario+', Arquivo = '+FullPath);
   Fmemo.Add('Verificando segurança ');
-  If Not VerificaSeguranca(FullPath, Usuario, Boolean(Rel133), Boolean(CmprBrncs), ArrRegIndice) Then
+  If Not VerificaSeguranca(FullPath, Usuario, Boolean(Rel133), Boolean(CmprBrncs), ArrRegIndice, log) Then
     Begin
     Fmemo.Add('Acesso ao relatório negado '+FullPath);
     Result := '1';
@@ -1745,7 +1745,7 @@ begin
 end;
 
 function TServerMethods1.VerificaSeguranca(NomeRel, Usuario: String;
-  var Rel133CC, CmprBrncs: Boolean; var ArrRegIndice: TgRegIndice): Boolean;
+  var Rel133CC, CmprBrncs: Boolean; var ArrRegIndice: TgRegIndice; log : Boolean): Boolean;
 Var
   PassouGrupoSubGrupoRel : Boolean;
   I,
@@ -2086,8 +2086,9 @@ try
       If CodGrupo = 'ADMSIS' Then
         Begin
         FdQry.Close;   // Usuario admsis pode ver tudo
-        InsereEventosVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
-                          UpperCase(Usuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 01);
+        if log then
+          InsereEventosVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
+                            UpperCase(Usuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 01);
         Exit;
         End;
 
@@ -2104,8 +2105,9 @@ try
       If I = -1 Then
         Begin
         Result := False;
-        InsereEventosVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
-                          UpperCase(Usuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 02);
+        if log then
+          InsereEventosVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
+                            UpperCase(Usuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 02);
         Exit;
         End;
 
@@ -2170,14 +2172,16 @@ try
       If Result And PassouGrupoSubGrupoRel Then
         Begin
         // Muito Bem, Passou por todos os testes..............
-        InsereEventosVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
-                          UpperCase(Usuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 01);
+        if log then
+          InsereEventosVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
+                            UpperCase(Usuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 01);
         End
       Else
         Begin
         Result := False;
-        InsereEventosVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
-                          UpperCase(Usuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 01);
+        if log then
+          InsereEventosVisu(ExtractFileName(NomeRel), ExtractFilePath(NomeRel), CodRel,
+                            UpperCase(Usuario), CodGrupo, RegGrp.Grp, RegDFN.CodSubGrupo, 01);
         End;
       End;
     End;

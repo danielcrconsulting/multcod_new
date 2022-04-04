@@ -326,7 +326,8 @@ Else
                                             Rel64,
                                             Rel133,
                                             CmprBrncs,
-                                            1);
+                                            1,
+                                            true);
           Retorno := TStringList.Create;
           Retorno.Delimiter := '|';
           Retorno.DelimitedText := RetValStr;
@@ -349,7 +350,8 @@ Else
                                             Rel64,
                                             Rel133,
                                             CmprBrncs,
-                                            2);
+                                            2,
+                                            false);
           StrCampos  := RetValStr;
 
         Finally

@@ -61,7 +61,7 @@ type
                                     var porta : String ; var banco : String;
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
-    function RetornarDadosBanco(SQL : String) : String;
+    function RetornarDadosBanco(SQL : String ; bd : Integer = 0) : String;
     procedure PersistirBanco(SQL : String; bd : Integer = 0);
     function BaixarArquivo( arq : String) : TJSONArray;
     function AbreRelatorio(Usuario: WideString; Senha: WideString;
@@ -95,7 +95,6 @@ Var
   Agora : TDateTime;
 Begin
 try
-  exit;
   Agora := Now;
   ConectarBanco_eve;
   FDQryE.Close;
@@ -103,7 +102,7 @@ try
   FDQryE.Sql.Add('INSERT INTO EVENTOS_VISU VALUES (:a, :b, :c, :d, :e, :f, :g, :h, :i, :j)');
   FDQryE.Params[0].Value := Agora;
   FDQryE.Params[1].Value := Agora;
-  FDQryE.Params[2].Value := Arquivo;
+  FDQryE.Params[2].Value := copy(Arquivo,1,70);
   FDQryE.Params[3].Value := Copy(Diretorio,1,70);
   FDQryE.Params[4].Value := CodRel;
   FDQryE.Params[5].Value := Grupo;
@@ -999,8 +998,10 @@ begin
   FdCon.Params.Values['Server'] := servidor;
   if bd = 0 then
     FdCon.Params.Values['Database'] := banco
+  else if bd = 1 then
+     FdCon.Params.Values['Database'] := banco + '_log'
   else
-     FdCon.Params.Values['Database'] := banco + '_log';
+     FdCon.Params.Values['Database'] := banco + '_evento';
   FdCon.Params.Values['User_name'] := usuario;
   FdCon.Params.Values['Password'] := senha;
   FdCon.Open;
@@ -2190,11 +2191,11 @@ except
 end;
 End;
 
-function TServerMethods1.RetornarDadosBanco(SQL: String): String;
+function TServerMethods1.RetornarDadosBanco(SQL: String; bd : Integer = 0): String;
 begin
   try
     try
-      ConectarBanco;
+      ConectarBanco(bd);
       Result := RetornaRegistros(SQL);
       DesconectarBanco;
     except

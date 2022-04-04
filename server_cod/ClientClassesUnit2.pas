@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 23/03/2022 19:00:20
+// 04/04/2022 18:17:38
 //
 
 unit ClientClassesUnit2;
@@ -41,7 +41,7 @@ type
     procedure PersistirBanco(SQL: string; bd: Integer);
     function BaixarArquivo(arq: string; const ARequestFilter: string = ''): TJSONArray;
     function BaixarArquivo_Cache(arq: string; const ARequestFilter: string = ''): IDSRestCachedJSONArray;
-    function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; const ARequestFilter: string = ''): string;
+    function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; log: Boolean; const ARequestFilter: string = ''): string;
     procedure InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
     procedure fazerumteste;
     function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; const ARequestFilter: string = ''): string;
@@ -110,7 +110,7 @@ const
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
   );
 
-  TServerMethods1_AbreRelatorio: array [0..10] of TDSRestParameterMetaData =
+  TServerMethods1_AbreRelatorio: array [0..11] of TDSRestParameterMetaData =
   (
     (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
     (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
@@ -122,6 +122,7 @@ const
     (Name: 'Rel133'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
     (Name: 'CmprBrncs'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
     (Name: 'tipo'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'log'; Direction: 1; DBXType: 4; TypeName: 'Boolean'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
@@ -342,7 +343,7 @@ begin
   Result := TDSRestCachedJSONArray.Create(FBaixarArquivoCommand_Cache.Parameters[1].Value.GetString);
 end;
 
-function TServerMethods1Client.AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; const ARequestFilter: string): string;
+function TServerMethods1Client.AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; log: Boolean; const ARequestFilter: string): string;
 begin
   if FAbreRelatorioCommand = nil then
   begin
@@ -361,8 +362,9 @@ begin
   FAbreRelatorioCommand.Parameters[7].Value.SetUInt8(Rel133);
   FAbreRelatorioCommand.Parameters[8].Value.SetUInt8(CmprBrncs);
   FAbreRelatorioCommand.Parameters[9].Value.SetInt32(tipo);
+  FAbreRelatorioCommand.Parameters[10].Value.SetBoolean(log);
   FAbreRelatorioCommand.Execute(ARequestFilter);
-  Result := FAbreRelatorioCommand.Parameters[10].Value.GetWideString;
+  Result := FAbreRelatorioCommand.Parameters[11].Value.GetWideString;
 end;
 
 procedure TServerMethods1Client.InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);

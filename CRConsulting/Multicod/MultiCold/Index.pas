@@ -252,7 +252,7 @@ Var
   BufCmp : Pointer;
   SearchRec,
   ReportRec,
-  Reports1Rec : TSearchRec;
+  Reports1Rec, Reports1RecII : TSearchRec;
 
   PosArq,
   Paginas,
@@ -1405,7 +1405,11 @@ Var
   FormGeral.ImportarDados(strSql.Text, nil);
 //  FormGeral.TableIndicesDFN.Filter := 'CODREL = '''+FormGeral.QueryAux2.FieldByName('CODREL').AsAnsiString+'''';
 //  FormGeral.TableIndicesDFN.Filtered := True;
-
+  if FormGeral.Memtb.Active = False then
+  begin
+    result := True;
+    exit;
+  end;
   While Not FormGeral.Memtb.Eof Do     //Romero
     FormGeral.Memtb.Next;
   FormGeral.Memtb.First;
@@ -2326,6 +2330,7 @@ Var
     strsql.Add('SELECT * FROM SISTEMA B INNER JOIN GRUPOSDFN A ON B.CODSIS = A.CODSIS');
     strsql.Add('WHERE A.CODSIS = '+ArrSubDirAuto[ISubDirAuto].CodSis + ' AND ');
     strsql.Add('      A.CODGRUPO = ' + ArrSubDirAuto[ISubDirAuto].CodGrupo);
+    //strsql.SaveToFile('c:\temp\sqlrel1.sql');
     FormGeral.ImportarDados(strsql.Text,nil,1);
     If Not ObtemGrupo Then
       Begin
@@ -2536,6 +2541,7 @@ Var
            FormGeral.InsereLog(ReportRec.Name,'Preparacao para a junção automatica falhou: índice alterado, processando sem juntar');
            End;
       End;  // Case
+
   If Not PreparaColIndex Then
     Begin
     MoveDelete(DirIn+ReportRec.Name,viDirTrabApl+'NaoProcessados\'+ReportRec.Name);
@@ -2561,7 +2567,7 @@ Var
   strsql.Add(FormGeral.MemAux2.FieldByName('CodGrupo').AsString    + ',');
   strsql.Add(FormGeral.MemAux2.FieldByName('CodSubGrupo').AsString + ',');
   strsql.Add(IntToStr(CodGrupo) + ',');
-  strsql.Add(QuotedStr(ExtractFileName(Arquivos.Cells[1,1])) + ',');
+  strsql.Add(QuotedStr(copy(ExtractFileName(Arquivos.Cells[1,1]),1,40)) + ',');
   strsql.Add(QuotedStr(StatusBar1.Panels[0].Text)+ ',');
   strsql.Add(QuotedStr('')  + ',');
   strsql.Add(QuotedStr(FormatDateTime('dd-mm-yyyy hh:mm:ss',Now)) + ',');
@@ -2798,6 +2804,7 @@ try
     strsql.Add(' ((UPPER(DIRENTRA) = '''+DirIn+''') OR '); // Pega com barra e sem barra...
     strsql.Add('  (UPPER(DIRENTRA) = '''+Copy(DirIn,1,Length(DirIn)-1)+''')) ');
     strsql.Add('ORDER BY CODREL');
+    //strsql.SaveToFile('c:\temp\sqlrel.sql');
     Reports1Str := DirIn + '*.1';
     If (FindFirst(Reports1Str,FaAnyFile,Reports1Rec) = 0) Then
       Repeat
@@ -2810,6 +2817,7 @@ try
           Begin
           If IdTeste Then
             Begin
+            //ShowMessage('Chegou aqui 2');
             ProcessaPrincipal;
             Break;
             End;

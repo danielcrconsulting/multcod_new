@@ -95,7 +95,7 @@ Type
     procedure Persistir( StrSql : String; StgParam : TFDParams; bd : Integer = 0);
     procedure JsonToDataset(aDataset : TDataSet; aJSON : string);
     function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString;
-                            Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo : Integer): String;
+                            Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo : Integer; log : Boolean): String;
     function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer;
                          Pagina: WideString): WideString;
     function LogIn(Usuario, Senha: WideString;
@@ -667,14 +667,14 @@ end; // Try
   strLst := TStringList.Create;
   strlst.Add('insert into logproc (dtLote,  hrLote, dtProc, hrProc, arquivo, mensagem) ');
   strlst.Add('values ( ');
-  strlst.Add(QuotedStr(FormatDateTime('YYYY/MM/DD hh:mm:ss',Agora)) + ',');
-  strlst.Add(QuotedStr(FormatDateTime('YYYY/MM/DD hh:mm:ss',Agora)) + ',');
-  strlst.Add(QuotedStr(FormatDateTime('YYYY/MM/DD hh:mm:ss',Now)) + ',');
-  strlst.Add(QuotedStr(FormatDateTime('YYYY/MM/DD hh:mm:ss',Now)) + ',');
+  strlst.Add(QuotedStr(FormatDateTime('DD/MM/YYYY hh:mm:ss',Agora)) + ',');
+  strlst.Add(QuotedStr(FormatDateTime('DD/MM/YYYY hh:mm:ss',Agora)) + ',');
+  strlst.Add(QuotedStr(FormatDateTime('DD/MM/YYYY hh:mm:ss',Now)) + ',');
+  strlst.Add(QuotedStr(FormatDateTime('DD/MM/YYYY hh:mm:ss',Now)) + ',');
   strlst.Add(QuotedStr(copy(Arquivo,1,255)) + ',');
-  strlst.Add(QuotedStr(copy(Mensagem,1,512)));
+  strlst.Add(QuotedStr(copy(Mensagem,1,512)) + ')');
 
-  Persistir(strLst.Text, nil);
+  Persistir(strLst.Text, nil,1);
   Freeandnil(strlst);
 End;
 
@@ -893,10 +893,10 @@ end;
 
 function TFormGeral.AbreRelatorio(Usuario, Senha: WideString;
   ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer;
-  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte; tipo : Integer): String;
+  StrCampos: WideString; Rel64, Rel133, CmprBrncs: Byte; tipo : Integer; log : Boolean): String;
 begin
   result := OMetodosServer.ServerMethodsPrincipalClient.AbreRelatorio(Usuario, Senha,
-  ConnectionID, FullPath, QtdPaginas, StrCampos, Rel64, Rel133, CmprBrncs, tipo);
+  ConnectionID, FullPath, QtdPaginas, StrCampos, Rel64, Rel133, CmprBrncs, tipo, log);
 end;
 
 function TFormGeral.BaixarArquivo( arq : String) : TJSONArray;
