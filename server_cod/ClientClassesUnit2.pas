@@ -1,15 +1,18 @@
 //
 // Created by the DataSnap proxy generator.
-// 04/04/2022 18:17:38
+// 30/04/2022 17:41:10
 //
 
 unit ClientClassesUnit2;
 
 interface
 
-uses System.JSON, Datasnap.DSProxyRest, Datasnap.DSClientRest, Data.DBXCommon, Data.DBXClient, Data.DBXDataSnap, Data.DBXJSON, Datasnap.DSProxy, System.Classes, System.SysUtils, Data.DB, Data.SqlExpr, Data.DBXDBReaders, Data.DBXCDSReaders, Data.DBXJSONReflect;
+uses System.JSON, Datasnap.DSProxyRest, Datasnap.DSClientRest, Data.DBXCommon, Data.DBXClient, Data.DBXDataSnap, Data.DBXJSON, Datasnap.DSProxy, System.Classes, System.SysUtils, Data.DB, Data.SqlExpr, Data.DBXDBReaders, Data.DBXCDSReaders, UclsAux, Data.DBXJSONReflect;
 
 type
+
+  IDSRestCachedTResultadoBuscaSequencialDTO = interface;
+
   TServerMethods1Client = class(TDSAdminRestClient)
   private
     FDSServerModuleDestroyCommand: TDSRestCommand;
@@ -17,6 +20,7 @@ type
     FEchoStringCommand: TDSRestCommand;
     FReverseStringCommand: TDSRestCommand;
     FRetornarParametrosConnCommand: TDSRestCommand;
+    FRetornarParametroADCommand: TDSRestCommand;
     FRetornarDadosBancoCommand: TDSRestCommand;
     FPersistirBancoCommand: TDSRestCommand;
     FBaixarArquivoCommand: TDSRestCommand;
@@ -28,6 +32,9 @@ type
     FLogInCommand: TDSRestCommand;
     FGetRelatorioCommand: TDSRestCommand;
     FExecutaNovaQueryFacilCommand: TDSRestCommand;
+    FValidarADCommand: TDSRestCommand;
+    FBuscaSequencialCommand: TDSRestCommand;
+    FBuscaSequencialCommand_Cache: TDSRestCommand;
   public
     constructor Create(ARestConnection: TDSRestConnection); overload;
     constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
@@ -37,6 +44,7 @@ type
     function EchoString(Value: string; const ARequestFilter: string = ''): string;
     function ReverseString(Value: string; const ARequestFilter: string = ''): string;
     function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
+    function RetornarParametroAD(const ARequestFilter: string = ''): string;
     function RetornarDadosBanco(SQL: string; bd: Integer; const ARequestFilter: string = ''): string;
     procedure PersistirBanco(SQL: string; bd: Integer);
     function BaixarArquivo(arq: string; const ARequestFilter: string = ''): TJSONArray;
@@ -48,6 +56,15 @@ type
     function LogIn(Usuario: WideString; Senha: WideString; ConnectionID: Integer; const ARequestFilter: string = ''): string;
     function GetRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString; tipo: Integer; const ARequestFilter: string = ''): string;
     function ExecutaNovaQueryFacil(gridXML: WideString; fileName: WideString; usuario: WideString; mensagem: WideString; xmlData: WideString; const ARequestFilter: string = ''): string;
+    function ValidarAD(pUsuario: string; pSenha: string; const ARequestFilter: string = ''): Boolean;
+    function BuscaSequencial(Usuario: string; Senha: string; ConnectionID: Integer; Relatorio: string; buscaSequencial: TBuscaSequencialDTO_M; const ARequestFilter: string = ''): TResultadoBuscaSequencialDTO;
+    function BuscaSequencial_Cache(Usuario: string; Senha: string; ConnectionID: Integer; Relatorio: string; buscaSequencial: TBuscaSequencialDTO_M; const ARequestFilter: string = ''): IDSRestCachedTResultadoBuscaSequencialDTO;
+  end;
+
+  IDSRestCachedTResultadoBuscaSequencialDTO = interface(IDSRestCachedObject<TResultadoBuscaSequencialDTO>)
+  end;
+
+  TDSRestCachedTResultadoBuscaSequencialDTO = class(TDSRestCachedObject<TResultadoBuscaSequencialDTO>, IDSRestCachedTResultadoBuscaSequencialDTO, IDSRestCachedCommand)
   end;
 
 const
@@ -83,6 +100,11 @@ const
     (Name: 'senha'; Direction: 3; DBXType: 26; TypeName: 'string'),
     (Name: 'NomeEstacao'; Direction: 3; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
+  );
+
+  TServerMethods1_RetornarParametroAD: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
   TServerMethods1_RetornarDadosBanco: array [0..2] of TDSRestParameterMetaData =
@@ -177,6 +199,33 @@ const
     (Name: 'mensagem'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
     (Name: 'xmlData'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
+  );
+
+  TServerMethods1_ValidarAD: array [0..2] of TDSRestParameterMetaData =
+  (
+    (Name: 'pUsuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'pSenha'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
+  );
+
+  TServerMethods1_BuscaSequencial: array [0..5] of TDSRestParameterMetaData =
+  (
+    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'Relatorio'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'buscaSequencial'; Direction: 1; DBXType: 37; TypeName: 'TBuscaSequencialDTO_M'),
+    (Name: ''; Direction: 4; DBXType: 37; TypeName: 'TResultadoBuscaSequencialDTO')
+  );
+
+  TServerMethods1_BuscaSequencial_Cache: array [0..5] of TDSRestParameterMetaData =
+  (
+    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'Relatorio'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'buscaSequencial'; Direction: 1; DBXType: 37; TypeName: 'TBuscaSequencialDTO_M'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
   );
 
 implementation
@@ -284,6 +333,19 @@ begin
   senha := FRetornarParametrosConnCommand.Parameters[5].Value.GetWideString;
   NomeEstacao := FRetornarParametrosConnCommand.Parameters[6].Value.GetWideString;
   Result := FRetornarParametrosConnCommand.Parameters[7].Value.GetBoolean;
+end;
+
+function TServerMethods1Client.RetornarParametroAD(const ARequestFilter: string): string;
+begin
+  if FRetornarParametroADCommand = nil then
+  begin
+    FRetornarParametroADCommand := FConnection.CreateCommand;
+    FRetornarParametroADCommand.RequestType := 'GET';
+    FRetornarParametroADCommand.Text := 'TServerMethods1.RetornarParametroAD';
+    FRetornarParametroADCommand.Prepare(TServerMethods1_RetornarParametroAD);
+  end;
+  FRetornarParametroADCommand.Execute(ARequestFilter);
+  Result := FRetornarParametroADCommand.Parameters[0].Value.GetWideString;
 end;
 
 function TServerMethods1Client.RetornarDadosBanco(SQL: string; bd: Integer; const ARequestFilter: string): string;
@@ -471,6 +533,93 @@ begin
   Result := FExecutaNovaQueryFacilCommand.Parameters[5].Value.GetWideString;
 end;
 
+function TServerMethods1Client.ValidarAD(pUsuario: string; pSenha: string; const ARequestFilter: string): Boolean;
+begin
+  if FValidarADCommand = nil then
+  begin
+    FValidarADCommand := FConnection.CreateCommand;
+    FValidarADCommand.RequestType := 'GET';
+    FValidarADCommand.Text := 'TServerMethods1.ValidarAD';
+    FValidarADCommand.Prepare(TServerMethods1_ValidarAD);
+  end;
+  FValidarADCommand.Parameters[0].Value.SetWideString(pUsuario);
+  FValidarADCommand.Parameters[1].Value.SetWideString(pSenha);
+  FValidarADCommand.Execute(ARequestFilter);
+  Result := FValidarADCommand.Parameters[2].Value.GetBoolean;
+end;
+
+function TServerMethods1Client.BuscaSequencial(Usuario: string; Senha: string; ConnectionID: Integer; Relatorio: string; buscaSequencial: TBuscaSequencialDTO_M; const ARequestFilter: string): TResultadoBuscaSequencialDTO;
+begin
+  if FBuscaSequencialCommand = nil then
+  begin
+    FBuscaSequencialCommand := FConnection.CreateCommand;
+    FBuscaSequencialCommand.RequestType := 'POST';
+    FBuscaSequencialCommand.Text := 'TServerMethods1."BuscaSequencial"';
+    FBuscaSequencialCommand.Prepare(TServerMethods1_BuscaSequencial);
+  end;
+  FBuscaSequencialCommand.Parameters[0].Value.SetWideString(Usuario);
+  FBuscaSequencialCommand.Parameters[1].Value.SetWideString(Senha);
+  FBuscaSequencialCommand.Parameters[2].Value.SetInt32(ConnectionID);
+  FBuscaSequencialCommand.Parameters[3].Value.SetWideString(Relatorio);
+  if not Assigned(buscaSequencial) then
+    FBuscaSequencialCommand.Parameters[4].Value.SetNull
+  else
+  begin
+    FMarshal := TDSRestCommand(FBuscaSequencialCommand.Parameters[4].ConnectionHandler).GetJSONMarshaler;
+    try
+      FBuscaSequencialCommand.Parameters[4].Value.SetJSONValue(FMarshal.Marshal(buscaSequencial), True);
+      if FInstanceOwner then
+        buscaSequencial.Free
+    finally
+      FreeAndNil(FMarshal)
+    end
+    end;
+  FBuscaSequencialCommand.Execute(ARequestFilter);
+  if not FBuscaSequencialCommand.Parameters[5].Value.IsNull then
+  begin
+    FUnMarshal := TDSRestCommand(FBuscaSequencialCommand.Parameters[5].ConnectionHandler).GetJSONUnMarshaler;
+    try
+      Result := TResultadoBuscaSequencialDTO(FUnMarshal.UnMarshal(FBuscaSequencialCommand.Parameters[5].Value.GetJSONValue(True)));
+      if FInstanceOwner then
+        FBuscaSequencialCommand.FreeOnExecute(Result);
+    finally
+      FreeAndNil(FUnMarshal)
+    end
+  end
+  else
+    Result := nil;
+end;
+
+function TServerMethods1Client.BuscaSequencial_Cache(Usuario: string; Senha: string; ConnectionID: Integer; Relatorio: string; buscaSequencial: TBuscaSequencialDTO_M; const ARequestFilter: string): IDSRestCachedTResultadoBuscaSequencialDTO;
+begin
+  if FBuscaSequencialCommand_Cache = nil then
+  begin
+    FBuscaSequencialCommand_Cache := FConnection.CreateCommand;
+    FBuscaSequencialCommand_Cache.RequestType := 'POST';
+    FBuscaSequencialCommand_Cache.Text := 'TServerMethods1."BuscaSequencial"';
+    FBuscaSequencialCommand_Cache.Prepare(TServerMethods1_BuscaSequencial_Cache);
+  end;
+  FBuscaSequencialCommand_Cache.Parameters[0].Value.SetWideString(Usuario);
+  FBuscaSequencialCommand_Cache.Parameters[1].Value.SetWideString(Senha);
+  FBuscaSequencialCommand_Cache.Parameters[2].Value.SetInt32(ConnectionID);
+  FBuscaSequencialCommand_Cache.Parameters[3].Value.SetWideString(Relatorio);
+  if not Assigned(buscaSequencial) then
+    FBuscaSequencialCommand_Cache.Parameters[4].Value.SetNull
+  else
+  begin
+    FMarshal := TDSRestCommand(FBuscaSequencialCommand_Cache.Parameters[4].ConnectionHandler).GetJSONMarshaler;
+    try
+      FBuscaSequencialCommand_Cache.Parameters[4].Value.SetJSONValue(FMarshal.Marshal(buscaSequencial), True);
+      if FInstanceOwner then
+        buscaSequencial.Free
+    finally
+      FreeAndNil(FMarshal)
+    end
+    end;
+  FBuscaSequencialCommand_Cache.ExecuteCache(ARequestFilter);
+  Result := TDSRestCachedTResultadoBuscaSequencialDTO.Create(FBuscaSequencialCommand_Cache.Parameters[5].Value.GetString);
+end;
+
 constructor TServerMethods1Client.Create(ARestConnection: TDSRestConnection);
 begin
   inherited Create(ARestConnection);
@@ -488,6 +637,7 @@ begin
   FEchoStringCommand.DisposeOf;
   FReverseStringCommand.DisposeOf;
   FRetornarParametrosConnCommand.DisposeOf;
+  FRetornarParametroADCommand.DisposeOf;
   FRetornarDadosBancoCommand.DisposeOf;
   FPersistirBancoCommand.DisposeOf;
   FBaixarArquivoCommand.DisposeOf;
@@ -499,6 +649,9 @@ begin
   FLogInCommand.DisposeOf;
   FGetRelatorioCommand.DisposeOf;
   FExecutaNovaQueryFacilCommand.DisposeOf;
+  FValidarADCommand.DisposeOf;
+  FBuscaSequencialCommand.DisposeOf;
+  FBuscaSequencialCommand_Cache.DisposeOf;
   inherited;
 end;
 

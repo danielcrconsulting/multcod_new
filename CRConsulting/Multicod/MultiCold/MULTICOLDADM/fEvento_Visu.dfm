@@ -10,11 +10,10 @@ object fEventosVisu: TfEventosVisu
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Panel1: TPanel
     Left = 0
     Top = 0
@@ -22,16 +21,13 @@ object fEventosVisu: TfEventosVisu
     Height = 369
     Align = alClient
     TabOrder = 0
-    DesignSize = (
-      603
-      369)
     object DBGrid1: TDBGrid
-      Left = 8
-      Top = 8
-      Width = 737
-      Height = 457
-      Anchors = [akLeft, akTop, akRight, akBottom]
+      Left = 1
+      Top = 1
+      Width = 597
+      Height = 360
       DataSource = DataSource1
+      DrawingStyle = gdsGradient
       TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -132,7 +128,7 @@ object fEventosVisu: TfEventosVisu
       Left = 192
       Top = 8
       Width = 185
-      Height = 21
+      Height = 22
       TabOrder = 1
       OnChange = ComboBox1Change
       Items.Strings = (

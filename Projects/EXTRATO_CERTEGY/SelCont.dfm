@@ -11,52 +11,51 @@ object SeleCons: TSeleCons
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Label1: TLabel
     Left = 232
     Top = 48
-    Width = 184
-    Height = 13
+    Width = 186
+    Height = 14
     Caption = 'Qual tipo de Consulta Deseja Realizar?'
   end
   object Label2: TLabel
     Left = 136
     Top = 86
     Width = 28
-    Height = 13
+    Height = 14
     Caption = 'Conta'
   end
   object Label3: TLabel
     Left = 136
     Top = 110
-    Width = 31
-    Height = 13
+    Width = 32
+    Height = 14
     Caption = 'Cart'#227'o'
   end
   object Label4: TLabel
     Left = 136
     Top = 134
-    Width = 20
-    Height = 13
+    Width = 19
+    Height = 14
     Caption = 'CPF'
   end
   object Label5: TLabel
     Left = 136
     Top = 158
-    Width = 28
-    Height = 13
+    Width = 27
+    Height = 14
     Caption = 'Nome'
   end
   object Label6: TLabel
     Left = 136
     Top = 182
     Width = 56
-    Height = 13
+    Height = 14
     Caption = 'SobreNome'
   end
   object Image1: TImage
@@ -161,28 +160,28 @@ object SeleCons: TSeleCons
     Left = 256
     Top = 80
     Width = 137
-    Height = 21
+    Height = 22
     TabOrder = 0
   end
   object EditCartao: TEdit
     Left = 256
     Top = 104
     Width = 137
-    Height = 21
+    Height = 22
     TabOrder = 1
   end
   object EditCpf: TEdit
     Left = 256
     Top = 128
     Width = 137
-    Height = 21
+    Height = 22
     TabOrder = 2
   end
   object EditNome: TEdit
     Left = 256
     Top = 152
     Width = 273
-    Height = 21
+    Height = 22
     CharCase = ecUpperCase
     TabOrder = 3
   end
@@ -190,7 +189,7 @@ object SeleCons: TSeleCons
     Left = 256
     Top = 176
     Width = 273
-    Height = 21
+    Height = 22
     CharCase = ecUpperCase
     TabOrder = 4
   end

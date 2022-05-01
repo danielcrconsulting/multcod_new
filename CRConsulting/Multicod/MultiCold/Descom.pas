@@ -4,7 +4,7 @@ Interface
 
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ComCtrls, ComObj, OleServer, IMulticoldServer1,
+  StdCtrls, ComCtrls, ComObj, OleServer, uclsAux {IMulticoldServer1},
   UMetodosServer,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
@@ -84,8 +84,8 @@ Begin
 Filtros := TFiltro.Create;
 RadioPagAtu.Checked := True;
 OpenDialog1.InitialDir := 'C:\ColdCfg';
-  OMetodosServer := clsMetodosServer.Create(Self);
-  OMetodosServer.Configurar;
+  //OMetodosServer := clsMetodosServer.Create(Self);
+  //OMetodosServer.Configurar;
 End;
 
 procedure TFrmDescom.FormShow(Sender: TObject);

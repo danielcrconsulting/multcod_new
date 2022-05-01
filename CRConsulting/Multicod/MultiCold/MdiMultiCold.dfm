@@ -2,8 +2,8 @@ object FrameForm: TFrameForm
   Left = 246
   Top = 159
   Caption = 'MultiCold - Viewer V10.0.1 - 04/04/2022'
-  ClientHeight = 57
-  ClientWidth = 144
+  ClientHeight = 161
+  ClientWidth = 652
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -54,12 +54,13 @@ object FrameForm: TFrameForm
   object SpeedPanel: TPanel
     Left = 0
     Top = 0
-    Width = 144
+    Width = 652
     Height = 49
     Align = alTop
     ParentShowHint = False
     ShowHint = True
     TabOrder = 3
+    ExplicitWidth = 118
     object PlusZoom: TSpeedButton
       Left = 0
       Top = 0

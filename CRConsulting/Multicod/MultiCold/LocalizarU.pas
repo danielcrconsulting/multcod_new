@@ -8,7 +8,7 @@ Unit LocalizarU;
 Interface
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, MdiEdit, ExtCtrls, IMulticoldServer1, Soap.SOAPHTTPClient, Zlib;
+  StdCtrls, MdiEdit, ExtCtrls, IMulticoldServer1, Soap.SOAPHTTPClient, Zlib, uclsAux;
 Type
   TLocalizar = Class(TForm)
     Label1: TLabel;
@@ -175,20 +175,15 @@ begin
   end;
 end;
 
-procedure TLocalizar.LocButClick(Sender: TObject);
+
+Procedure TLocalizar.LocButClick(Sender: TObject);
 Var
   I,
   J : Integer;
 //  Linha133,
 //  Linha : String;
   localizaNaPesquisa : boolean;
-  servicoRemoto: IMulticoldServer;
-  busca: TBuscaSequencialDTO;
-  resultadoBusca: TResultadoBuscaSequencialDTO;
-  pUser, pSenha, pArquivo: WideString;
-  spUser, spSenha : String;
-  rio: THTTPRIO;
-  MyClass: TEditForm;
+
   Function SetaLinIni : Boolean;
   Begin
   Result := True;
@@ -203,6 +198,7 @@ Var
   Else
     LinIni := 1;
   End;
+
   function paginaDaPesquisa(pagNum:Integer) : boolean;
   var
     z : integer;
@@ -215,24 +211,29 @@ Var
       break;
       end;
   end;
+
 Begin
+
 localizaNaPesquisa := ((TEditForm(FrameForm.ActiveMdiChild).temPesquisa) and (radioGroup1.ItemIndex = 1));
 FrameForm.LocalizarPrxima1.Enabled := True;
 LocProxBut.Enabled := True;
-If (not TEditForm(FrameForm.ActiveMdiChild).RelRemoto) and (not AlterouValores) and (PagIni > PagFin) then
+
+If (not AlterouValores) and (PagIni > PagFin) then
   begin
   messageDlg('Fim da pesquisa.',mtInformation,[mbOk],0);
   exit;
   end;
-  
+
 If (AlterouValores) Or (Sender = LocBut) Then
   Begin
+
   PagIni := 1;
   PagFin := TEditForm(FrameForm.ActiveMdiChild).Paginas;
   LinIni := 1;
   LinFin := 1;
   Coluna := 1;
   LinhaLocalizada := -1;
+
   If PagFinEdit.Text <> '*' Then
     Begin
     Try
@@ -246,6 +247,7 @@ If (AlterouValores) Or (Sender = LocBut) Then
     if (localizaNaPesquisa) and (PagFin > FrameForm.ScrollBar1.Max) then
       PagFin := FrameForm.ScrollBar1.Max
     End;
+
   If PagIniEdit.Text <> '*' Then
     Begin
     Try
@@ -257,8 +259,10 @@ If (AlterouValores) Or (Sender = LocBut) Then
     If PagIni > PagFin Then
       PagIni := PagFin;
     End;
+
   If Not SetaLinIni Then
     Exit;
+
   If LinFinEdit.Text <> '*' Then
     Try
       LinFin := StrToInt(LinFinEdit.Text);
@@ -266,6 +270,7 @@ If (AlterouValores) Or (Sender = LocBut) Then
       ShowMessage('Linha Final inválida, verifique...');
       Exit;
     End;
+
   If ColunaEdit.Text <> '*' Then
     Try
       Coluna := StrToInt(ColunaEdit.Text);
@@ -273,11 +278,14 @@ If (AlterouValores) Or (Sender = LocBut) Then
       ShowMessage('Coluna inválida, verifique...');
       Exit;
     End;
+
   AlterouValores := False;
   End;
 Cancelar := False;
+
 With TEditForm(FrameForm.ActiveMdiChild) Do
   Begin
+
   If LinhaLocalizada <> -1 Then  // Começa a procurar na próxima linha depois de achada;
     Begin
     LinIni := LinhaLocalizada+2;
@@ -287,124 +295,18 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
     If Not SetaLinIni Then
       Exit;
 
-//*****************************************************//
-{  Iniciar aqui um tratamento para se for remoto, chamar o código do webServices.
-
-}
-  if RelRemoto then
-  begin
-    if LinFinEdit.Text = '*' then
-      LinFin := -1;
-    if ColunaEdit.Text = '*' then
-      Coluna := -1;
-    busca := TBuscaSequencialDTO.Create;
-    try
-
-      busca.PagIni := PagIni;
-      busca.PagFin := PagFin;
-      busca.LinIni := LinIni-1;
-      busca.LinFin := LinFin;
-      busca.Coluna := Coluna;
-      busca.ValorBusca := LocalizarEdit.Text;
-
-      if localizaNaPesquisa then
-      begin
-        busca.PagIni := FrameForm.ScrollBar1.Position+1;
-        busca.PagFin := FrameForm.ScrollBar1.Max+1;
-        busca.TipoBusca := TTipoBuscaSequencial.tbPesquisa;
-        busca.QueryFacil := MontarQueryFacil;
-        busca.ConectorQuery := PilhaEspecial;
-      end;
-
-
-      if not ValidarQtdePaginasSuportadasRemoto then
-      begin
-        LblValidacao.Caption := 'Para relatórios remotos é permitido 15000 páginas por vez.';
-        PagFinEdit.SetFocus;
-        exit;
-      end else
-        LblValidacao.Caption := '';
-
-      spUser := LogInRemotoForm.UsuEdit.Text;
-      spSenha := LogInRemotoForm.PassEdit.Text;
-
-      pUser := spUser;
-      pSenha := spSenha;
-      pArquivo := Filename;
-
-      Cursor := crHourGlass;
-      try
-
-        Application.ProcessMessages;
-        try
-          formGeral.HTTPRIO1.HttpWebNode.ConnectTimeout := 90000;
-          resultadoBusca := (formGeral.HTTPRIO1 as IMulticoldServer).BuscaSequencial( pUser,
-                                         pSenha,
-                                         1,
-                                         pArquivo,
-                                         busca);
-        except 
-          on E: Exception do
-          begin
-            messageDlg('Erro ao tentar buscar no relatório remoto.', mtError, [mbOk], 0);
-            exit;
-          end;
-        end;
-
-
-        if resultadoBusca.Localizou then
-        begin
-          DecriptaPagina(resultadoBusca.QtdeBytesPag, resultadoBusca.Pagina);
-        end else
-        begin
-          messageDlg('Fim da pesquisa.',mtInformation,[mbOk],0);
-          Exit;
-        end;
-
-        UsouLocalizar := True;
-        LinhaLocalizada := resultadoBusca.LinhaLocalizada;
-        ColunaLocalizada := resultadoBusca.ColunaLocalizada;
-        TamLocalizada := Length(LocalizarEdit.Text);
-
-        if localizaNaPesquisa then
-        begin
-          FrameForm.ScrollBar1.Position := resultadoBusca.IndexPagLocPesq-1;
-          FrameForm.Scrolla1;
-        end
-        else
-        begin
-          FrameForm.ScrollBar2.Position := resultadoBusca.IndexPagLoc-1;
-          FrameForm.Scrolla2;
-        end;
-        PaginaAtu := resultadoBusca.IndexPagLoc;
-        Pagini := resultadoBusca.IndexPagLoc;
-        Localizar.Close;
-        Exit;
-
-
-      finally
-        Cursor := crDefault;
-      end;
-
-    finally
-      if Assigned(resultadoBusca) then
-        FreeAndNil(resultadoBusca);
-      busca.Free;
-    end;
-
-  end;
-
-//*****************************************************//
-
   For I := PagIni To PagFin Do
     Begin
+
     If I <> PagIni Then // Mudou para outra página no loop do for, seta para pesquisar da linha inicial
       Begin
       If Not SetaLinIni Then
         Exit;
         PagIni := I;
       End;
+
     PaginaAtuEdit.Text := IntToStr(I);
+
     if localizaNaPesquisa then
       begin
       Seek(TEditForm(FrameForm.ActiveMdiChild).ArqPsq,I-1);
@@ -420,15 +322,19 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
       end
     else
       GetPaginaDoRel(I, False);
+
     Application.ProcessMessages;
+
     MemoGidley.Lines.Text := PaginaAcertada;
-    
+
     If LinFinEdit.Text <> '*' Then
       LinFin := StrToInt(LinFinEdit.Text)
     Else
       LinFin := MemoGidley.Lines.Count;
+
     If LinFin > MemoGidley.Lines.Count Then
       LinFin := MemoGidley.Lines.Count;
+
     For J := LinIni To LinFin Do
       Begin
       If ColunaEdit.Text = '*' Then
@@ -506,6 +412,7 @@ If PagIni > PagFin Then
   AlterouValores := True;
   End;
 End;
+
 function TLocalizar.MontarQueryFacil :  QueryFacilArrayDTO;
 var
   i, len: Integer;

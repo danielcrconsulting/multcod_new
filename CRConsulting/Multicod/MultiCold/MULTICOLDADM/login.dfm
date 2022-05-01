@@ -4,39 +4,34 @@ object fLogin: TfLogin
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = 'Multicold ADMIN'
-  ClientHeight = 213
-  ClientWidth = 246
+  ClientHeight = 209
+  ClientWidth = 275
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -14
+  Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poDesktopCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 120
-  TextHeight = 16
+  PixelsPerInch = 96
+  TextHeight = 14
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 246
-    Height = 163
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
+    Width = 275
+    Height = 169
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 241
-    ExplicitHeight = 158
+    ExplicitWidth = 197
+    ExplicitHeight = 130
     object Label1: TLabel
       Left = 16
       Top = 26
-      Width = 110
-      Height = 16
+      Width = 87
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -46,8 +41,8 @@ object fLogin: TfLogin
     object Label2: TLabel
       Left = 16
       Top = 85
-      Width = 39
-      Height = 16
+      Width = 31
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -58,7 +53,7 @@ object fLogin: TfLogin
       Left = 16
       Top = 46
       Width = 208
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -69,7 +64,7 @@ object fLogin: TfLogin
       Left = 16
       Top = 105
       Width = 208
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -80,20 +75,16 @@ object fLogin: TfLogin
   end
   object Panel2: TPanel
     Left = 0
-    Top = 163
-    Width = 246
-    Height = 50
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
+    Top = 169
+    Width = 275
+    Height = 40
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 158
-    ExplicitWidth = 241
+    ExplicitTop = 130
+    ExplicitWidth = 197
     object BitBtn1: TBitBtn
-      Left = 47
-      Top = 10
+      Left = 35
+      Top = 4
       Width = 92
       Height = 31
       Margins.Left = 4
@@ -124,8 +115,8 @@ object fLogin: TfLogin
       OnClick = BitBtn1Click
     end
     object BitBtn2: TBitBtn
-      Left = 138
-      Top = 10
+      Left = 144
+      Top = 4
       Width = 92
       Height = 31
       Margins.Left = 4

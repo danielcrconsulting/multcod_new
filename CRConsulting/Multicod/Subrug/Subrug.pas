@@ -18,7 +18,7 @@ Uses
   DB,
   Classes,
   Pilha,
-  zLib,
+  System.zLib,
   ShlObj, System.Variants,
   Vcl.Grids;
 

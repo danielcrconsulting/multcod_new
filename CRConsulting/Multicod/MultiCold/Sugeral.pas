@@ -8,14 +8,38 @@ Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Db, IniFiles, SuTypGer, StdCtrls, SuTypMultiCold,
   ADODB, InvokeRegistry, Rio, SOAPHTTPClient, System.Net.URLClient,
-  Datasnap.Provider, Datasnap.DBClient, IMulticoldServer1, UMetodosServer,
+  Datasnap.Provider, Datasnap.DBClient, {IMulticoldServer1,} UMetodosServer,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect,
-  REST.Response.Adapter, System.JSON, System.Zip;
+  REST.Response.Adapter, System.JSON, System.Zip, uclsAux, ActiveDs_TLB;
 
 Type
 
+ {
+  TBuscaSequencialDTO_M = class(TRemotable)
+  private
+    FPagIni: Integer;
+    FPagFin: Integer;
+    FLinIni: Integer;
+    FLinFin: Integer;
+    FColuna: Integer;
+    FValorBusca: WideString;
+    FTipoBusca: Integer;
+    FQueryFacil: QueryFacilArrayDTO;
+    FConectorQuery: String;
+  public
+    property PagIni:     Integer               read FPagIni write FPagIni;
+    property PagFin:     Integer               read FPagFin write FPagFin;
+    property LinIni:     Integer               read FLinIni write FLinIni;
+    property LinFin:     Integer               read FLinFin write FLinFin;
+    property Coluna:     Integer               read FColuna write FColuna;
+    property ValorBusca: WideString            read FValorBusca write FValorBusca;
+    property TipoBusca:  Integer               read FTipoBusca write FTipoBusca;
+    property QueryFacil: QueryFacilArrayDTO    read FQueryFacil write FQueryFacil;
+    property ConectorQuery: String read FConectorQuery write FConectorQuery;
+  end;
+  }
   TDrawingTool = (dtFree, dtLine, dtRectangle, dtEllipse, dtRoundRect);
 
   TFormGeral = Class(TForm)
@@ -77,7 +101,7 @@ Type
     procedure ConfigurarConnect;
 
   Public
-    FMulticoldServer: IMulticoldServer;
+    //FMulticoldServer: IMulticoldServer;
     SemServidor, ModoOff : Boolean;
   Procedure InsereLog(Arquivo,Mensagem : AnsiString);
   Procedure InsereEventos(V1, V2, V3 : AnsiString; V4 : Integer;Const Reg : AnsiString);
@@ -102,7 +126,12 @@ Type
       ConnectionID: Integer): String;
     function GetRelatorio(Usuario, Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString; tipo : Integer): String;
     function ExecutaNovaQueryFacil(gridXML: WideString; fileName: WideString; usuario: WideString; mensagem: WideString; xmlData: WideString): String;
-
+    function ValidarAD(usuario, login : String) : Boolean;
+    function ValidarAD_(pUsuario, pSenha: String): Boolean;
+    function EhUsuarioValido(Servidor, Usuario, Senha: pchar): Boolean;
+    function BuscaSequencial( Usuario, Senha: String;
+                              ConnectionID: Integer; Relatorio: String;
+                              buscaSequencial: TBuscaSequencialDTO_M) : TResultadoBuscaSequencialDTO;
   End;
 
 
@@ -771,7 +800,142 @@ begin
   xmlData);
 end;
 
+function TFormGeral.ValidarAD(usuario, login : String) : Boolean;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.ValidarAD(usuario, login);
+end;
+
+function TFormGeral.ValidarAD_(pUsuario, pSenha: String): Boolean;
+var
+  Adc_Login: TADOConnection;
+  Qry_Login: TADOQuery;
+  Host : String;
+begin
+  Host := OMetodosServer.ServerMethodsPrincipalClient.RetornarParametroAD;
+  //logaLocal('host:' + Host);
+  if Host = '' then
+  begin
+    result := True;
+    exit;
+  end;
+
+  //logaLocal('senha:' + pSenha);
+  //pusuario := 'LucianoTeste';
+  //psenha:= '1234568kkkk';
+  showmessage('usuário:' + pusuario);
+  showmessage('senha:' + pSenha);
+  if Trim(pSenha) <> '' then
+  begin
+    Adc_Login:= TADOConnection.Create(nil);
+    Qry_Login:= TADOQuery.Create(Adc_Login);
+    Qry_Login.Connection := Adc_Login;
+
+    Adc_Login.LoginPrompt := False;
+    Adc_Login.KeepConnection := False;
+    Adc_Login.Mode := cmRead;
+    Adc_Login.Provider := 'AdsDSOObject';
+
+    Result := True;
+    try
+      //Passa o Dominio, usuário e senha do LDAP na string de conexão...
+      Qry_Login.SQL.Text :=
+        ' SELECT' +
+        '   cn' +
+        ' FROM' +
+        '   %Dominio%' +
+        ' WHERE objectClass = ''cn'' ';
+      Qry_Login.CursorType := ctStatic;
+
+      Qry_Login.Close;
+
+      try
+      {
+        Adc_Login.ConnectionString :=
+        'Provider=ADsDSOObject;Encrypt Password=True;Data Source=LDAP://' + Host +
+        //'Provider=ADsDSOObject;Data Source=LDAP://' + Host +
+        ';User ID =' + pUsuario +
+        ';Password=' + pSenha +
+        ';ADSI Flag=ADS_SECURE_AUTHENTICATION'  +
+        ';Mode=Read';
+       }
+        Adc_Login.Properties['User ID'].value := pUsuario;
+        Adc_Login.Properties['Password'].Value := pSenha;
+        Adc_Login.Properties['Encrypt Password'].Value := True ;
+        //Adc_Login.Properties['ADSI Flag'].Value := 'ADS_SECURE_AUTHENTICATION';
+
+        //adoConnection.Properties("ADSI Flag") = ADS_SERVER_BIND _
+     //Or ADS_SECURE_AUTHENTICATION
+
+        Adc_Login.Open;
+        Adc_Login.Connected := True;
+        Showmessage('passo 1');
+      except
+        on e:exception do
+        begin
+          ShowMessage(e.Message);
+          Result := False;
+        end;
+      end;
+
+      try
+        with (Qry_Login) do
+        begin
+          Close;
+          SQL.Text := StringReplace(SQL.Text, '%Dominio%', QuotedStr('LDAP://'+Host ),
+                      [rfReplaceAll]);
+
+                   //Mensagem(SQL.Text);
+          SQL.Text :=  'SELECT * FROM ' + 'LDAP://' +Host +
+                        ' WHERE objectClass = ' + QuotedStr('user');
+
+          sql.SaveToFile('c:\temp\ad.sql');
+          Open;
+          if Qry_Login.RecordCount > 0 then
+             Showmessage('reg: ' + IntToStr(Qry_Login.RecordCount));
+        end;
+      except
+        on e:exception do
+        begin
+          ShowMessage(e.Message);
+          //logaLocal('passo 2 ' + e.Message);
+          Result := False;
+        end;
+      end;
+    finally
+      FreeAndNil(Qry_Login);
+      FreeAndNil(Adc_Login);
+    end;
+  end
+    else
+      Result := False;
+  showMessage('passo 3');
+end;
+
+function TFormGeral.EhUsuarioValido(Servidor, Usuario, Senha: pchar): Boolean;
+var hr : integer;
+    obj : IAdsUser;
+begin
+  try
+    //hr := ADsOpenObject(Servidor, Usuario, Senha, ADS_PROMPT_CREDENTIALS , IAdsUser, obj);
+    Result :=Succeeded(hr);
+  except
+    Result := False;
+  end;
+end;
+
 procedure TFormGeral.FormCreate(Sender: TObject);
+  var senhaAD : String;
+  function usuarioLogado: String;
+  var
+    I: DWord;
+    user: string;
+  begin
+    I := 255;
+    SetLength(user, I);
+    GetUserName(PChar(user), I);
+    user := string(PChar(user));
+    result := user;
+  end;
 Begin
 {
   if not fileExists(extractFilePath(ParamStr(0))+'Multicold.udl') then
@@ -791,11 +955,29 @@ Begin
   OMetodosServer.Configurar;
   SemServidor := OMetodosServer.SemServidor;
   ModoOff     := OMetodosServer.ModoOff;
+  //ShowMessage('semservidor:' + BoolToStr(SemServidor));
+  //ShowMessage('ModoOff:' + BoolToStr(ModoOff));
   if (SemServidor) and (not ModoOff) then
   begin
     ShowMessage('Servidor Multicold não encontrado');
     Application.Terminate;
     Close;
+  end;
+  if ExtractFileName(LowerCase(application.ExeName)) = 'multicold.exe' then
+  begin
+    if (not SemServidor) and (not ModoOff) then
+    begin
+      if OMetodosServer.ServerMethodsPrincipalClient.RetornarParametroAD <> '' then
+      begin
+        senhaAD := InputBox(senhaAD,#31 + 'Usuário: ' + usuarioLogado + ' Digite a Senha para autencição no AD:','');
+        if not ValidarAD_(usuarioLogado,senhaAD) then
+        begin
+          ShowMessage('Usuário da rede não autorizado');
+          Application.Terminate;
+          Close;
+        end;
+      end;
+    end;
   end;
 FormGeral.Visible := false;
 ControleFiltro := ' ';
@@ -902,6 +1084,18 @@ end;
 function TFormGeral.BaixarArquivo( arq : String) : TJSONArray;
 begin
   result := OMetodosServer.ServerMethodsPrincipalClient.BaixarArquivo(arq);
+end;
+
+function TFormGeral.BuscaSequencial(Usuario, Senha: String;
+  ConnectionID: Integer; Relatorio: String;
+  buscaSequencial: TBuscaSequencialDTO_M): TResultadoBuscaSequencialDTO;
+begin
+  try
+    result := OMetodosServer.ServerMethodsPrincipalClient.BuscaSequencial(Usuario, Senha, ConnectionID, Relatorio,
+            buscaSequencial);
+  except
+
+  end;
 end;
 
 procedure TFormGeral.ImportarDados( StrSql : String; strPar : TFDParams; tb : Integer = 0; bd : Integer = 0);

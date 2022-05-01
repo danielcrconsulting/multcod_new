@@ -3,35 +3,32 @@ object fUsuarios: TfUsuarios
   Top = 189
   BorderStyle = bsDialog
   Caption = 'Usu'#225'rios'
-  ClientHeight = 246
-  ClientWidth = 423
+  ClientHeight = 290
+  ClientWidth = 444
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -14
+  Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnShow = FormShow
-  PixelsPerInch = 120
-  TextHeight = 16
+  PixelsPerInch = 96
+  TextHeight = 14
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 423
-    Height = 196
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
+    Width = 444
+    Height = 250
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 437
+    ExplicitHeight = 201
     object Label1: TLabel
       Left = 10
       Top = 10
-      Width = 110
-      Height = 16
+      Width = 87
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -41,8 +38,8 @@ object fUsuarios: TfUsuarios
     object Label2: TLabel
       Left = 10
       Top = 69
-      Width = 39
-      Height = 16
+      Width = 31
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -52,8 +49,8 @@ object fUsuarios: TfUsuarios
     object Label3: TLabel
       Left = 217
       Top = 69
-      Width = 135
-      Height = 16
+      Width = 109
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -63,8 +60,8 @@ object fUsuarios: TfUsuarios
     object Label4: TLabel
       Left = 10
       Top = 118
-      Width = 103
-      Height = 16
+      Width = 81
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -75,7 +72,7 @@ object fUsuarios: TfUsuarios
       Left = 10
       Top = 30
       Width = 395
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -86,7 +83,7 @@ object fUsuarios: TfUsuarios
       Left = 10
       Top = 89
       Width = 188
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -98,7 +95,7 @@ object fUsuarios: TfUsuarios
       Left = 217
       Top = 89
       Width = 188
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -122,7 +119,7 @@ object fUsuarios: TfUsuarios
       Left = 10
       Top = 138
       Width = 395
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -132,18 +129,16 @@ object fUsuarios: TfUsuarios
   end
   object Panel2: TPanel
     Left = 0
-    Top = 196
-    Width = 423
-    Height = 50
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
+    Top = 250
+    Width = 444
+    Height = 40
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 157
+    ExplicitWidth = 338
     object SpeedButton2: TSpeedButton
       Left = 384
-      Top = 10
+      Top = 6
       Width = 28
       Height = 31
       Hint = 'Sair'
@@ -171,7 +166,7 @@ object fUsuarios: TfUsuarios
     end
     object BitBtn1: TBitBtn
       Left = 10
-      Top = 10
+      Top = 4
       Width = 92
       Height = 31
       Margins.Left = 4
@@ -203,7 +198,7 @@ object fUsuarios: TfUsuarios
     end
     object BitBtn3: TBitBtn
       Left = 108
-      Top = 10
+      Top = 4
       Width = 93
       Height = 31
       Margins.Left = 4
@@ -234,7 +229,7 @@ object fUsuarios: TfUsuarios
     end
     object BitBtn2: TBitBtn
       Left = 207
-      Top = 10
+      Top = 4
       Width = 92
       Height = 31
       Margins.Left = 4

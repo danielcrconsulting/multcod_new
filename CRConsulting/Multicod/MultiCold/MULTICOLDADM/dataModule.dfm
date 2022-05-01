@@ -1,9 +1,9 @@
 object repositorioDeDados: TrepositorioDeDados
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
   Height = 636
   Width = 686
+  PixelsPerInch = 96
   object dbMulticold: TADOConnection
     ConnectionString = 'FILE NAME=MultiCold.udl'
     LoginPrompt = False
@@ -2197,7 +2197,7 @@ object repositorioDeDados: TrepositorioDeDados
       end>
     SQL.Strings = (
       'DELETE FROM EVENTOS_VISU'
-      'WHERE DT < ?')
+      'WHERE cast(DT as date) < ?')
     Left = 216
     Top = 544
   end

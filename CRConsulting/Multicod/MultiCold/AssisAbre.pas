@@ -199,6 +199,7 @@ Var
   End;
 
 Begin
+ShowMessage('chegou aqui 2');
 If TreeView1.Selected = Nil Then
   Begin
   Avisop.Label1.Caption := 'Nenhum código de relatório selecionado!';

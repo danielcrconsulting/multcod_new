@@ -3261,6 +3261,7 @@ If Not CarregaDadosDfnIncExc Then
   End; // Try
 
 //If JaAbriu Then
+ShowMessage('chegou aqui 4....');
 If Tela <> '' Then
   Begin
   If Length(ArINC) <> 0 Then // Há relatórios associados...

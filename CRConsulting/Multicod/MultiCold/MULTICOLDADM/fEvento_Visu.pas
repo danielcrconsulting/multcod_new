@@ -69,7 +69,7 @@ with repositorioDeDados do
   dbMulticoldEvento.BeginTrans;
   try
     repositorioDeDados.QueryEvento.Close;
-    QueryEvento2.Parameters[0].Value := dData;
+    QueryEvento2.Parameters[0].Value := strData;//dData;
     QueryEvento2.ExecSQL;
     QueryEvento3.Parameters[0].Value := Now;
     QueryEvento3.Parameters[1].Value := Now;
@@ -149,8 +149,8 @@ if (ComboBox1.ItemIndex = 0) or (ComboBox1.ItemIndex = -1) then
   repositorioDeDados.QueryEvento.Sql.Add(' 	MENSAGENS B ');
   repositorioDeDados.QueryEvento.Sql.Add(' WHERE ');
   repositorioDeDados.QueryEvento.Sql.Add(' 	A.CODMENSAGEM = B.CODMENSAGEM ');
-  repositorioDeDados.QueryEvento.Sql.Add(' 	AND A.DT >= :A01 ');
-  repositorioDeDados.QueryEvento.Sql.Add(' 	AND A.DT <= :A02 ');
+  repositorioDeDados.QueryEvento.Sql.Add(' 	AND cast(A.DT as date) >= :A01 ');
+  repositorioDeDados.QueryEvento.Sql.Add(' 	AND cast(A.DT as date) <= :A02 ');
   repositorioDeDados.QueryEvento.Sql.Add(' ORDER BY ');
   repositorioDeDados.QueryEvento.Sql.Add(' 	A.DT, ');
   repositorioDeDados.QueryEvento.Sql.Add(' 	A.HR DESC ');

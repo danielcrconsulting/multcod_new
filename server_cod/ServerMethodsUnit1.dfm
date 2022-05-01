@@ -2,7 +2,7 @@ object ServerMethods1: TServerMethods1
   OnCreate = DSServerModuleCreate
   OnDestroy = DSServerModuleDestroy
   Height = 251
-  Width = 486
+  Width = 528
   PixelsPerInch = 96
   object FDStanStorageJSONLink1: TFDStanStorageJSONLink
     Left = 128

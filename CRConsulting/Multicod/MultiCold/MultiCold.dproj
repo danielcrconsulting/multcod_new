@@ -3,7 +3,7 @@
         <ProjectGuid>{F02B4DFC-5B06-4C6B-A38B-CFB07FFF3DDD}</ProjectGuid>
         <MainSource>MultiCold.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
@@ -219,7 +219,6 @@
         </DCCReference>
         <DCCReference Include="..\Defined\Delphi7\dfpdf.pas"/>
         <DCCReference Include="..\CR CONSULTING\Pilha.pas"/>
-        <DCCReference Include="IMulticoldServer1.pas"/>
         <DCCReference Include="UFrmConsultaExportacoesRemoto.pas">
             <Form>FrmConsultaExportacoesRemoto</Form>
             <FormType>dfm</FormType>
@@ -234,6 +233,8 @@
             <Form>MultiColdServerForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\..\..\server_cod\UclsAux.pas"/>
+        <DCCReference Include="..\..\..\server_cod\ActiveDs_TLB.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -295,6 +296,12 @@
             </Platforms>
             <Deployment Version="3">
                 <DeployFile LocalName="C:\ROM\MultiCold.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>MultiCold.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="C:\ROM\MULTICOLD\Origem\MultiCold.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>MultiCold.exe</RemoteName>
                         <Overwrite>true</Overwrite>

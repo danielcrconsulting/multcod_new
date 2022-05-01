@@ -13,7 +13,7 @@ uses System.SysUtils, System.Classes, System.Json,
   FireDAC.VCLUI.Wait, FireDAC.Phys.MSSQLDef, FireDAC.Phys.ODBCBase,
   FireDAC.Phys.MSSQL, FireDAC.Stan.StorageBin, FireDAC.Comp.UI, System.Zlib,
   System.Zip, System.Variants, SutypGer, Subrug, SuTypMultiCold, Pilha,
-  Bde.DBTables, dm;
+  Bde.DBTables, dm, UclsAux, UMulticoldReport;
 
 type
   TPesquisa = Record
@@ -61,6 +61,7 @@ type
                                     var porta : String ; var banco : String;
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
+    function RetornarParametroAD : String;
     function RetornarDadosBanco(SQL : String ; bd : Integer = 0) : String;
     procedure PersistirBanco(SQL : String; bd : Integer = 0);
     function BaixarArquivo( arq : String) : TJSONArray;
@@ -79,6 +80,11 @@ type
                           ConnectionID: Integer; ListaCodRel: WideString;
                           FullPaths: WideString; tipo : Integer): String;
     function ExecutaNovaQueryFacil ( gridXML, fileName, usuario : WideString; mensagem, xmlData : WideString): String;
+    function ValidarAD(pUsuario, pSenha: String): Boolean;
+
+    function BuscaSequencial(Usuario, Senha: String;
+                             ConnectionID: Integer; Relatorio: String;
+                             buscaSequencial: TBuscaSequencialDTO_M): TResultadoBuscaSequencialDTO;
   end;
 
 implementation
@@ -1114,8 +1120,8 @@ Var
   Retorno : WideString;
 Begin
 //dtLog := now;
-logaLocal('GetPagina - N. '+IntToStr(PagNum)+', Usuario = '+Usuario);
-logaLocal(Relatorio);
+//logaLocal('GetPagina - N. '+IntToStr(PagNum)+', Usuario = '+Usuario);
+//logaLocal(Relatorio);
 fileMode := fmShareDenyNone;
 Result := '';
 AssignFile(Arq,Relatorio);
@@ -1162,17 +1168,18 @@ binToHex(ArrBuf^, PAnsiChar(Pag), ContBytes);
 QtdBytes := ContBytes*2;
 
 Pagina := Pag;
-logaLocal(Pagina);
+//logaLocal(Pagina);
 Retorno := '0' + '|' + Pagina;
 
 //Result := '0';
 Retorno := Retorno  + '|' + IntToStr(QtdBytes);
 
 Dispose(ArrBuf);
-logaLocal('GetPagina concluida com sucesso');
+//logaLocal('GetPagina concluida com sucesso');
 //LogaTempoExecucao('GetPagina',dtLog);
 result := Retorno;
 End;
+
 
 function TServerMethods1.GetRelatorio(Usuario, Senha: WideString;
   ConnectionID: Integer; ListaCodRel, FullPaths: WideString; tipo : Integer): String;
@@ -1744,6 +1751,153 @@ begin
   Result := System.StrUtils.ReverseString(Value);
 end;
 
+function TServerMethods1.ValidarAD(pUsuario, pSenha: String): Boolean;
+var
+  Adc_Login: TADOConnection;
+  Qry_Login: TADOQuery;
+  Host : String;
+begin
+  Host := RetornarParametroAD;
+  logaLocal('host:' + Host);
+  if Host = '' then
+  begin
+    result := True;
+    exit;
+  end;
+  logaLocal('senha:' + pSenha);
+  if Trim(pSenha) <> '' then
+  begin
+    Adc_Login:= TADOConnection.Create(nil);
+    Qry_Login:= TADOQuery.Create(Adc_Login);
+    Qry_Login.Connection := Adc_Login;
+
+    Adc_Login.LoginPrompt := False;
+    Adc_Login.KeepConnection := False;
+    Adc_Login.Mode := cmRead;
+    Adc_Login.Provider := 'AdsDSOObject';
+
+    Result := True;
+    try
+      //Passa o Dominio, usuário e senha do LDAP na string de conexão...
+      Qry_Login.SQL.Text :=
+        ' SELECT' +
+        '   cn' +
+        ' FROM' +
+        '   %Dominio%' +
+        ' WHERE objectClass = ''cn'' ';
+      Qry_Login.CursorType := ctStatic;
+
+      Qry_Login.Close;
+
+      try
+        Adc_Login.ConnectionString :=
+        'Provider=ADsDSOObject;Encrypt Password=True;Data Source=LDAP://' + Host +
+        //'Provider=ADsDSOObject;Data Source=LDAP://' + Host +
+        ';User ID =daniel' +// pUsuario +
+        ';Password=' + pSenha;
+        //';Mode=Read';
+
+        Adc_Login.Open;
+        Adc_Login.Connected := True;
+      except
+        on e:exception do
+        begin
+          logaLocal('passo 1 ' + e.Message);
+        end;
+      end;
+
+      try
+        with (Qry_Login) do
+        begin
+          Close;
+          SQL.Text := StringReplace(SQL.Text, '%Dominio%', QuotedStr('LDAP://'+Host), [rfReplaceAll]);
+          //Mensagem(SQL.Text);
+          sql.SaveToFile('c:\temp\ad.sql');
+          Open;
+        end;
+      except
+        on e:exception do
+        begin
+          logaLocal('passo 2 ' + e.Message);
+          Result := False;
+        end;
+      end;
+    finally
+      FreeAndNil(Qry_Login);
+      FreeAndNil(Adc_Login);
+    end;
+  end
+    else
+      Result := False;
+end;
+
+{
+function TServerMethods1.ValidarAD(pUsuario, pSenha: String): Boolean;
+var
+  ADOCon :TADOConnection;
+  ADOQuery :TADOQuery;
+  SQL, NmUser :String;
+  PosArroba :Integer;
+  Dominio : String;
+const
+  campos = 'Name, sAMAccountName, userAccountControl';
+begin
+  Dominio := RetornarParametroAD;
+  Result := False;
+
+  PosArroba := Pos('@', pUsuario);
+
+  if posArroba = 0 then
+    nmUser := pUsuario
+  else
+    NmUser := Copy(pUsuario, 1, Pos('@', pUsuario)-1);
+
+  //NmUser := Copy(pUsuario, 1, Pos('@', pUsuario)-1); //copia o nome do usuario antes do @
+
+  ADOCon := TADOConnection.Create(nil); //Cria os objetos de conexão
+  ADOQuery := TADOQuery.Create(nil);
+  try
+    //Atribui as configurações
+    ADOQuery.Connection := ADOCon;
+    ADOCon.LoginPrompt := False;
+
+    ADOCon.Provider := 'ADSDSOObject';
+    ADOCon.Properties['User Id'].Value := LowerCase(pUsuario);
+    ADOCon.Properties['Password'].Value := pSenha;
+    ADOCon.Properties['Encrypt Password'].Value := False;
+    //Gera o Select
+    SQL := Format('SELECT %s FROM ''LDAP://%s'' WHERE objectClass = %s and sAMAccountName = %s',
+      [campos, Dominio, QuotedStr('User'), QuotedStr(NmUser)]);
+    ADOQuery.SQL.Text := SQL;
+
+    try //Abre a conexão
+      ADOQuery.Open;
+      if ADOQuery.RecordCount > 0 then
+      begin
+        if ADOQuery.FieldByName('userAccountControl').AsInteger = 512 then //512 para usuario habilitado
+          Result := True
+        else
+        if ADOQuery.FieldByName('userAccountControl').AsInteger = 514 then //514 para usuario desabilitado
+        begin
+          logaLocal('User disabled');
+          raise Exception.Create('User disabled');
+        end;
+      end;
+    except on E :Exception do
+      begin
+        logaLocal(E.Message);
+        raise Exception.Create(E.Message);
+      end;
+    end;
+  finally
+    ADOQuery.Close;
+    ADOCon.Connected := False;
+    FreeAndNil(ADOCon);
+    FreeAndNil(ADOQuery);
+  end;
+end;
+}
+
 function TServerMethods1.VerificaSeguranca(NomeRel, Usuario: String;
   var Rel133CC, CmprBrncs: Boolean; var ArrRegIndice: TgRegIndice; log : Boolean): Boolean;
 Var
@@ -2268,11 +2422,100 @@ begin
   result := True;
 end;
 
+function TServerMethods1.RetornarParametroAD : String;
+var arqIni : TiniFile;
+    host : String;
+begin
+  arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
+  host           := arqIni.ReadString('AD', 'host',    '');
+
+  result := host;
+end;
+
 function TServerMethods1.RetornarCaminhoArq : String;
 var arqIni : TiniFile;
 begin
   arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
   result         := arqIni.ReadString('configuracoes', 'caminho',    '');
+end;
+
+function TServerMethods1.BuscaSequencial(Usuario, Senha: String;
+  ConnectionID: Integer; Relatorio: String;
+  buscaSequencial: TBuscaSequencialDTO_M): TResultadoBuscaSequencialDTO;
+var
+  multicoldManager: TMulticoldManager;
+  busca: TBuscaSequencial;
+  resultadoBusca: TResultadoBuscaSequencial;
+  pesquisa: TListaPesquisa;
+  resultadoQuery: TListaResultadoPesquisa;
+
+  I: Integer;
+begin
+  Result := nil;
+
+  multicoldManager := TMulticoldManager.Create(Usuario, Senha, Relatorio, false);
+  try
+    multicoldManager.AbrirRelatorio;
+
+    case buscaSequencial.TipoBusca of
+      0:
+      begin
+        resultadoBusca := multicoldManager.ExecutarBuscaSequencial(buscaSequencial.PagIni,
+                                                 buscaSequencial.PagFin,
+                                                 buscaSequencial.LinIni,
+                                                 buscaSequencial.LinFin,
+                                                 buscaSequencial.Coluna,
+                                                 buscaSequencial.TipoBusca,
+                                                 buscaSequencial.ValorBusca);
+
+      end;
+      1:
+      begin
+
+        if buscaSequencial.QueryFacil = nil then
+          exit;
+
+        SetLength(pesquisa, Length(buscaSequencial.QueryFacil));
+
+        for I := 0 to Length(buscaSequencial.QueryFacil)-1 do
+        begin
+          pesquisa[I].Index := BuscaSequencial.QueryFacil[I].Index_;
+          pesquisa[I].Campo := BuscaSequencial.QueryFacil[I].Campo;
+          pesquisa[I].Operador := BuscaSequencial.QueryFacil[I].Operador;
+          pesquisa[I].Valor := BuscaSequencial.QueryFacil[I].Valor;
+        end;
+
+
+        if multicoldManager.ExecutarQueryFacil(pesquisa, buscaSequencial.ConectorQuery, resultadoQuery) then
+        begin
+          resultadoBusca := multicoldManager.ExecutarBuscaSequencial(buscaSequencial.PagIni,
+                                                   buscaSequencial.PagFin,
+                                                   buscaSequencial.LinIni,
+                                                   buscaSequencial.LinFin,
+                                                   buscaSequencial.Coluna,
+                                                   buscaSequencial.TipoBusca,
+                                                   buscaSequencial.ValorBusca);
+
+        end;
+      end;
+    end;
+
+    Result := TResultadoBuscaSequencialDTO.Create;
+
+    Result.Localizou := resultadoBusca.Localizou;
+    Result.LinhaLocalizada := resultadoBusca.LinhaLocalizada;
+    Result.ColunaLocalizada := resultadoBusca.ColunaLocalizada;
+    Result.Pagina := resultadoBusca.Pagina;
+    Result.IndexPagLoc := resultadoBusca.IndexPagLoc;
+    Result.QtdeTotalPag := resultadoBusca.QtdeTotalPag;
+    Result.QtdeBytesPag := resultadoBusca.QtdeBytesPag;
+    Result.IndexPagLocPesq := resultadoBusca.IndexPagLocPesq;
+
+    resultadoBusca.Free;
+
+  finally
+    FreeAndNil(multicoldManager);
+  end;
 end;
 
 

@@ -56,6 +56,7 @@ begin
         on e:exception do
         begin
           SemServidor := True;
+          ModoOff := False;
           //raise Exception.Create('Servidor MultiCold não encontrato');
         end;
       end;

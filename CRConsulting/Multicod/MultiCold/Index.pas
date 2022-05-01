@@ -2043,6 +2043,14 @@ Var
 
     RichEdit1.Lines.Add('Copiando arquivos processados para ' + DirDest);
 
+
+    strSql.Clear;
+    strSql.Add(' SELECT CodRel, replace(DESTINO,' + quotedStr('\') + ',' + QuotedStr('/') + ') DESTINO, ');
+    strSql.Add(' TIPODESTINO, SEGURANCA, QTDPERIODOS, TIPOPERIODO, USUARIO, SENHA, DIREXPL ');
+    strSql.Add(' FROM         DESTINOSDFN ');
+    strSql.Add(' WHERE     (CODREL = ' + Quotedstr(FormGeral.MemAux2.FieldByName('CodRel').AsAnsiString) + ')  ');
+    strSql.Add(' AND TIPODESTINO = ' + QuotedStr('Dir') );
+    formGeral.ImportarDados(strSql.Text, nil);
     CriaDestino;
     RegDestino.DESTINO := viDirGravCd;
     RegDestino.SEGURANCA := FormGeral.MemAux1.FieldByName('Seguranca').AsAnsiString = 'S';
@@ -2757,53 +2765,7 @@ try
     //
     // Nesta parte do loop, os lrelatórios *.1 do diretório principal são processados
     DirIn := IncludeTrailingPathDelimiter(UpperCase(viDirTrabApl)); // Apontar para o diretório de trabalho
-    strsql.Clear;
-    //FormGeral.QueryAux2.Close;
-    //FormGeral.QueryAux2.Sql.Clear;
-    strsql.Add('SELECT ' );
-    strsql.Add('CODREL ,');
-    strsql.Add('NOMEREL,');
-    strsql.Add('CODSIS,');
-    strsql.Add('CODGRUPO,');
-    strsql.Add('CODSUBGRUPO,');
-    strsql.Add('IDCOLUNA1,');
-    strsql.Add('IDLINHA1,');
-    strsql.Add('IDSTRING1,');
-    strsql.Add('IDCOLUNA2,');
-    strsql.Add('IDLINHA2,');
-    strsql.Add('IDSTRING2,');
-    strsql.Add('replace(DIRENTRA,' + quotedStr('\') + ',' + QuotedStr('/') + ') DIRENTRA,');
-    strsql.Add('TIPOQUEBRA,');
-    strsql.Add('COLQUEBRASTR1,');
-    strsql.Add('STRQUEBRASTR1,');
-    strsql.Add('COLQUEBRASTR2,');
-    strsql.Add('STRQUEBRASTR2,');
-    strsql.Add('QUEBRAAFTERSTR,');
-    strsql.Add('NLINHASQUEBRALIN,');
-    strsql.Add('FILTROCAR,');
-    strsql.Add('COMPRBRANCOS,');
-    strsql.Add('JUNCAOAUTOM,');
-    strsql.Add('QTDPAGSAPULAR,');
-    strsql.Add('CODGRUPAUTO,');
-    strsql.Add('COLGRUPAUTO,');
-    strsql.Add('LINGRUPAUTO,');
-    strsql.Add('TAMGRUPAUTO,');
-    strsql.Add('TIPOGRUPAUTO,');
-    strsql.Add('BACKUPREL,');
-    strsql.Add('SUBDIRAUTO,');
-    strsql.Add('STATUS,');
-    strsql.Add('DTCRIACAO,');
-    strsql.Add('HRCRIACAO,');
-    strsql.Add('DTALTERACAO,');
-    strsql.Add('HRALTERACAO,');
-    strsql.Add('REMOVE,');
-    strsql.Add('SISAUTO,');
-    strsql.Add('DTULTPROC FROM DFN ');
-    strsql.Add('WHERE (STATUS = ''A'') AND (CODREL <> ''*'') AND ');
-    strsql.Add(' (SUBDIRAUTO = ''F'') AND ');
-    strsql.Add(' ((UPPER(DIRENTRA) = '''+DirIn+''') OR '); // Pega com barra e sem barra...
-    strsql.Add('  (UPPER(DIRENTRA) = '''+Copy(DirIn,1,Length(DirIn)-1)+''')) ');
-    strsql.Add('ORDER BY CODREL');
+
     //strsql.SaveToFile('c:\temp\sqlrel.sql');
     Reports1Str := DirIn + '*.1';
     If (FindFirst(Reports1Str,FaAnyFile,Reports1Rec) = 0) Then
@@ -2812,6 +2774,53 @@ try
         ReportRec := Reports1Rec;
         If Not TestaAcessoExclusivo(DirIn + ReportRec.Name) Then
           Continue;   // Pula o arquivo que está sendo copiado no momento
+        strsql.Clear;
+        //FormGeral.QueryAux2.Close;
+        //FormGeral.QueryAux2.Sql.Clear;
+        strsql.Add('SELECT ' );
+        strsql.Add('CODREL ,');
+        strsql.Add('NOMEREL,');
+        strsql.Add('CODSIS,');
+        strsql.Add('CODGRUPO,');
+        strsql.Add('CODSUBGRUPO,');
+        strsql.Add('IDCOLUNA1,');
+        strsql.Add('IDLINHA1,');
+        strsql.Add('IDSTRING1,');
+        strsql.Add('IDCOLUNA2,');
+        strsql.Add('IDLINHA2,');
+        strsql.Add('IDSTRING2,');
+        strsql.Add('replace(DIRENTRA,' + quotedStr('\') + ',' + QuotedStr('/') + ') DIRENTRA,');
+        strsql.Add('TIPOQUEBRA,');
+        strsql.Add('COLQUEBRASTR1,');
+        strsql.Add('STRQUEBRASTR1,');
+        strsql.Add('COLQUEBRASTR2,');
+        strsql.Add('STRQUEBRASTR2,');
+        strsql.Add('QUEBRAAFTERSTR,');
+        strsql.Add('NLINHASQUEBRALIN,');
+        strsql.Add('FILTROCAR,');
+        strsql.Add('COMPRBRANCOS,');
+        strsql.Add('JUNCAOAUTOM,');
+        strsql.Add('QTDPAGSAPULAR,');
+        strsql.Add('CODGRUPAUTO,');
+        strsql.Add('COLGRUPAUTO,');
+        strsql.Add('LINGRUPAUTO,');
+        strsql.Add('TAMGRUPAUTO,');
+        strsql.Add('TIPOGRUPAUTO,');
+        strsql.Add('BACKUPREL,');
+        strsql.Add('SUBDIRAUTO,');
+        strsql.Add('STATUS,');
+        strsql.Add('DTCRIACAO,');
+        strsql.Add('HRCRIACAO,');
+        strsql.Add('DTALTERACAO,');
+        strsql.Add('HRALTERACAO,');
+        strsql.Add('REMOVE,');
+        strsql.Add('SISAUTO,');
+        strsql.Add('DTULTPROC FROM DFN ');
+        strsql.Add('WHERE (STATUS = ''A'') AND (CODREL <> ''*'') AND ');
+        strsql.Add(' (SUBDIRAUTO = ''F'') AND ');
+        strsql.Add(' ((UPPER(DIRENTRA) = '''+DirIn+''') OR '); // Pega com barra e sem barra...
+        strsql.Add('  (UPPER(DIRENTRA) = '''+Copy(DirIn,1,Length(DirIn)-1)+''')) ');
+        strsql.Add('ORDER BY CODREL');
         FormGeral.ImportarDados(strsql.Text,nil,2);
         While Not FormGeral.MemAux2.Eof Do
           Begin

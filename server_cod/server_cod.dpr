@@ -19,7 +19,12 @@ uses
   Subrug in '..\CRConsulting\Multicod\Subrug\Subrug.pas',
   SuTypMultiCold in '..\CRConsulting\Multicod\Subrug\SuTypMultiCold.pas',
   Pilha in '..\CRConsulting\Multicod\CR CONSULTING\Pilha.pas',
-  dm in '..\CRConsulting\Multicod\MultiCold\MULTICOLDSERVER\SOAP\dm.pas' {DataModule1: TDataModule};
+  dm in '..\CRConsulting\Multicod\MultiCold\MULTICOLDSERVER\SOAP\dm.pas' {DataModule1: TDataModule},
+  UMulticoldReport in 'UMulticoldReport.pas',
+  UMulticoldFunctions in 'UMulticoldFunctions.pas',
+  UMulticoldMigrate in 'UMulticoldMigrate.pas',
+  UExtratorDados in 'UExtratorDados.pas',
+  ZLIBEX in '..\CRConsulting\Multicod\Subrug\DelphiZLib\ZLIBEX.PAS';
 
 {$R *.res}
 
