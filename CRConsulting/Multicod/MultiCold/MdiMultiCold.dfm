@@ -1,7 +1,7 @@
 object FrameForm: TFrameForm
   Left = 246
   Top = 159
-  Caption = 'MultiCold - Viewer V10.0.1 - 04/04/2022'
+  Caption = 'MultiCold - Viewer V10.0.2 - 01/05/2022'
   ClientHeight = 161
   ClientWidth = 652
   Color = clWhite
@@ -60,7 +60,6 @@ object FrameForm: TFrameForm
     ParentShowHint = False
     ShowHint = True
     TabOrder = 3
-    ExplicitWidth = 118
     object PlusZoom: TSpeedButton
       Left = 0
       Top = 0
