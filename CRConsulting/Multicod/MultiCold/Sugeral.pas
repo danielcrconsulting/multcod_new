@@ -12,7 +12,8 @@ Uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect,
-  REST.Response.Adapter, System.JSON, System.Zip, uclsAux, ActiveDs_TLB;
+  REST.Response.Adapter, System.JSON, System.Zip, uclsAux, ActiveDs_TLB, adshlp,
+  ComObj, ActiveX;
 
 Type
 
@@ -122,13 +123,16 @@ Type
                             Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo : Integer; log : Boolean): String;
     function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer;
                          Pagina: WideString): WideString;
+    function GetPaginaL(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer;
+                         Pagina: WideString; strloc : String; rel133 : Byte; CmprBrncs : Byte;
+                         linini, linfim, coluna, pagini, pagfim: String): WideString;
+
     function LogIn(Usuario, Senha: WideString;
       ConnectionID: Integer): String;
     function GetRelatorio(Usuario, Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString; tipo : Integer): String;
     function ExecutaNovaQueryFacil(gridXML: WideString; fileName: WideString; usuario: WideString; mensagem: WideString; xmlData: WideString): String;
     function ValidarAD(usuario, login : String) : Boolean;
-    function ValidarAD_(pUsuario, pSenha: String): Boolean;
-    function EhUsuarioValido(Servidor, Usuario, Senha: pchar): Boolean;
+    function ValidarADNew(pUsuario, pSenha: String): Boolean;
     function BuscaSequencial( Usuario, Senha: String;
                               ConnectionID: Integer; Relatorio: String;
                               buscaSequencial: TBuscaSequencialDTO_M) : TResultadoBuscaSequencialDTO;
@@ -805,122 +809,34 @@ begin
   result := OMetodosServer.ServerMethodsPrincipalClient.ValidarAD(usuario, login);
 end;
 
-function TFormGeral.ValidarAD_(pUsuario, pSenha: String): Boolean;
+
+function TFormGeral.ValidarADNew(pUsuario, pSenha: String): Boolean;
 var
-  Adc_Login: TADOConnection;
-  Qry_Login: TADOQuery;
-  Host : String;
+  adObject: IADs;
+  host : String;
 begin
-  Host := OMetodosServer.ServerMethodsPrincipalClient.RetornarParametroAD;
-  //logaLocal('host:' + Host);
-  if Host = '' then
-  begin
-    result := True;
-    exit;
-  end;
-
-  //logaLocal('senha:' + pSenha);
-  //pusuario := 'LucianoTeste';
-  //psenha:= '1234568kkkk';
-  showmessage('usuário:' + pusuario);
-  showmessage('senha:' + pSenha);
-  if Trim(pSenha) <> '' then
-  begin
-    Adc_Login:= TADOConnection.Create(nil);
-    Qry_Login:= TADOQuery.Create(Adc_Login);
-    Qry_Login.Connection := Adc_Login;
-
-    Adc_Login.LoginPrompt := False;
-    Adc_Login.KeepConnection := False;
-    Adc_Login.Mode := cmRead;
-    Adc_Login.Provider := 'AdsDSOObject';
-
-    Result := True;
-    try
-      //Passa o Dominio, usuário e senha do LDAP na string de conexão...
-      Qry_Login.SQL.Text :=
-        ' SELECT' +
-        '   cn' +
-        ' FROM' +
-        '   %Dominio%' +
-        ' WHERE objectClass = ''cn'' ';
-      Qry_Login.CursorType := ctStatic;
-
-      Qry_Login.Close;
-
-      try
-      {
-        Adc_Login.ConnectionString :=
-        'Provider=ADsDSOObject;Encrypt Password=True;Data Source=LDAP://' + Host +
-        //'Provider=ADsDSOObject;Data Source=LDAP://' + Host +
-        ';User ID =' + pUsuario +
-        ';Password=' + pSenha +
-        ';ADSI Flag=ADS_SECURE_AUTHENTICATION'  +
-        ';Mode=Read';
-       }
-        Adc_Login.Properties['User ID'].value := pUsuario;
-        Adc_Login.Properties['Password'].Value := pSenha;
-        Adc_Login.Properties['Encrypt Password'].Value := True ;
-        //Adc_Login.Properties['ADSI Flag'].Value := 'ADS_SECURE_AUTHENTICATION';
-
-        //adoConnection.Properties("ADSI Flag") = ADS_SERVER_BIND _
-     //Or ADS_SECURE_AUTHENTICATION
-
-        Adc_Login.Open;
-        Adc_Login.Connected := True;
-        Showmessage('passo 1');
-      except
-        on e:exception do
-        begin
-          ShowMessage(e.Message);
-          Result := False;
-        end;
-      end;
-
-      try
-        with (Qry_Login) do
-        begin
-          Close;
-          SQL.Text := StringReplace(SQL.Text, '%Dominio%', QuotedStr('LDAP://'+Host ),
-                      [rfReplaceAll]);
-
-                   //Mensagem(SQL.Text);
-          SQL.Text :=  'SELECT * FROM ' + 'LDAP://' +Host +
-                        ' WHERE objectClass = ' + QuotedStr('user');
-
-          sql.SaveToFile('c:\temp\ad.sql');
-          Open;
-          if Qry_Login.RecordCount > 0 then
-             Showmessage('reg: ' + IntToStr(Qry_Login.RecordCount));
-        end;
-      except
-        on e:exception do
-        begin
-          ShowMessage(e.Message);
-          //logaLocal('passo 2 ' + e.Message);
-          Result := False;
-        end;
-      end;
-    finally
-      FreeAndNil(Qry_Login);
-      FreeAndNil(Adc_Login);
-    end;
-  end
-    else
-      Result := False;
-  showMessage('passo 3');
-end;
-
-function TFormGeral.EhUsuarioValido(Servidor, Usuario, Senha: pchar): Boolean;
-var hr : integer;
-    obj : IAdsUser;
-begin
+  ///Inicialização do COM
+  ///
+  host := OMetodosServer.ServerMethodsPrincipalClient.RetornarParametroAD;
+  CoInitialize(nil);
+  result := False;
   try
-    //hr := ADsOpenObject(Servidor, Usuario, Senha, ADS_PROMPT_CREDENTIALS , IAdsUser, obj);
-    Result :=Succeeded(hr);
+    ADsOpenObject('LDAP://' + host, LowerCase(pUsuario), pSenha, ADS_SECURE_AUTHENTICATION, IADs, adObject);
+    result := True;
+    //ShowMessage('Login válido!');
   except
-    Result := False;
+    on e: EOleException do
+    begin
+      {
+      if Pos('Falha de logon', e.Message) > 0 then
+        ShowMessage('Login inválido!')
+      else
+        ShowMessage(e.Message);
+      }
+      result := False;
+    end;
   end;
+  CoUninitialize;
 end;
 
 procedure TFormGeral.FormCreate(Sender: TObject);
@@ -969,13 +885,16 @@ Begin
     begin
       if OMetodosServer.ServerMethodsPrincipalClient.RetornarParametroAD <> '' then
       begin
-        senhaAD := InputBox(senhaAD,#31 + 'Usuário: ' + usuarioLogado + ' Digite a Senha para autencição no AD:','');
-        if not ValidarAD_(usuarioLogado,senhaAD) then
+        senhaAD := InputBox('Login AD',#31 + 'Usuário: ' + usuarioLogado + ' Digite a Senha para autencição no AD:','');
+        if (not ValidarADNew(usuarioLogado,senhaAD)) or (Trim(senhaAD) = '') then
         begin
           ShowMessage('Usuário da rede não autorizado');
+          OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'NEGADO');
           Application.Terminate;
           Close;
+          exit;
         end;
+        OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'ACEITO');
       end;
     end;
   end;
@@ -1064,6 +983,13 @@ function TFormGeral.GetPagina(Usuario: WideString; Senha: WideString; Connection
 begin
   result := OMetodosServer.ServerMethodsPrincipalClient.GetPagina(Usuario,Senha,ConnectionID,Relatorio,
                          PagNum,QtdBytes,Pagina);
+end;
+
+function TFormGeral.GetPaginaL(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer;
+                         Pagina: WideString; strloc : String; rel133 : Byte; CmprBrncs : Byte; linini, linfim, coluna, pagini, pagfim : String): WideString;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.GetPaginaL(Usuario,Senha,ConnectionID,Relatorio,
+                         PagNum,QtdBytes,Pagina, strloc, rel133, CmprBrncs, linini, linfim, coluna, pagini, pagfim);
 end;
 
 function TFormGeral.GetRelatorio(Usuario, Senha: WideString;

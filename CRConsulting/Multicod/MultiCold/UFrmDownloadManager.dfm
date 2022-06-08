@@ -12,7 +12,6 @@ object FrmDownloadManager: TFrmDownloadManager
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -28,10 +27,6 @@ object FrmDownloadManager: TFrmDownloadManager
     ItemHeight = 13
     TabOrder = 0
     OnClick = LbDownloadsClick
-    ExplicitLeft = -6
-    ExplicitTop = -6
-    ExplicitWidth = 288
-    ExplicitHeight = 399
   end
   object Panel1: TPanel
     Left = 0
@@ -40,8 +35,6 @@ object FrmDownloadManager: TFrmDownloadManager
     Height = 57
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 399
-    ExplicitWidth = 527
     object Btnfechar: TButton
       Left = 430
       Top = 16
@@ -59,8 +52,6 @@ object FrmDownloadManager: TFrmDownloadManager
     Height = 409
     Align = alRight
     TabOrder = 2
-    ExplicitLeft = 304
-    ExplicitTop = -6
     object Label1: TLabel
       Left = 88
       Top = 16

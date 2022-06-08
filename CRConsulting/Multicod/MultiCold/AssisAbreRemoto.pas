@@ -219,7 +219,6 @@ Else
 
 
       ListBox2.Items.Text := retornoStr;
-
       retornoStr  := deCompressHexReturnString(formGeral.GetRelatorio(LogInRemotoForm.UsuEdit.Text,
                                                LogInRemotoForm.PassEdit.Text, ConnectionID, Lista.Text, FullPathsTemp, 2));
 

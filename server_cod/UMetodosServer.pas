@@ -49,6 +49,7 @@ begin
       DSRestConnection1.Port := StrToInt(port);
       DSRestConnection1.UserName := 'multicoldserver';
       DSRestConnection1.Password := 'server@#2021';
+      DSRestConnection1.ReadTimeout := 99999999;
       SemServidor := False;
       try
         DSRestConnection1.TestConnection();

@@ -38,7 +38,8 @@ uses
   Vcl.Styles,
   MultiColdServerUnit1 in '..\..\..\rotinas do server antigo\MultiColdServerUnit1.pas' {MultiColdServerForm},
   UclsAux in '..\..\..\server_cod\UclsAux.pas',
-  ActiveDs_TLB in '..\..\..\server_cod\ActiveDs_TLB.pas';
+  ActiveDs_TLB in '..\..\..\server_cod\ActiveDs_TLB.pas',
+  adshlp in '..\..\..\server_cod\adshlp.pas';
 
 {$R *.RES}
 

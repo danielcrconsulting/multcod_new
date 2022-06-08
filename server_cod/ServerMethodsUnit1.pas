@@ -13,7 +13,7 @@ uses System.SysUtils, System.Classes, System.Json,
   FireDAC.VCLUI.Wait, FireDAC.Phys.MSSQLDef, FireDAC.Phys.ODBCBase,
   FireDAC.Phys.MSSQL, FireDAC.Stan.StorageBin, FireDAC.Comp.UI, System.Zlib,
   System.Zip, System.Variants, SutypGer, Subrug, SuTypMultiCold, Pilha,
-  Bde.DBTables, dm, UclsAux, UMulticoldReport;
+  Bde.DBTables, dm, UclsAux, UMulticoldReport, Windows;
 
 type
   TPesquisa = Record
@@ -62,6 +62,7 @@ type
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
     function RetornarParametroAD : String;
+    procedure GravarLOGAD(usuario,status : String);
     function RetornarDadosBanco(SQL : String ; bd : Integer = 0) : String;
     procedure PersistirBanco(SQL : String; bd : Integer = 0);
     function BaixarArquivo( arq : String) : TJSONArray;
@@ -72,8 +73,18 @@ type
     Procedure InsereEventosVisu(Arquivo, Diretorio, CodRel, CodUsuario, NomeGrupoUsuario : String;
                                 Grupo, SubGrupo, CodMens : Integer);
     procedure fazerumteste;
+    procedure LimpaMemoria;
+    function Decripta(Var Buffer : Pointer; Report133CC, Orig : Boolean;
+                             QtdBytes : Integer): AnsiString;
+    function Localizar(RetVal : AnsiString;  EEE : Integer;  varPag : AnsiString;
+                      strloc : String; rel133 : Byte; CmprBrncs : Byte;
+                      linini, linfim, coluna, pagini, pagfim : String) : Boolean;
+
     function GetPagina(Usuario, Senha: WideString; ConnectionID: Integer;
        Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina : WideString) : String;
+    function GetPaginaL(Usuario, Senha: WideString; ConnectionID: Integer;
+       Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina : WideString;
+       strloc : String; rel133 : Byte; CmprBrncs : Byte; linini, linfim, coluna, pagini, pagfim : String) : String;
     function LogIn(Usuario, Senha: WideString;
       ConnectionID: Integer): String;
     function GetRelatorio(Usuario, Senha: WideString;
@@ -465,7 +476,7 @@ var
       begin
       Stream.Free;
       //deleteFile(ColetaDiretorioTemporario+operando+'.Multicold');
-      deleteFile(dirSecao+operando+'.Multicold');
+      System.SysUtils.deleteFile(dirSecao+operando+'.Multicold');
       end
     else
       Query.Close;
@@ -894,9 +905,9 @@ finally
   if findFirst(dirSecao+'*.*',faAnyFile,f) = 0 then
     repeat
       if (f.Name <> '.') and (f.Name <> '.') then
-        deleteFile(dirSecao+f.Name);
+        System.SysUtils.deleteFile(dirSecao+f.Name);
     until findNext(f) <> 0;
-  findClose(f);
+  System.SysUtils.findClose(f);
 
   removeDir(dirSecao);
   //dataModule.Query1.Free;
@@ -937,8 +948,9 @@ begin
     FreeAndNil(ZipFile);
     //Comprimir(RetornarCaminhoArq + 'arq.zip', ListaArquivos);
     // Envia o arquivo em JOSN para o servidor
+    LimpaMemoria;
     oArquivoJSON := ConverterArquivoParaJSON( RetornarCaminhoArq + 'arq.zip');
-    DeleteFile(RetornarCaminhoArq + 'arq.zip');
+    System.SysUtils.DeleteFile(RetornarCaminhoArq + 'arq.zip');
     result := oArquivoJSON;
   finally
   end;
@@ -1031,7 +1043,7 @@ end;
 function TServerMethods1.ConverterArquivoParaJSON(
   pDirArquivo: string): TJSONArray;
 var
-  sBytesArquivo, sNomeArquivo: string;
+  sBytesArquivo, sNomeArquivo: AnsiString;
   oSSArquivoStream: TStringStream;
   iTamanhoArquivo, iCont: Integer;
 begin
@@ -1083,12 +1095,14 @@ end;
 
 procedure TServerMethods1.DSServerModuleCreate(Sender: TObject);
 begin
+  LimpaMemoria;
   Fmemo := TStringList.Create;
 end;
 
 procedure TServerMethods1.DSServerModuleDestroy(Sender: TObject);
 begin
   DesconectarBanco;
+  LimpaMemoria;
 end;
 
 function TServerMethods1.EchoString(Value: string): string;
@@ -1101,6 +1115,245 @@ var w : String;
 begin
   w := 'teste';
 end;
+
+procedure TServerMethods1.LimpaMemoria;
+var
+   MainHandle : THandle;
+begin
+ try
+   MainHandle := OpenProcess(PROCESS_ALL_ACCESS, false, GetCurrentProcessID) ;
+   SetProcessWorkingSetSize(MainHandle, $FFFFFFFF, $FFFFFFFF) ;
+   CloseHandle(MainHandle);
+ except
+ end;
+end;
+
+function TServerMethods1.Localizar(RetVal : AnsiString;  EEE : Integer;  varPag : AnsiString;
+                                   strloc : String; rel133 : Byte; CmprBrncs : Byte;
+                                   linini, linfim, coluna, pagini, pagfim : String) : Boolean;
+var
+   BufI, Buffer : Pointer;
+   auxPag : AnsiString;
+   QtdBytesPagRel : Integer;
+   tipoZ : TZCompressionLevel;
+   Report133CC, orig : Boolean;
+   BufferA : ^TgArr20000 Absolute Buffer;
+   strpag : TStringList;
+   MemoGidley : TStringList;
+   J, lininic, linFin : Integer;
+   UsouLocalizar, localizaNaPesquisa : Boolean;
+   LinhaLocalizada, ColunaLocalizada, TamLocalizada : Integer;
+begin
+    BufI    := nil;
+    Buffer  := nil;
+    BufferA := nil;
+    orig := False;
+    ReallocMem(BufI,EEE div 2);
+    ReallocMem(Buffer,EEE div 2); // Temporariamente para a conversão.....
+
+    auxPag := varPag;
+    hexToBin(PAnsiChar(auxPag), PAnsiChar(BufferA), EEE div 2);
+
+    Move(BufferA^,BufI^,EEE div 2);
+
+    ReallocMem(Buffer,0);
+    ZDecompress(BufI, EEE, Buffer, QtdBytesPagRel, 0);
+
+    Report133CC := Boolean(Rel133);
+
+    MemoGidley := TStringList.Create;
+    MemoGidley.Text := Decripta(Buffer, Report133CC, Orig, QtdBytesPagRel);
+
+    //strlista := TStringList.Create;
+    //strlista.Text := PaginaAcertada;
+    If linfim <> '*' Then
+      LinFin := StrToInt(linfim)
+    Else
+      LinFin := MemoGidley.Count;
+
+    If LinFin> MemoGidley.Count Then
+      LinFin := MemoGidley.Count;
+    lininic := 1;
+    //strlista.Strings
+    //if strlista.IndexOf(LocalizarEdit.Text) > -1 then
+    //begin
+    For J := lininic To LinFin Do
+      Begin
+      If Coluna = '*' Then
+        Begin
+        If Pos(strloc,MemoGidley.Strings[J-1]) <> 0 Then
+          Begin
+          UsouLocalizar := True;
+          LinhaLocalizada := J-1;
+          ColunaLocalizada := Pos(strloc,MemoGidley.Strings[J-1]);
+          TamLocalizada := Length(strloc);
+          End;
+        End
+      Else
+        Begin
+        If Copy(MemoGidley.Strings[J-1],StrToInt(Coluna),Length(strloc)) = strloc Then
+          Begin
+          UsouLocalizar := True;
+          LinhaLocalizada := J-1;
+          ColunaLocalizada := StrToInt(Coluna);
+          TamLocalizada := Length(strloc);
+          break;
+          End;
+        End;
+      End;
+  result := UsouLocalizar;
+  FreeAndNil(MemoGidley);
+end;
+
+
+function TServerMethods1.Decripta(Var Buffer : Pointer; Report133CC, Orig : Boolean;
+                             QtdBytes : Integer) : AnsiString;
+Var
+  I, Ind : Integer;
+  BufferA : ^TgArr20000 Absolute Buffer;
+  Apendix : AnsiString;
+  ComandoDeCarro,
+  AuxTemp,
+  Teste : AnsiChar;           //17/05/2013
+  PaginaAcertada,
+  PaginaNormal : AnsiString;
+  ComprimeBrancos : Boolean;
+Begin
+SetLength(PaginaAcertada,10000);
+SetLength(PaginaNormal,10000);
+I := 1;
+ComprimeBrancos := True;
+
+If Report133CC Then
+  Begin
+  For Ind := 1 To QtdBytes Do
+    If ComprimeBrancos Then
+      Begin
+      If (Byte(BufferA^[Ind]) And $80) = $80 Then
+        Begin
+        AuxTemp := BufferA^[Ind];
+        If Byte(BufferA^[Ind]) = $80 Then
+          Teste := #$0
+        Else
+          Teste := #$80;
+        Repeat
+          PaginaNormal[I] := ' ';
+          Inc(I);
+          If I > Length(PaginaNormal) Then
+            SetLength(PaginaNormal,Length(PaginaNormal)+10000);
+          Dec(AuxTemp);
+        Until AuxTemp = Teste;
+        End
+      Else
+        Begin
+        PaginaNormal[I] := (BufferA^[Ind]);
+        Inc(I);
+        If I > Length(PaginaNormal) Then
+          SetLength(PaginaNormal,Length(PaginaNormal)+10000);
+        End;
+      End
+    Else
+      Begin
+      PaginaNormal[I] := (BufferA^[Ind]);
+      Inc(I);
+      If I > Length(PaginaNormal) Then
+        SetLength(PaginaNormal,Length(PaginaNormal)+10000);
+      End;
+  SetLength(PaginaNormal,I-1); // Ajusta o tamanho certo
+  If Orig Then
+    PaginaAcertada := PaginaNormal
+  Else
+    Begin
+    Apendix := '';
+    PaginaAcertada[1] := ' ';
+    I := 2;
+    For Ind := 2 To Length(PaginaNormal) Do
+//      If PaginaNormal[Ind-1] = #10 Then
+      If (PaginaNormal[Ind-1] = #10) And (PaginaNormal[Ind] <> #13) Then // É Comando de carro, vai tratar...
+        Begin
+        If Apendix <> '' Then
+          Begin
+          PaginaAcertada[I] := #13;
+          Inc(I);
+          If I > Length(PaginaAcertada) Then
+            SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
+          PaginaAcertada[I] := #10;
+          Inc(I);                 // := PaginaAcertada + Apendix; // Se colocou uma linha After
+          If I > Length(PaginaAcertada) Then
+            SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
+          End;
+        Apendix := '';
+        ComandoDeCarro := PaginaNormal[Ind];
+        If ComandoDeCarro = '0' Then
+          Begin
+          PaginaAcertada[I] := #13;
+          Inc(I);
+          If I > Length(PaginaAcertada) Then
+            SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
+          PaginaAcertada[I] := #10;
+          Inc(I);                 // Uma Linha Before
+          If I > Length(PaginaAcertada) Then
+            SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
+          End
+        Else
+          If ComandoDeCarro = '-' Then
+            Apendix := CrLf;
+        PaginaAcertada[I] := ' ';
+        Inc(I);
+        If I > Length(PaginaAcertada) Then
+          SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
+        End
+      Else
+        Begin
+        PaginaAcertada[I] := PaginaNormal[Ind];
+        Inc(I);
+        If I > Length(PaginaAcertada) Then
+          SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
+        End;
+    SetLength(PaginaAcertada,I-1); // Ajusta
+    End;
+  End
+Else
+  Begin
+  For Ind := 1 To QtdBytes Do
+    If ComprimeBrancos Then
+      Begin
+      If (Byte(BufferA^[Ind]) And $80) = $80 Then
+        Begin
+        AuxTemp := BufferA^[Ind];
+        If Byte(BufferA^[Ind]) = $80 Then
+          Teste := #$0
+        Else
+          Teste := #$80;
+        Repeat
+          PaginaAcertada[I] := ' ';
+          Inc(I);
+          If I > Length(PaginaAcertada) Then
+            SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
+          Dec(AuxTemp);
+        Until AuxTemp = Teste;
+        End
+      Else
+        Begin
+        PaginaAcertada[I] := BufferA^[Ind];
+        Inc(I);
+        If I > Length(PaginaAcertada) Then
+          SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
+        End;
+      End
+    Else
+      Begin
+      PaginaAcertada[I] := BufferA^[Ind];
+      Inc(I);
+      If I > Length(PaginaAcertada) Then
+        SetLength(PaginaAcertada,Length(PaginaAcertada)+10000);
+      End;
+
+  SetLength(PaginaAcertada,I-1); // Ajusta o tamanho
+  PaginaNormal := PaginaAcertada;
+  End;
+  result := PaginaNormal;
+End;
 
 function TServerMethods1.GetPagina(Usuario, Senha: WideString; ConnectionID: Integer;
        Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina : WideString) : String;
@@ -1165,6 +1418,8 @@ BlockRead(Arq,ArrBuf^,NextPag64-Pag64,ContBytes); { Read only the buffer To deco
 
 SetLength(Pag, ContBytes*2);
 binToHex(ArrBuf^, PAnsiChar(Pag), ContBytes);
+
+
 QtdBytes := ContBytes*2;
 
 Pagina := Pag;
@@ -1180,6 +1435,92 @@ Dispose(ArrBuf);
 result := Retorno;
 End;
 
+function TServerMethods1.GetPaginaL(Usuario, Senha: WideString; ConnectionID: Integer;
+       Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina : WideString;
+       strloc : String; rel133 : Byte; CmprBrncs : Byte; linini, linfim, coluna, pagini,
+       pagfim : String) : String;
+Var
+
+//  dtLog : TDateTime; // Tirei da raiz!!!!
+
+  Arq : File;
+  I,
+  ContBytes,
+  size : Integer;
+  Pag64,
+  NextPag64 : Int64;
+  ArqPag64 : File Of Int64;
+  ArrBuf : ^TgArr20000;
+  Pag : AnsiString;
+  Retorno : WideString;
+Begin
+//dtLog := now;
+//logaLocal('GetPagina - N. '+IntToStr(PagNum)+', Usuario = '+Usuario);
+//logaLocal(Relatorio);
+fileMode := fmShareDenyNone;
+Result := '';
+AssignFile(Arq,Relatorio);
+Try
+  Reset(Arq,1);
+Except
+  on e:exception do
+    begin
+    logaLocal('Erro de abertura do relatório:  '+Relatorio+#13#10+e.Message);
+    Result := '1';
+    Exit;
+    end;
+End; // Try
+
+If FileExists(ChangeFileExt(Relatorio,'.IAPX')) Then // Novo formato
+  Begin
+  AssignFile(ArqPag64,ChangeFileExt(Relatorio,'.IAPX'));
+  Try
+    Reset(ArqPag64);
+  Except
+    on e:exception do
+      begin
+      logaLocal('Erro de abertura IAPX:  '+Relatorio+#13#10+e.Message);
+      Result := '2';
+      Exit;
+      end;
+  End; // Try
+  Seek(ArqPag64,PagNum - 1);
+  Read(ArqPag64,Pag64);
+  {$i-}
+  Read(ArqPag64,NextPag64);
+  {$i+}
+  If IoResult <> 0 Then
+    NextPag64 := FileSize(Arq);
+  CloseFile(ArqPag64);
+  Seek(Arq,Pag64 + 1); // 1 = OffSet do primeiro byte
+  End;
+
+New(ArrBuf);
+BlockRead(Arq,ArrBuf^,NextPag64-Pag64,ContBytes); { Read only the buffer To decompress }
+
+SetLength(Pag, ContBytes*2);
+binToHex(ArrBuf^, PAnsiChar(Pag), ContBytes);
+
+
+QtdBytes := ContBytes*2;
+
+Pagina := Pag;
+//logaLocal(Pagina);
+Retorno := '0' + '|' + Pagina;
+
+//Result := '0';
+Retorno := Retorno  + '|' + IntToStr(QtdBytes);
+
+Dispose(ArrBuf);
+//logaLocal('GetPagina concluida com sucesso');
+//LogaTempoExecucao('GetPagina',dtLog);
+result := Retorno;
+
+if not Localizar('0', QtdBytes, Pagina,strloc,rel133,CmprBrncs,linini, linfim, coluna, pagini,
+       pagfim) then
+  GetPaginaL(Usuario, Senha, ConnectionID,Relatorio,PagNum+1,QtdBytes,Pagina,
+             strloc,rel133,CmprBrncs,linini, linfim, coluna, pagini, pagfim);
+End;
 
 function TServerMethods1.GetRelatorio(Usuario, Senha: WideString;
   ConnectionID: Integer; ListaCodRel, FullPaths: WideString; tipo : Integer): String;
@@ -1281,7 +1622,7 @@ try
         logaLocal('Motivo: '+SysErrorMessage(ErrorCode));
         GetLastError;
         end;
-      FindClose(SearchRec);
+      System.SysUtils.FindClose(SearchRec);
       End;
     FdQry.Close;
     End;
@@ -2430,6 +2771,24 @@ begin
   host           := arqIni.ReadString('AD', 'host',    '');
 
   result := host;
+end;
+
+procedure TServerMethods1.GravarLOGAD(usuario,status : String);
+var arqIni : TiniFile;
+    caminho, data : String;
+    strarq : TStringList;
+begin
+  data := FormatDateTime('YYYYMMDD', now);
+  arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
+  caminho        := arqIni.ReadString('AD', 'log',    '');
+  strarq := TStringList.Create;
+  if FileExists(caminho + '_' + data + '.csv') then
+  begin
+    strarq.LoadFromFile(caminho + '_' + data + '.csv');
+  end;
+  strarq.Add(FormatDateTime('YYYYMMDDhhnnss', now)+';'+usuario+';'+status);
+  strarq.SaveToFile(caminho + '_' + data + '.csv');
+  FreeAndNil(strarq);
 end;
 
 function TServerMethods1.RetornarCaminhoArq : String;

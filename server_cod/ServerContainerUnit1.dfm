@@ -1,7 +1,7 @@
 object ServerContainer1: TServerContainer1
   Height = 251
   Width = 486
-  PixelsPerInch = 120
+  PixelsPerInch = 96
   object DSServer1: TDSServer
     ChannelResponseTimeout = 3000000
     Left = 96

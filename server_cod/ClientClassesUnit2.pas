@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 30/04/2022 17:41:10
+// 20/05/2022 18:01:34
 //
 
 unit ClientClassesUnit2;
@@ -21,6 +21,7 @@ type
     FReverseStringCommand: TDSRestCommand;
     FRetornarParametrosConnCommand: TDSRestCommand;
     FRetornarParametroADCommand: TDSRestCommand;
+    FGravarLOGADCommand: TDSRestCommand;
     FRetornarDadosBancoCommand: TDSRestCommand;
     FPersistirBancoCommand: TDSRestCommand;
     FBaixarArquivoCommand: TDSRestCommand;
@@ -28,7 +29,9 @@ type
     FAbreRelatorioCommand: TDSRestCommand;
     FInsereEventosVisuCommand: TDSRestCommand;
     FfazerumtesteCommand: TDSRestCommand;
+    FLocalizarCommand: TDSRestCommand;
     FGetPaginaCommand: TDSRestCommand;
+    FGetPaginaLCommand: TDSRestCommand;
     FLogInCommand: TDSRestCommand;
     FGetRelatorioCommand: TDSRestCommand;
     FExecutaNovaQueryFacilCommand: TDSRestCommand;
@@ -45,6 +48,7 @@ type
     function ReverseString(Value: string; const ARequestFilter: string = ''): string;
     function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
     function RetornarParametroAD(const ARequestFilter: string = ''): string;
+    procedure GravarLOGAD(usuario: string; status: string);
     function RetornarDadosBanco(SQL: string; bd: Integer; const ARequestFilter: string = ''): string;
     procedure PersistirBanco(SQL: string; bd: Integer);
     function BaixarArquivo(arq: string; const ARequestFilter: string = ''): TJSONArray;
@@ -52,7 +56,9 @@ type
     function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; log: Boolean; const ARequestFilter: string = ''): string;
     procedure InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
     procedure fazerumteste;
+    function Localizar(RetVal: AnsiString; EEE: Integer; varPag: AnsiString; strloc: string; rel133: Byte; CmprBrncs: Byte; linini: string; linfim: string; coluna: string; pagini: string; pagfim: string; const ARequestFilter: string = ''): Boolean;
     function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; const ARequestFilter: string = ''): string;
+    function GetPaginaL(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; strloc: string; rel133: Byte; CmprBrncs: Byte; linini: string; linfim: string; coluna: string; pagini: string; pagfim: string; const ARequestFilter: string = ''): string;
     function LogIn(Usuario: WideString; Senha: WideString; ConnectionID: Integer; const ARequestFilter: string = ''): string;
     function GetRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString; tipo: Integer; const ARequestFilter: string = ''): string;
     function ExecutaNovaQueryFacil(gridXML: WideString; fileName: WideString; usuario: WideString; mensagem: WideString; xmlData: WideString; const ARequestFilter: string = ''): string;
@@ -105,6 +111,12 @@ const
   TServerMethods1_RetornarParametroAD: array [0..0] of TDSRestParameterMetaData =
   (
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
+  );
+
+  TServerMethods1_GravarLOGAD: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'usuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'status'; Direction: 1; DBXType: 26; TypeName: 'string')
   );
 
   TServerMethods1_RetornarDadosBanco: array [0..2] of TDSRestParameterMetaData =
@@ -160,6 +172,22 @@ const
     (Name: 'CodMens'; Direction: 1; DBXType: 6; TypeName: 'Integer')
   );
 
+  TServerMethods1_Localizar: array [0..11] of TDSRestParameterMetaData =
+  (
+    (Name: 'RetVal'; Direction: 1; DBXType: 1; TypeName: 'AnsiString'),
+    (Name: 'EEE'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'varPag'; Direction: 1; DBXType: 1; TypeName: 'AnsiString'),
+    (Name: 'strloc'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'rel133'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
+    (Name: 'CmprBrncs'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
+    (Name: 'linini'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'linfim'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'coluna'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'pagini'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'pagfim'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
+  );
+
   TServerMethods1_GetPagina: array [0..7] of TDSRestParameterMetaData =
   (
     (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
@@ -169,6 +197,26 @@ const
     (Name: 'PagNum'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
     (Name: 'QtdBytes'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
     (Name: 'Pagina'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
+  );
+
+  TServerMethods1_GetPaginaL: array [0..15] of TDSRestParameterMetaData =
+  (
+    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'Relatorio'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'PagNum'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'QtdBytes'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'Pagina'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'strloc'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'rel133'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
+    (Name: 'CmprBrncs'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
+    (Name: 'linini'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'linfim'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'coluna'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'pagini'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'pagfim'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
@@ -348,6 +396,20 @@ begin
   Result := FRetornarParametroADCommand.Parameters[0].Value.GetWideString;
 end;
 
+procedure TServerMethods1Client.GravarLOGAD(usuario: string; status: string);
+begin
+  if FGravarLOGADCommand = nil then
+  begin
+    FGravarLOGADCommand := FConnection.CreateCommand;
+    FGravarLOGADCommand.RequestType := 'GET';
+    FGravarLOGADCommand.Text := 'TServerMethods1.GravarLOGAD';
+    FGravarLOGADCommand.Prepare(TServerMethods1_GravarLOGAD);
+  end;
+  FGravarLOGADCommand.Parameters[0].Value.SetWideString(usuario);
+  FGravarLOGADCommand.Parameters[1].Value.SetWideString(status);
+  FGravarLOGADCommand.Execute;
+end;
+
 function TServerMethods1Client.RetornarDadosBanco(SQL: string; bd: Integer; const ARequestFilter: string): string;
 begin
   if FRetornarDadosBancoCommand = nil then
@@ -460,6 +522,30 @@ begin
   FfazerumtesteCommand.Execute;
 end;
 
+function TServerMethods1Client.Localizar(RetVal: AnsiString; EEE: Integer; varPag: AnsiString; strloc: string; rel133: Byte; CmprBrncs: Byte; linini: string; linfim: string; coluna: string; pagini: string; pagfim: string; const ARequestFilter: string): Boolean;
+begin
+  if FLocalizarCommand = nil then
+  begin
+    FLocalizarCommand := FConnection.CreateCommand;
+    FLocalizarCommand.RequestType := 'GET';
+    FLocalizarCommand.Text := 'TServerMethods1.Localizar';
+    FLocalizarCommand.Prepare(TServerMethods1_Localizar);
+  end;
+  FLocalizarCommand.Parameters[0].Value.SetAnsiString(RetVal);
+  FLocalizarCommand.Parameters[1].Value.SetInt32(EEE);
+  FLocalizarCommand.Parameters[2].Value.SetAnsiString(varPag);
+  FLocalizarCommand.Parameters[3].Value.SetWideString(strloc);
+  FLocalizarCommand.Parameters[4].Value.SetUInt8(rel133);
+  FLocalizarCommand.Parameters[5].Value.SetUInt8(CmprBrncs);
+  FLocalizarCommand.Parameters[6].Value.SetWideString(linini);
+  FLocalizarCommand.Parameters[7].Value.SetWideString(linfim);
+  FLocalizarCommand.Parameters[8].Value.SetWideString(coluna);
+  FLocalizarCommand.Parameters[9].Value.SetWideString(pagini);
+  FLocalizarCommand.Parameters[10].Value.SetWideString(pagfim);
+  FLocalizarCommand.Execute(ARequestFilter);
+  Result := FLocalizarCommand.Parameters[11].Value.GetBoolean;
+end;
+
 function TServerMethods1Client.GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; const ARequestFilter: string): string;
 begin
   if FGetPaginaCommand = nil then
@@ -478,6 +564,34 @@ begin
   FGetPaginaCommand.Parameters[6].Value.SetWideString(Pagina);
   FGetPaginaCommand.Execute(ARequestFilter);
   Result := FGetPaginaCommand.Parameters[7].Value.GetWideString;
+end;
+
+function TServerMethods1Client.GetPaginaL(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; strloc: string; rel133: Byte; CmprBrncs: Byte; linini: string; linfim: string; coluna: string; pagini: string; pagfim: string; const ARequestFilter: string): string;
+begin
+  if FGetPaginaLCommand = nil then
+  begin
+    FGetPaginaLCommand := FConnection.CreateCommand;
+    FGetPaginaLCommand.RequestType := 'GET';
+    FGetPaginaLCommand.Text := 'TServerMethods1.GetPaginaL';
+    FGetPaginaLCommand.Prepare(TServerMethods1_GetPaginaL);
+  end;
+  FGetPaginaLCommand.Parameters[0].Value.SetWideString(Usuario);
+  FGetPaginaLCommand.Parameters[1].Value.SetWideString(Senha);
+  FGetPaginaLCommand.Parameters[2].Value.SetInt32(ConnectionID);
+  FGetPaginaLCommand.Parameters[3].Value.SetWideString(Relatorio);
+  FGetPaginaLCommand.Parameters[4].Value.SetInt32(PagNum);
+  FGetPaginaLCommand.Parameters[5].Value.SetInt32(QtdBytes);
+  FGetPaginaLCommand.Parameters[6].Value.SetWideString(Pagina);
+  FGetPaginaLCommand.Parameters[7].Value.SetWideString(strloc);
+  FGetPaginaLCommand.Parameters[8].Value.SetUInt8(rel133);
+  FGetPaginaLCommand.Parameters[9].Value.SetUInt8(CmprBrncs);
+  FGetPaginaLCommand.Parameters[10].Value.SetWideString(linini);
+  FGetPaginaLCommand.Parameters[11].Value.SetWideString(linfim);
+  FGetPaginaLCommand.Parameters[12].Value.SetWideString(coluna);
+  FGetPaginaLCommand.Parameters[13].Value.SetWideString(pagini);
+  FGetPaginaLCommand.Parameters[14].Value.SetWideString(pagfim);
+  FGetPaginaLCommand.Execute(ARequestFilter);
+  Result := FGetPaginaLCommand.Parameters[15].Value.GetWideString;
 end;
 
 function TServerMethods1Client.LogIn(Usuario: WideString; Senha: WideString; ConnectionID: Integer; const ARequestFilter: string): string;
@@ -638,6 +752,7 @@ begin
   FReverseStringCommand.DisposeOf;
   FRetornarParametrosConnCommand.DisposeOf;
   FRetornarParametroADCommand.DisposeOf;
+  FGravarLOGADCommand.DisposeOf;
   FRetornarDadosBancoCommand.DisposeOf;
   FPersistirBancoCommand.DisposeOf;
   FBaixarArquivoCommand.DisposeOf;
@@ -645,7 +760,9 @@ begin
   FAbreRelatorioCommand.DisposeOf;
   FInsereEventosVisuCommand.DisposeOf;
   FfazerumtesteCommand.DisposeOf;
+  FLocalizarCommand.DisposeOf;
   FGetPaginaCommand.DisposeOf;
+  FGetPaginaLCommand.DisposeOf;
   FLogInCommand.DisposeOf;
   FGetRelatorioCommand.DisposeOf;
   FExecutaNovaQueryFacilCommand.DisposeOf;

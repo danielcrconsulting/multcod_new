@@ -920,7 +920,7 @@ If (OrigemDeExecucao = 'I') Then
   TEditForm(FrameForm.ActiveMDIChild).Decripta(BufI, (TipoQuebra=1), False,Length(PaginaAnt))
 Else
 //    TEditForm(FrameForm.ActiveMDIChild).GetPaginaDoRel(I, PagNormal, PagAcertada, False);
-  TEditForm(FrameForm.ActiveMDIChild).GetPaginaDoRel(I, False);
+  TEditForm(FrameForm.ActiveMDIChild).GetPaginaDoRel(I, False,'','','','','', '');
 
 StrPagina.Text := TEditForm(FrameForm.ActiveMDIChild).PaginaAcertada;
                                                    

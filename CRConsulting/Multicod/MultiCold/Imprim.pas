@@ -185,7 +185,7 @@ Var
     TEditForm(FrameForm.ActiveMDIChild).PaginaAcertada := '';
     TEditForm(FrameForm.ActiveMDIChild).PaginaNormal := '';
 //  TEditForm(FrameForm.ActiveMDIChild).GetPaginaDoRel(I, Linha133, Linha, False);
-    TEditForm(FrameForm.ActiveMDIChild).GetPaginaDoRel(I, False);
+    TEditForm(FrameForm.ActiveMDIChild).GetPaginaDoRel(I, False,'','','','','', '');
 
     StrPagina.Lines.Clear;
     StrPagina.Lines.Text := TEditForm(FrameForm.ActiveMDIChild).PaginaAcertada;

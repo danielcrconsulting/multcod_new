@@ -149,7 +149,7 @@ Type
     Procedure Decripta(Var Buffer : Pointer; Report133CC, Orig : Boolean;
                        QtdBytes : Integer);
 
-    Procedure GetPaginaDoRel(Pagina : Integer; Orig : Boolean);
+    Procedure GetPaginaDoRel(Pagina : Integer; Orig : Boolean;strloc,linini, linfim, coluna, pagini, pagfim : AnsiString);
 
     procedure DrawShape(TopLeft, BottomRight: TPoint; AMode: TPenMode);
     procedure PrintPageBMP;
@@ -322,7 +322,7 @@ begin
 end;
 
 //Procedure TEditForm.GetPaginaDoRel(Pagina : Integer; Var PaginaNormal, PaginaAcertada : AnsiString; Orig : Boolean);
-Procedure TEditForm.GetPaginaDoRel(Pagina : Integer; Orig : Boolean);
+Procedure TEditForm.GetPaginaDoRel(Pagina : Integer; Orig : Boolean;strloc, linini, linfim, coluna, pagini, pagfim : AnsiString);
 Var
   FileHandle,
   QtdBytesPagRel,
@@ -363,13 +363,27 @@ If RelRemoto Then
                                                  EEE,
                                                  varPag);
     }
-    RetVal := formgeral.GetPagina(LogInRemotoForm.UsuEdit.Text,
+
+    if strloc = '' then
+      RetVal := formgeral.GetPagina(LogInRemotoForm.UsuEdit.Text,
                                                  LogInRemotoForm.PassEdit.Text,
                                                  ConnectionID,
                                                  Filename,
                                                  Pagina,
                                                  EEE,
-                                                 varPag);
+                                                 varPag)
+    else
+       RetVal := formgeral.GetPaginaL(LogInRemotoForm.UsuEdit.Text,
+                                                 LogInRemotoForm.PassEdit.Text,
+                                                 ConnectionID,
+                                                 Filename,
+                                                 Pagina,
+                                                 EEE,
+                                                 varPag,
+                                                 strloc,
+                                                 rel133,
+                                                 CmprBrncs,
+                                                 linini, linfim, coluna, pagini, pagfim);
     Retorno := TStringList.Create;
     Retorno.Delimiter := '|';
     Retorno.DelimitedText := RetVal;

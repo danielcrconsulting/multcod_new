@@ -20,10 +20,12 @@ object WebModule1: TWebModule1
   BeforeDispatch = WebModuleBeforeDispatch
   Height = 251
   Width = 486
-  PixelsPerInch = 120
+  PixelsPerInch = 96
   object DSHTTPWebDispatcher1: TDSHTTPWebDispatcher
     Filters = <>
     AuthenticationManager = ServerContainer1.DSAuthenticationManager1
+    DSAuthUser = 'serverarq'
+    DSAuthPassword = '#@2022'
     WebDispatch.PathInfo = 'datasnap*'
     Left = 96
     Top = 75
@@ -88,9 +90,8 @@ object WebModule1: TWebModule1
         DirectoryAction = dirExclude
         DirectoryMask = '\templates\*'
       end>
-    RootDirectory = '.'
+    RootDirectory = '/extracoes'
     VirtualPath = '/'
-    DefaultFile = 'IAPX'
     Left = 56
     Top = 136
   end

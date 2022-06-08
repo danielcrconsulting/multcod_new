@@ -183,6 +183,7 @@ Var
 //  Linha133,
 //  Linha : String;
   localizaNaPesquisa : boolean;
+  //strlista : TStringList;
 
   Function SetaLinIni : Boolean;
   Begin
@@ -282,7 +283,6 @@ If (AlterouValores) Or (Sender = LocBut) Then
   AlterouValores := False;
   End;
 Cancelar := False;
-
 With TEditForm(FrameForm.ActiveMdiChild) Do
   Begin
 
@@ -318,14 +318,20 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
         messageDlg('Fim da pesquisa.',mtInformation,[mbOk],0);
         Exit;
         End;
-      GetPaginaDoRel(TEditForm(FrameForm.ActiveMdiChild).RegPsq.Pagina, False)
+      GetPaginaDoRel(TEditForm(FrameForm.ActiveMdiChild).RegPsq.Pagina, False,
+                     LocalizarEdit.Text, LinIniEdit.Text, LinFinEdit.Text,
+                     ColunaEdit.Text, PagIniEdit.Text, PagFinEdit.Text)
       end
     else
-      GetPaginaDoRel(I, False);
+      GetPaginaDoRel(I, False, LocalizarEdit.Text, LinIniEdit.Text, LinFinEdit.Text,
+                     ColunaEdit.Text, PagIniEdit.Text, PagFinEdit.Text);
 
     Application.ProcessMessages;
 
     MemoGidley.Lines.Text := PaginaAcertada;
+
+    //strlista := TStringList.Create;
+    //strlista.Text := PaginaAcertada;
 
     If LinFinEdit.Text <> '*' Then
       LinFin := StrToInt(LinFinEdit.Text)
@@ -335,6 +341,9 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
     If LinFin > MemoGidley.Lines.Count Then
       LinFin := MemoGidley.Lines.Count;
 
+    //strlista.Strings
+    //if strlista.IndexOf(LocalizarEdit.Text) > -1 then
+    //begin
     For J := LinIni To LinFin Do
       Begin
       If ColunaEdit.Text = '*' Then
@@ -404,6 +413,7 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
     If Cancelar Then
       Break;
     End;
+    //end;
   End;
 PagIni := I+1;
 If PagIni > PagFin Then

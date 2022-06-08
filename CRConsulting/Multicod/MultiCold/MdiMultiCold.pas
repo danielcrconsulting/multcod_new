@@ -1711,7 +1711,6 @@ Else
 
 //AdcPassWord := False;
 Tela := '';
-
 End;
 
 Procedure TFrameForm.PlusZoomClick(Sender: TObject);

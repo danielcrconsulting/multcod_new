@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Datasnap.DBClient, Vcl.Grids,
   Vcl.DBGrids, Datasnap.Provider, Vcl.StdCtrls, Vcl.Menus, Vcl.ExtCtrls, ADODB,
   Vcl.ComCtrls, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  IdSSLOpenSSL, System.Json, System.Zlib, System.Zip;
+  IdSSLOpenSSL, System.Json, System.Zlib, System.Zip, System.Threading, System.IniFiles;
 
 type
   TFrmConsultaExportacoesRemoto = class(TForm)
@@ -46,8 +46,12 @@ type
   strict private
     { Private declarations }
     FCodUsuario: String;
-    FUrlBase: String;
+    FUrlBase, urldow: String;
+    ArquivoINI : TIniFile;
+
+    wfilename, waFileName : String;
     procedure DownloadFile(aFileName: String);
+    procedure BaixarArquivo;
   public
     { Public declarations }
     procedure SetParameters(codUsuario, urlBase: String);
@@ -144,7 +148,6 @@ procedure TFrmConsultaExportacoesRemoto.BtnDownloadClick(Sender: TObject);
 var
   fullFileName,
   fileName: String;
-
 begin
   if TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('StatusProcessamento').AsString = 'S' then
   begin
@@ -356,6 +359,21 @@ begin
   end;
 end;
 
+
+procedure TFrmConsultaExportacoesRemoto.BaixarArquivo;
+var
+  oArquivoJSON : TJSONArray;
+  ZipFile: TZipFile;
+begin
+  oArquivoJSON := FormGeral.BaixarArquivo(wFilename);
+  ZipFile := TZipFile.Create;
+  ZipFile.Open(ExtractFileDir(SaveDialog1.FileName) + '\arq.zip', zmReadWrite);
+  ZipFile.ExtractAll(ExtractFileDir(SaveDialog1.FileName));
+  RenameFile(ExtractFileDir(SaveDialog1.FileName) + '\' + waFileName, SaveDialog1.FileName);
+  FreeAndNil(ZipFile);
+  DeleteFile(ExtractFileDir(SaveDialog1.FileName) + '\arq.zip');
+end;
+
 procedure TFrmConsultaExportacoesRemoto.DownloadFile(aFileName: String);
 var
   IdHTTP1: TIdHTTP;
@@ -366,6 +384,9 @@ var
   download: TDownload;
   oArquivoJSON : TJSONArray;
   ZipFile: TZipFile;
+  Tasks: array [0..0] of ITask;
+  strArq : TStringList;
+  vArquivo: TFileStream;
 begin
   //Url := FUrlBase + aFileName;
   ProgressBar1.Visible := True;
@@ -374,26 +395,59 @@ begin
   Filename := aFileName;
   SaveDialog1.FileName := fileName;
   ProgressBar1.Position := 1;
+
   Application.ProcessMessages;
   if not SaveDialog1.Execute then
   begin
     ProgressBar1.Visible := False;
     exit;
   end;
-  oArquivoJSON := FormGeral.BaixarArquivo(Filename);
 
-  ConverterJSONParaArquivo(oArquivoJSON, ExtractFileDir(SaveDialog1.FileName) + '\arq.zip');
-  ProgressBar1.Position := 2;
-  ZipFile := TZipFile.Create;
-  ZipFile.Open(ExtractFileDir(SaveDialog1.FileName) + '\arq.zip', zmReadWrite);
-  ZipFile.ExtractAll(ExtractFileDir(SaveDialog1.FileName));
-  RenameFile(ExtractFileDir(SaveDialog1.FileName) + '\' + aFileName, SaveDialog1.FileName);
+  vArquivo := TFileStream.Create(SaveDialog1.FileName,fmCreate);
 
-  FreeAndNil(ZipFile);
-  DeleteFile(ExtractFileDir(SaveDialog1.FileName) + '\arq.zip');
-  ProgressBar1.Position := 3;
+  Try
+    IdHTTP1 := TIdHTTP.Create;
+    Try
+      idHTTP1.Request.Username := 'multicoldserver';
+      idHTTP1.Request.Password := 'server@#2021';
+      ProgressBar1.Position := 2;
+      idHTTP1.Get(urldow + '/' + aFileName ,vArquivo);
+      ProgressBar1.Position := 3;
+      ShowMessage('Download OK !');
+    Except
+      ShowMessage('Não foi possivel baixar o arquivo !');
+    End;
+  Finally
+    FreeAndNil(vArquivo);
+    FreeAndNil(IdHTTP1);
+    ProgressBar1.Visible := False;
+  End;
+  exit;
+
+
+  wfilename  := filename;
+  waFileName := aFileName;
+
+  //Tasks[0] := TTask.Create(BaixarArquivo);
+  //Tasks[0].Start;
+  //exit;
+
+  //oArquivoJSON := FormGeral.BaixarArquivo(Filename);
+
+  //ConverterJSONParaArquivo(oArquivoJSON, ExtractFileDir(SaveDialog1.FileName) + '\arq.zip');
+  //ProgressBar1.Position := 2;
+  //ShowMessage('Baixou o arquivo como zip');
+  //ZipFile := TZipFile.Create;
+  //ZipFile.Open(ExtractFileDir(SaveDialog1.FileName) + '\arq.zip', zmReadWrite);
+  //ZipFile.ExtractAll(ExtractFileDir(SaveDialog1.FileName));
+  //RenameFile(ExtractFileDir(SaveDialog1.FileName) + '\' + aFileName, SaveDialog1.FileName);
+
+  //FreeAndNil(ZipFile);
+  //DeleteFile(ExtractFileDir(SaveDialog1.FileName) + '\arq.zip');
+
+  //ProgressBar1.Position := 3;
   //Descomprimir('arq.zip', ExtractFileDir(SaveDialog1.FileName) );
-  {
+
   // DEBUG => Para Testes.
   // ShowMessage(Url);
 
@@ -422,12 +476,12 @@ begin
   finally
     Cursor := crDefault;
   end;
-  }
-  ShowMessage('Arquivo baixado com sucesso...');
-  ProgressBar1.Visible := False;
-  Close;
-  //FrmDownloadManager.Show;
-  //FrmDownloadManager.RefreshList;
+
+  //ShowMessage('Arquivo baixado com sucesso...');
+  //ProgressBar1.Visible := False;
+  //Close;
+  FrmDownloadManager.Show;
+  FrmDownloadManager.RefreshList;
 end;
 
 procedure TFrmConsultaExportacoesRemoto.FormActivate(Sender: TObject);
@@ -447,6 +501,9 @@ procedure TFrmConsultaExportacoesRemoto.FormCreate(Sender: TObject);
 begin
   DateTimePickerIni.DateTime := Now;
   DateTimePickerFin.DateTime := Now;
+  ArquivoINI := TIniFile.Create(GetCurrentDir + '/conf.ini');
+  urldow := 'http://' + ArquivoINI.ReadString('configuracoes', 'server',    '') + ':' +
+                     ArquivoINI.ReadString('configuracoes', 'port',      '');
 end;
 
 procedure TFrmConsultaExportacoesRemoto.SetParameters(codUsuario,

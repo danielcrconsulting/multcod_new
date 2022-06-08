@@ -460,7 +460,7 @@ Var
   TEditForm(FrameForm.ActiveMDIChild).PaginaNormal := '';
 
 //  TEditForm(FrameForm.ActiveMDIChild).GetPaginaDoRel(I, Linha133, Linha, CheckOrig.Checked);
-  TEditForm(FrameForm.ActiveMDIChild).GetPaginaDoRel(I, CheckOrig.Checked);
+  TEditForm(FrameForm.ActiveMDIChild).GetPaginaDoRel(I, CheckOrig.Checked,'','','','','', '');
 
   If (ArqTempl.Text <> '') And (IExcel = 1) Then
     Begin                            // Dar o nome dos campos à primeira linha da exportação
