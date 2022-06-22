@@ -3,7 +3,7 @@
         <ProjectGuid>{F02B4DFC-5B06-4C6B-A38B-CFB07FFF3DDD}</ProjectGuid>
         <MainSource>MultiCold.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2022/06/14 18:45:19.000.597,=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\server_master\FormUnit1.pas</Transaction>
+    <Transaction>2022/06/14 18:45:19.000.971,=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\server_master\ServerContainerUnit1.pas</Transaction>
+    <Transaction>2022/06/14 18:45:19.000.825,=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\server_master\ServerMethodsUnit1.pas</Transaction>
+    <Transaction>2022/06/14 18:45:20.000.103,=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\server_master\WebModuleUnit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

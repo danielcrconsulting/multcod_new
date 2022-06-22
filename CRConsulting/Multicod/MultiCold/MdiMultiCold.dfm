@@ -1,7 +1,7 @@
 object FrameForm: TFrameForm
   Left = 246
   Top = 159
-  Caption = 'MultiCold - Viewer V10.0.2 - 01/05/2022'
+  Caption = 'MultiCold - Viewer V10.0.3 - 08/06/2022'
   ClientHeight = 161
   ClientWidth = 652
   Color = clWhite

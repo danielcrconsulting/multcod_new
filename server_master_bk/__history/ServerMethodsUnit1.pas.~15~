@@ -1,0 +1,136 @@
+unit ServerMethodsUnit1;
+
+interface
+
+uses System.SysUtils, System.Classes, System.Json,
+    Datasnap.DSServer, Datasnap.DSAuth, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB,
+  FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, Data.DB, FireDAC.Comp.Client,
+  IniFiles, FireDAC.Comp.UI;
+
+type
+{$METHODINFO ON}
+  TServerMethods1 = class(TDataModule)
+    FDCon: TFDConnection;
+    FDConLog: TFDConnection;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+  private
+    { Private declarations }
+    caminhoMaster, caminhoLog : String;
+    procedure ConfigurarBanco;
+  public
+    { Public declarations }
+    function EchoString(Value: string): string;
+    function ReverseString(Value: string): string;
+    function validarUsuario( usuario : String) : string;
+    function validarGrupo( grupo : String) : String;
+  end;
+{$METHODINFO OFF}
+
+implementation
+
+
+{$R *.dfm}
+
+
+uses System.StrUtils;
+
+function TServerMethods1.EchoString(Value: string): string;
+begin
+  Result := Value;
+end;
+
+procedure TServerMethods1.ConfigurarBanco;
+var iniF : TIniFile;
+begin
+  iniF := TIniFile.Create(GetCurrentDir + 'conf.ini');
+  caminhoMaster := iniF.ReadString('BANCO','MASTER','');
+  caminhoLog := iniF.ReadString('BANCO','LOG','');
+
+  FDCon.Params.Database    := caminhoMaster;
+  FDConLog.Params.Database := caminhoLog;
+end;
+
+function TServerMethods1.ReverseString(Value: string): string;
+begin
+  Result := System.StrUtils.ReverseString(Value);
+end;
+
+function TServerMethods1.validarGrupo(grupo: String): String;
+var
+  fdqry : TFDQuery;
+begin
+  try
+    fdqry := TFDQuery.Create(nil);
+    try
+      fdqry.Sql.Clear;
+  fdqry.Sql.Add('SELECT * FROM "'+FormGeral.TableUsuRel.TableName+'" A, ');
+  fdqry.Sql.Add(              '"'+FormGeral.TableGruposDFN.TableName+'" B ');
+  fdqry.Sql.Add('WHERE (A."CODUSUARIO" = '''+UsuEdit.Text+''') ');
+  fdqry.Sql.Add('AND   (A."CODGRUPO" = B."CODGRUPO") ');
+  fdqry.Open;
+  If fdqry.RecordCount = 0 Then
+    ShowMessage('Nenhuma Organização associada a seu usuário: '+UsuEdit.Text)
+  Else
+    Begin
+    While Not FormGeral.QueryAux1.Eof Do
+      FormGeral.QueryAux1.Next;
+    SetLength(Org,FormGeral.QueryAux1.RecordCount);
+    SetLength(NomeOrg,FormGeral.QueryAux1.RecordCount);
+    FormGeral.QueryAux1.Close;
+    FormGeral.QueryAux1.Open;
+    I := 0;
+    While Not FormGeral.QueryAux1.Eof Do
+      Begin
+      Org[I] := FormGeral.QueryAux1.Fields[1].AsInteger;
+      NomeOrg[I] := FormGeral.QueryAux1.Fields[6].AsString;
+      Inc(I);
+      FormGeral.QueryAux1.Next;
+      End;
+    End;
+  FormGeral.QueryAux1.Close;
+  End;
+      If fdqry.RecordCount = 0 Then
+        result := fdqry.FieldByName('CODUSUARIO').AsString
+      else
+        result := '';
+    except
+      on e:exception do begin
+
+      end;
+    end;
+  finally
+    FreeAndNil(fdqry);
+  end;
+
+end;
+
+function TServerMethods1.validarUsuario(usuario: String): string;
+var
+  fdqry : TFDQuery;
+begin
+  try
+    fdqry := TFDQuery.Create(nil);
+    try
+      fdqry.Sql.Clear;
+      fdqry.Sql.Add('SELECT * FROM usuarios ');
+      fdqry.Sql.Add('WHERE CODUSUARIO = ' + QuotedStr(usuario));
+      fdqry.Open;
+      If fdqry.RecordCount = 0 Then
+        result := fdqry.FieldByName('CODUSUARIO').AsString
+      else
+        result := '';
+    except
+      on e:exception do begin
+
+      end;
+    end;
+  finally
+    FreeAndNil(fdqry);
+  end;
+
+end;
+
+end.
+

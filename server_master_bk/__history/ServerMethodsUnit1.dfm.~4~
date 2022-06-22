@@ -1,0 +1,25 @@
+object ServerMethods1: TServerMethods1
+  Height = 201
+  Width = 389
+  PixelsPerInch = 96
+  object FDCon: TFDConnection
+    Params.Strings = (
+      'Database=C:\CD_BMG\MASTERCOLD\Origem\Database\MASTERCOLD.gdb'
+      'User_Name=SYSDBA'
+      'Password=ghqp4908'
+      'DriverID=FB')
+    LoginPrompt = False
+    Left = 232
+    Top = 40
+  end
+  object FDConLog: TFDConnection
+    Params.Strings = (
+      'Database=C:\CD_BMG\MASTERCOLD\Origem\Database\MASTERCOLD.gdb'
+      'User_Name=SYSDBA'
+      'Password=ghqp4908'
+      'DriverID=FB')
+    LoginPrompt = False
+    Left = 240
+    Top = 112
+  end
+end

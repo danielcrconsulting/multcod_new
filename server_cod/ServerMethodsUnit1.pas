@@ -2783,10 +2783,10 @@ begin
   caminho        := arqIni.ReadString('AD', 'log',    '');
   strarq := TStringList.Create;
   if FileExists(caminho + '_' + data + '.csv') then
-  begin
-    strarq.LoadFromFile(caminho + '_' + data + '.csv');
-  end;
-  strarq.Add(FormatDateTime('YYYYMMDDhhnnss', now)+';'+usuario+';'+status);
+    strarq.LoadFromFile(caminho + '_' + data + '.csv')
+  else
+    strarq.Add('SistemaRotina|UsuarioAlvo|UsuarioResponsavel|OrigemAcesso|Data|Resultado|TipoDeEvento');
+  strarq.Add('426_SOX|' + usuario + '||D4253N001|' + FormatDateTime('YYYY-MM-DD hh:nn:ss', now)+'|'+usuario+'|'+status+'|1');
   strarq.SaveToFile(caminho + '_' + data + '.csv');
   FreeAndNil(strarq);
 end;
