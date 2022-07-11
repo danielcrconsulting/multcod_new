@@ -437,6 +437,8 @@ Var
   J, K : Integer;
   AuxStr,
   AuxConta : AnsiString;
+  Strm: TMemoryStream;
+  strFile :TFileStream;
 Begin
                    // Verifica o preenchimento do campo do número do cartão de crédito
 If Key <> #13 Then

@@ -164,6 +164,7 @@
         <DCCReference Include="MULTICOLDSERVER\SOAP\UMulticoldFunctions.pas"/>
         <DCCReference Include="MULTICOLDSERVER\SOAP\UMulticoldMigrate.pas"/>
         <DCCReference Include="MULTICOLDSERVER\SOAP\UExtratorDados.pas"/>
+        <DCCReference Include="..\..\..\server_cod\UclsAux.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -224,6 +225,12 @@
                 <Platform value="Win64">False</Platform>
             </Platforms>
             <Deployment Version="3">
+                <DeployFile LocalName="C:\rom\MultiColdIndexa.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>MultiColdIndexa.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="C:\rom\MultiCold\Origem\MultiColdIndexa.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>MultiColdIndexa.exe</RemoteName>

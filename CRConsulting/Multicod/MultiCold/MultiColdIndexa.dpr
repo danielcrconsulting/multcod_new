@@ -28,7 +28,8 @@ uses
   ZLIBEX in '..\..\..\Projects\Subrug\DelphiZLib\ZLIBEX.PAS',
   UMulticoldFunctions in 'MULTICOLDSERVER\SOAP\UMulticoldFunctions.pas',
   UMulticoldMigrate in 'MULTICOLDSERVER\SOAP\UMulticoldMigrate.pas',
-  UExtratorDados in 'MULTICOLDSERVER\SOAP\UExtratorDados.pas';
+  UExtratorDados in 'MULTICOLDSERVER\SOAP\UExtratorDados.pas',
+  UclsAux in '..\..\..\server_cod\UclsAux.pas';
 
 {$R *.RES}
 

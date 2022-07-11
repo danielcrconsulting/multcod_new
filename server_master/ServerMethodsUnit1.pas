@@ -16,6 +16,8 @@ uses System.SysUtils, System.Classes, System.Json,
   Bde.DBTables, dm, UclsAux, UMulticoldReport, Windows, FireDAC.Phys.FB,
   FireDAC.Phys.FBDef;
 
+
+
 type
   TPesquisa = Record
              Campo : Char;
@@ -23,6 +25,72 @@ type
              Relativo : Integer;
              Linha : Integer;
   end;
+
+type
+  TgIndiceI64F = Record
+               Valor : Int64;
+               TipoConta  : TgArr001;
+               PosIni : Int64;
+               Tam : Int64;
+               End;
+
+type
+  TgIndiceNomeCartao = Record
+                     Valor : TgArr019;
+                     TipoConta : TgArr001;
+                     PosIni,
+                     Tam : Int64;
+                     End;
+
+
+  TgArqIndiceContaCartao = File Of TgIndiceI64F;
+  TgArqIndiceNomeCartao  = File Of TgIndiceNomeCartao;
+
+type
+  TgUnsrCart = Record
+             Org        : TgArr003; // 1
+             Logo       : TgArr003; // 4
+             Cartao     : TgArr016; // 7
+             Conta      : TgArr016; // 23
+             Status     : TgArr002; // 39
+             CgcCpf     : TgArr015; // 41
+             NomeCartao : TgArr019; // 56
+             Titular    : TgArr001; // 75
+             TipoConta  : TgArr001; // 76
+             CrLf       : TgArr002;
+             End;
+type
+  TgUnsrCont = Record
+             Org               : TgArr003;  // 1
+             Logo              : TgArr003;  // 4
+             Conta             : TgArr016;  // 7 0000000002641178
+             ContaEmpres       : TgArr016;
+             CpfCgc            : TgArr015;
+             Status            : TgArr002;
+             NomeExt           : TgArr040;
+             EndResidenc       : TgArr040;
+             EndResidencCompl  : TgArr010;
+             EndResidencBairro : TgArr015;
+             EndResidencCep    : TgArr008;
+             EndResidencCidade : TgArr020;
+             EndResidencUf     : TgArr002;
+             EndResidencDdd    : TgArr004;
+             EndResidencFone   : TgArr008;
+             EndResidencRamal  : TgArr004;
+             Opc               : TgArr001;
+             EndEmpr           : TgArr040;
+             EndEmprCompl      : TgArr010;
+             EndEmprBairro     : TgArr015;
+             EndEmprCep        : TgArr008;
+             EndEmprCidade     : TgArr020;
+             EndEmprUf         : TgArr002;
+             EndEmprDdd        : TgArr004;
+             EndEmprFone       : TgArr008;
+             EndEmprRamal      : TgArr004;
+             TipoConta         : TgArr001;
+             CrLf              : TgArr002;
+             End;
+
 
   TServerMethods1 = class(TDSServerModule)
     FDStanStorageJSONLink1: TFDStanStorageJSONLink;
@@ -41,6 +109,30 @@ type
     procedure DSServerModuleCreate(Sender: TObject);
   private
     { Private declarations }
+    ArqIndiceContaCartao : TgArqIndiceContaCartao;
+    ArqIndiceNomeCartao : TgArqIndiceNomeCartao;
+    IndiceConta,
+    IndiceCartao : TgIndiceI64F;
+    IndiceNomeCartao : TgIndiceNomeCartao;
+    BufI,
+    BufCmp : Pointer;
+    SubForm,
+    Sinal,
+    Nome,
+    CartaoAnt,
+    DataTransAux,
+    Operacao,
+    NomeDescricaoOrg : AnsiString;
+    TestarFlag : Boolean;
+
+    DadosDeCartao,
+    DadosDeCartaoDePortadores,
+    DadosDeConta,
+    DadosDeCartaoCpfNome,
+    DadosDeContaDePortadores,
+    DadosDeExtrato,
+    ListaDeArquivosAProcessar : TStringList;
+
     Fmemo : TStringList;
     dataModule : TDataModule1;
     procedure ConectarBanco(bd : integer = 0);
@@ -50,6 +142,11 @@ type
     function RetornarCaminhoArq : String;
     procedure Comprimir(ArquivoCompacto: TFileName; Arquivos: array of TFileName);
     Procedure LogaLocal(Const Mens : String);
+    Function PesquisaCarregaContaCartao(NConta : Int64; Narq : AnsiString) : AnsiString;
+    Function PesquisaContaCartao(NConta : Int64; Var ArqIndiceContaCartao : TgArqIndiceContaCartao; Var Qtd : Integer) : Boolean;
+    Function PesquisaCarregaNomeCartao(Nome, SobreNome : AnsiString; Narq : AnsiString) : AnsiString;
+    Function PesquisaNomeCartao(Nome : AnsiString; Var ArqIndiceNomeCartao : TgArqIndiceNomeCartao) : Boolean;
+
   public
     { Public declarations }
     function EchoString(Value: string): string;
@@ -66,7 +163,10 @@ type
     procedure fazerumteste;
     procedure LimpaMemoria;
     function ValidarAD(pUsuario, pSenha: String): Boolean;
-
+    Function RetornarContaCartao(arquivo, cartao : String) : String;
+    Function RetornarContaCPF(arquivo, cpf : String) : String;
+    Function RetornarContaNome(arquivo, nome, sobrenome : String) : String;
+    Function RetornarContaAux(arquivo, contaaux : String) : String;
   end;
 
 implementation
@@ -76,6 +176,144 @@ implementation
 
 
 uses System.StrUtils;
+
+Function TServerMethods1.PesquisaContaCartao(NConta : Int64; Var ArqIndiceContaCartao : TgArqIndiceContaCartao; Var Qtd : Integer) : Boolean;
+Var
+  L,
+  U,
+  M,
+  Posic : Integer;
+Begin
+Result := False;
+Qtd := 0;
+L := 0;
+U := (FileSize(ArqIndiceContaCartao)) - 1;
+While L <= U Do
+  Begin
+  M := (L + U) Div 2;
+  Seek(ArqIndiceContaCartao,M);
+  {$i-}
+  Read(ArqIndiceContaCartao, IndiceConta);
+  {$i+}
+  If (IoResult = 0) Then
+    If NConta = IndiceConta.Valor Then
+      Begin
+      Repeat
+        Try
+          Seek(ArqIndiceContaCartao,FilePos(ArqIndiceContaCartao)-2);
+          Read(ArqIndiceContaCartao,IndiceConta);
+        Except
+          Seek(ArqIndiceContaCartao,0);
+          Break;
+        End; // Try
+      Until (NConta <> IndiceConta.Valor);
+      Posic := FilePos(ArqIndiceContaCartao); // Aponta Para o Primeiro da lista
+      Repeat
+        Try
+          Read(ArqIndiceContaCartao,IndiceConta);
+        Except
+          Break;
+          End; // Try
+        If NConta = IndiceConta.Valor Then
+          Inc(Qtd);
+      Until NConta <> IndiceConta.Valor;
+      Seek(ArqIndiceContaCartao,Posic);
+      Read(ArqIndiceContaCartao,IndiceConta);
+      Result := True;
+      Exit
+      End
+    Else
+      If NConta > IndiceConta.Valor Then
+        L := M + 1
+      Else
+        U := M - 1
+  Else
+    Begin
+    {ShowMessage('Erro fatal durante pesquisa IContaCartao');}
+    Exit;
+    End;
+  End;
+End;
+
+Function TServerMethods1.PesquisaCarregaContaCartao(NConta : Int64; Narq : AnsiString) : AnsiString;
+Var
+  ArqContaCartao : File;
+  Qtd,
+  Lidos : Integer;
+  Teste,
+  AuxStr : AnsiString;
+  Pula : Boolean;
+  RegUnsrCartAux : TgUnsrCart;
+  RegUnsrContAux : TgUnsrCont;
+
+Begin
+Result := '';
+If PesquisaContaCartao(NConta, ArqIndiceContaCartao, Qtd) Then
+  Begin
+  AssignFile(ArqContaCartao,NArq);
+  Reset(ArqContaCartao,1);
+  Repeat
+    Seek(ArqContaCartao,IndiceConta.PosIni);
+
+    ReallocMem(BufCmp,IndiceConta.Tam);                   { Allocates only the space needed }
+    BlockRead(ArqContaCartao,BufCmp^,IndiceConta.Tam,Lidos);   { Read only the buffer To decompress }
+    ReallocMem(BufI,0);
+    Try                         { DeAllocates }
+      ZDecompress(BufCmp,IndiceConta.Tam,BufI,Lidos);
+//      DecompressBuf(BufCmp,IndiceConta.Tam,0,BufI,Lidos);
+    Except
+      Result := '';
+      Exit;
+      End;
+    SetLength(AuxStr,Lidos);
+    Move(BufI^,AuxStr[1],Lidos);
+    Teste := '';
+    If Lidos = SizeOf(RegUnsrCartAux) Then
+      Begin
+      Move(BufI^,RegUnsrCartAux,SizeOf(RegUnsrCartAux));
+      Teste := RegUnsrCartAux.TipoConta;
+      End
+    Else
+    If Lidos = SizeOf(RegUnsrContAux)-2 Then
+      Begin
+      Move(BufI^,RegUnsrContAux,SizeOf(RegUnsrContAux));
+      Teste := RegUnsrContAux.TipoConta;
+      End;
+
+    Pula := False;
+    If Teste <> '' Then
+      Begin
+      If (SubForm = '') Or (SubForm = 'CONTA') Or (SubForm = 'CARTAO') Or (SubForm = 'EXTR1') Then
+        If Teste <> 'F' Then
+          Pula := True;
+      If (SubForm = 'EMPRESARIAL1') Or (SubForm = 'EMPRESARIAL4') Then
+        If Teste = 'F' Then
+          Pula := True;
+      If (SubForm = 'EMPRESARIAL2') Or (SubForm = 'EMPRESARIAL3') Then
+        If Teste <> 'J' Then
+          Pula := True;
+      End;
+
+    If Not TestarFlag Then
+      Pula := False;
+
+    If Not Pula Then
+      If AuxStr[Length(AuxStr)] = #10 Then
+        Result := Result + AuxStr
+      Else
+        Result := Result + AuxStr + #13#10;
+    Try
+      Read(ArqIndiceContaCartao, IndiceConta);
+    Except
+      IndiceConta.Valor := NConta-1; // Para dar um valor diferente e sair do loop...
+      End; // Try
+  Until IndiceConta.Valor <> NConta;
+  If Length(Result) <> 0 Then
+    Result := Copy(Result,1,Length(Result)-2);
+  CloseFile(ArqContaCartao);
+  End;
+TestarFlag := True;
+End;
 
 Procedure TServerMethods1.LogaLocal(Const Mens : String);
 Var
@@ -468,6 +706,200 @@ begin
   arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
   result         := arqIni.ReadString('configuracoes', 'caminho',    '');
 end;
+
+function TServerMethods1.RetornarContaAux(arquivo, contaaux: String): String;
+var
+  NumConta : Int64;
+begin
+  AssignFile(ArqIndiceContaCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'CONTA.IND');
+  DadosDeCartao.Clear;
+  Reset(ArqIndiceContaCartao);
+  NumConta := StrToInt64(contaaux);
+  DadosDeCartao.Text := DadosDeCartao.Text + PesquisaCarregaContaCartao(NumConta, arquivo);
+  result := DadosDeCartao.Text;
+end;
+
+function TServerMethods1.RetornarContaCartao(arquivo, cartao: String): String;
+var
+  NumCartao : Int64;
+begin
+  AssignFile(ArqIndiceContaCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'CARTAO.IND');
+  DadosDeCartao.Clear;
+  Reset(ArqIndiceContaCartao);
+  NumCartao := StrToInt64(cartao);
+  DadosDeCartao.Text := PesquisaCarregaContaCartao(NumCartao, arquivo);
+  result := DadosDeCartao.Text;
+end;
+
+function TServerMethods1.RetornarContaCPF(arquivo, cpf: String): String;
+var
+  NumCpf : Int64;
+begin
+  AssignFile(ArqIndiceContaCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'CPFCGC.IND');
+  DadosDeConta.Clear;
+  Reset(ArqIndiceContaCartao);
+  NumCpf := StrToInt64(cpf);
+  DadosDeConta.Text := PesquisaCarregaContaCartao(NumCpf, arquivo);
+  result := DadosDeConta.Text;
+end;
+
+function TServerMethods1.RetornarContaNome(arquivo, nome, sobrenome: String): String;
+begin
+  AssignFile(ArqIndiceNomeCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'NOMECARTAO.IND');
+  DadosDeCartao.Clear;
+  Reset(ArqIndiceNomeCartao);
+  DadosDeCartao.Text := PesquisaCarregaNomeCartao(nome, sobrenome, arquivo);
+  result := DadosDeCartao.Text;
+end;
+
+Function TServerMethods1.PesquisaNomeCartao(Nome : AnsiString; Var ArqIndiceNomeCartao : TgArqIndiceNomeCartao) : Boolean;
+Var
+  L,
+  U,
+  M,
+  Posic,
+  Ofs : Integer;
+  Ok : Boolean;
+Begin
+Result := False;
+L := 0;
+U := (FileSize(ArqIndiceNomeCartao)) - 1;
+While L <= U Do
+  Begin
+  M := (L + U) Div 2;
+  Seek(ArqIndiceNomeCartao,M);
+  {$i-}
+  Read(ArqIndiceNomeCartao, IndiceNomeCartao);
+  {$i+}
+  If (IoResult = 0) Then
+    Begin
+    Ok := (Nome = Copy(IndiceNomeCartao.Valor,1,Length(Nome)));
+    If Ok Then
+      Begin
+      Ofs := 2;
+      Repeat
+        Try
+//          Seek(ArqIndiceNomeCartao,FilePos(ArqIndiceNomeCartao)-2);
+          Seek(ArqIndiceNomeCartao,FilePos(ArqIndiceNomeCartao)-Ofs); // Pula mais para trás SPEED UP THE SEARCH!
+          Read(ArqIndiceNomeCartao,IndiceNomeCartao);
+          If Ofs < 1024 Then
+            Ofs := Ofs * 2;
+        Except
+          Seek(ArqIndiceNomeCartao,0);
+          Break;
+          End; // Try
+        Ok := (Nome = Copy(IndiceNomeCartao.Valor,1,Length(Nome)));
+      Until Not Ok;
+
+      Repeat                                                       // Sincroniza
+        Read(ArqIndiceNomeCartao,IndiceNomeCartao);
+        Ok := (Nome = Copy(IndiceNomeCartao.Valor,1,Length(Nome)));
+      Until Ok;
+      Seek(ArqIndiceNomeCartao,FilePos(ArqIndiceNomeCartao)-1);
+
+      Posic := FilePos(ArqIndiceNomeCartao); // Aponta Para o Primeiro da lista
+//      Repeat
+//        Try
+//          Read(ArqIndiceNomeCartao,IndiceNomeCartao);
+//        Except
+//          Break;
+//          End; // Try
+//        Ok := (Nome = Copy(IndiceNomeCartao.Valor,1,Length(Nome)));
+//        If Ok Then
+//          Inc(Qtd);
+//      Until Not Ok;
+
+      Seek(ArqIndiceNomeCartao,Posic);
+      Read(ArqIndiceNomeCartao,IndiceNomeCartao);
+      Result := True;
+      Exit
+      End
+    Else
+      If Nome > Copy(IndiceNomeCartao.Valor,1,Length(Nome)) Then
+        L := M + 1
+      Else
+        U := M - 1
+    End
+  Else
+    Begin
+    //ShowMessage('Erro fatal durante pesquisa INome');
+    Exit;
+    End;
+  End;
+End;
+
+Function TServerMethods1.PesquisaCarregaNomeCartao(Nome, SobreNome : AnsiString; Narq : AnsiString) : AnsiString;
+Var
+  ArqNomeExt : File;
+  PosDados,
+  QtdReal,
+  Lidos : Integer;
+  RegUnsrCartAux : TgUnsrCart;
+  StrAux : AnsiString;
+  Pula,
+  Ok : Boolean;
+Begin
+Result := '';
+If PesquisaNomeCartao(Nome, ArqIndiceNomeCartao) Then
+  Begin
+  AssignFile(ArqNomeExt,NArq);
+  Reset(ArqNomeExt,1);
+  QtdReal := 0;
+  PosDados := -1;
+  Repeat
+    Ok := True;
+    If (Sobrenome <> '') Then
+      Ok := (Pos(SobreNome,Copy(IndiceNomeCartao.Valor,Length(Nome)+1,Length(IndiceNomeCartao.Valor)-Length(Nome))) <> 0);
+    If Ok And (PosDados <> IndiceNomeCartao.PosIni) Then
+      Begin
+      PosDados := IndiceNomeCartao.PosIni;
+      Seek(ArqNomeExt,IndiceNomeCartao.PosIni);
+      ReallocMem(BufCmp,IndiceNomeCartao.Tam);                   { Allocates only the space needed }
+      BlockRead(ArqNomeExt,BufCmp^,IndiceNomeCartao.Tam,Lidos);   { Read only the buffer To decompress }
+      ReallocMem(BufI,0);                               { DeAllocates }
+      ZDecompress(BufCmp,IndiceNomeCartao.Tam,BufI,Lidos);
+//      DecompressBuf(BufCmp,IndiceNomeCartao.Tam,0,BufI,Lidos);
+      SetLength(StrAux,Lidos);
+      Move(BufI^,StrAux[1],Lidos);
+      Move(BufI^,RegUnsrCartAux,SizeOf(RegUnsrCartAux));
+      Pula := False;
+      If (SubForm = '') Or (SubForm = 'CONTA') Or (SubForm = 'CARTAO') Or (SubForm = 'EXTR1') Then
+        If RegUnsrCartAux.TipoConta <> 'F' Then
+          Pula := True;
+      If (SubForm = 'EMPRESARIAL1') Or (SubForm = 'EMPRESARIAL4') Then
+        If RegUnsrCartAux.TipoConta = 'F' Then
+          Pula := True;
+      If (SubForm = 'EMPRESARIAL2') Or (SubForm = 'EMPRESARIAL3') Then // Dados da empresa e portadores
+        If RegUnsrCartAux.TipoConta <> 'J' Then
+          Pula := True;
+
+      If Not TestarFlag Then
+        Pula := False;
+
+      If Not Pula Then
+        Begin
+        Result := Result + StrAux;
+        Inc(QtdReal);
+        If QtdReal = 1000 Then
+          Begin
+          ShowMessage('Redefina a sua pesquisa. Mais de 1000 registros encontrados, desprezando o restante...');
+//        Qtd := 0;
+          Break;
+          End;
+        End;
+      End;
+    Try
+      Read(ArqIndiceNomeCartao,IndiceNomeCartao);      // Muda o registro
+    Except
+      Break
+      End; // Try
+//    Dec(Qtd);
+//  Until Qtd <= 0;
+  Until (Nome <> Copy(IndiceNomeCartao.Valor,1,Length(Nome)));
+  CloseFile(ArqNomeExt);
+  End;
+TestarFlag := True;
+End;
 
 end.
 

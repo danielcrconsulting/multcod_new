@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 271
   Top = 114
-  Caption = 'Configurar Server V1.0.2 08/06/2022'
+  Caption = '+'
   ClientHeight = 235
   ClientWidth = 443
   Color = clBtnFace
@@ -11,6 +11,7 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel

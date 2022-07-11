@@ -889,12 +889,12 @@ Begin
         if (not ValidarADNew(usuarioLogado,senhaAD)) or (Trim(senhaAD) = '') then
         begin
           ShowMessage('Usuário da rede não autorizado');
-          OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'NEGADO');
+          OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'FALHA');
           Application.Terminate;
           Close;
           exit;
         end;
-        OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'ACEITO');
+        OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'SUCESSO');
       end;
     end;
   end;

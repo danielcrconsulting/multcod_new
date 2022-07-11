@@ -28,6 +28,7 @@ type
     procedure ButtonStopClick(Sender: TObject);
     procedure ButtonOpenBrowserClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FServer: TIdHTTPWebBrokerBridge;
     procedure StartServer;
@@ -99,6 +100,11 @@ begin
   FServer := TIdHTTPWebBrokerBridge.Create(Self);
   arqIni         := TIniFile.Create(GetCurrentDir+'/confserver.ini');
   EditPort.Text  := arqIni.ReadString('configuracoes', 'port',        '');
+end;
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+  ButtonStart.Click;
 end;
 
 procedure TForm1.StartServer;

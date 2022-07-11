@@ -2586,6 +2586,7 @@ Var
   strsql.Add( IntToStr(TotTamInd) + ',');
   strsql.Add( IntToStr(TotTamExt) + ',');
   strsql.Add( IntToStr(TotTam) + ')');
+  strsql.SaveToFile('d:\rom\protocolo.sql');
   Try
     FormGeral.Persistir(strsql.Text, nil,1);
     //FormGeral.QueryInsertProtocolo.ExecSQL;
