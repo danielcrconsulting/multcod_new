@@ -1,6 +1,5 @@
-﻿// 
+// 
 // Created by the DataSnap proxy generator.
-// 21/06/2022 18:52:17
 // 
 
 function DSAdmin(connectionInfo)
@@ -621,25 +620,11 @@ function TServerMethods1(connectionInfo)
   this.executor = new ServerFunctionExecutor("TServerMethods1",connectionInfo);
 
   /*
-   * @param Sender [in] - Type on server: TObject
-   */
-  this.DSServerModuleDestroy = function(Sender) {
-    this.executor.executeMethod('"DSServerModuleDestroy"', "POST", [Sender], arguments[1], false, arguments[2], arguments[3]);
-  };
-
-  /*
-   * @param Sender [in] - Type on server: TObject
-   */
-  this.DSServerModuleCreate = function(Sender) {
-    this.executor.executeMethod('"DSServerModuleCreate"', "POST", [Sender], arguments[1], false, arguments[2], arguments[3]);
-  };
-
-  /*
    * @param Value [in] - Type on server: string
    * @return result - Type on server: string
    */
   this.EchoString = function(Value) {
-    var returnObject = this.executor.executeMethod('EchoString', "GET", [Value], arguments[1], true, arguments[2], arguments[3]);
+    var returnObject = this.executor.executeMethod("EchoString", "GET", [Value], arguments[1], true, arguments[2], arguments[3]);
     if (arguments[1] == null) {
       if (returnObject != null && returnObject.result != null && isArray(returnObject.result)) {
         var resultArray = returnObject.result;
@@ -661,7 +646,7 @@ function TServerMethods1(connectionInfo)
    * @return result - Type on server: string
    */
   this.ReverseString = function(Value) {
-    var returnObject = this.executor.executeMethod('ReverseString', "GET", [Value], arguments[1], true, arguments[2], arguments[3]);
+    var returnObject = this.executor.executeMethod("ReverseString", "GET", [Value], arguments[1], true, arguments[2], arguments[3]);
     if (arguments[1] == null) {
       if (returnObject != null && returnObject.result != null && isArray(returnObject.result)) {
         var resultArray = returnObject.result;
@@ -677,178 +662,10 @@ function TServerMethods1(connectionInfo)
   this.ReverseString_URL = function(Value) {
     return this.executor.getMethodURL("ReverseString", "GET", [Value], arguments[1])[0];
   };
-
-  /*
-   * @param servidor [in/out] - Type on server: string
-   * @param driverservidor [in/out] - Type on server: string
-   * @param porta [in/out] - Type on server: string
-   * @param banco [in/out] - Type on server: string
-   * @param usuario [in/out] - Type on server: string
-   * @param senha [in/out] - Type on server: string
-   * @param NomeEstacao [in/out] - Type on server: string
-   * @return result - Type on server: Boolean
-   */
-  this.RetornarParametrosConn = function(servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao) {
-    var returnObject = this.executor.executeMethod('RetornarParametrosConn', "GET", [servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao], arguments[7], true, arguments[8], arguments[9]);
-    if (arguments[7] == null) {
-      if (returnObject != null && returnObject.result != null && isArray(returnObject.result)) {
-        var resultArray = returnObject.result;
-        var resultObject = new Object();
-        resultObject.servidor = resultArray[0];
-        resultObject.driverservidor = resultArray[1];
-        resultObject.porta = resultArray[2];
-        resultObject.banco = resultArray[3];
-        resultObject.usuario = resultArray[4];
-        resultObject.senha = resultArray[5];
-        resultObject.NomeEstacao = resultArray[6];
-        resultObject.result = resultArray[7];
-        return resultObject;
-      }
-      return returnObject;
-    }
-  };
-
-  this.RetornarParametrosConn_URL = function(servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao) {
-    return this.executor.getMethodURL("RetornarParametrosConn", "GET", [servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao], arguments[7])[0];
-  };
-
-  /*
-   * @return result - Type on server: string
-   */
-  this.RetornarParametroAD = function() {
-    var returnObject = this.executor.executeMethod('RetornarParametroAD', "GET", [], arguments[0], true, arguments[1], arguments[2]);
-    if (arguments[0] == null) {
-      if (returnObject != null && returnObject.result != null && isArray(returnObject.result)) {
-        var resultArray = returnObject.result;
-        var resultObject = new Object();
-        resultObject.result = resultArray[0];
-        return resultObject;
-      }
-      return returnObject;
-    }
-  };
-
-  this.RetornarParametroAD_URL = function() {
-    return this.executor.getMethodURL("RetornarParametroAD", "GET", [], arguments[0])[0];
-  };
-
-  /*
-   * @param usuario [in] - Type on server: string
-   * @param status [in] - Type on server: string
-   */
-  this.GravarLOGAD = function(usuario, status) {
-    this.executor.executeMethod('GravarLOGAD', "GET", [usuario, status], arguments[2], false, arguments[3], arguments[4]);
-  };
-
-  this.GravarLOGAD_URL = function(usuario, status) {
-    return this.executor.getMethodURL("GravarLOGAD", "GET", [usuario, status], arguments[2])[0];
-  };
-
-  /*
-   * @param SQL [in] - Type on server: string
-   * @param bd [in] - Type on server: Integer
-   * @return result - Type on server: string
-   */
-  this.RetornarDadosBanco = function(SQL, bd) {
-    var returnObject = this.executor.executeMethod('RetornarDadosBanco', "GET", [SQL, bd], arguments[2], true, arguments[3], arguments[4]);
-    if (arguments[2] == null) {
-      if (returnObject != null && returnObject.result != null && isArray(returnObject.result)) {
-        var resultArray = returnObject.result;
-        var resultObject = new Object();
-        resultObject.SQL = SQL;
-        resultObject.bd = bd;
-        resultObject.result = resultArray[0];
-        return resultObject;
-      }
-      return returnObject;
-    }
-  };
-
-  this.RetornarDadosBanco_URL = function(SQL, bd) {
-    return this.executor.getMethodURL("RetornarDadosBanco", "GET", [SQL, bd], arguments[2])[0];
-  };
-
-  /*
-   * @param SQL [in] - Type on server: string
-   * @param bd [in] - Type on server: Integer
-   */
-  this.PersistirBanco = function(SQL, bd) {
-    this.executor.executeMethod('PersistirBanco', "GET", [SQL, bd], arguments[2], false, arguments[3], arguments[4]);
-  };
-
-  this.PersistirBanco_URL = function(SQL, bd) {
-    return this.executor.getMethodURL("PersistirBanco", "GET", [SQL, bd], arguments[2])[0];
-  };
-
-  /*
-   * @param arq [in] - Type on server: string
-   * @return result - Type on server: TJSONArray
-   */
-  this.BaixarArquivo = function(arq) {
-    var returnObject = this.executor.executeMethod('BaixarArquivo', "GET", [arq], arguments[1], true, arguments[2], arguments[3]);
-    if (arguments[1] == null) {
-      if (returnObject != null && returnObject.result != null && isArray(returnObject.result)) {
-        var resultArray = returnObject.result;
-        var resultObject = new Object();
-        resultObject.arq = arq;
-        resultObject.result = resultArray[0];
-        if (returnObject.cacheId != null && returnObject.cmdIndex != null) {
-          resultObject._cacheId = returnObject.cacheId;
-          resultObject._cmdIndex = returnObject.cmdIndex;
-        }
-        return resultObject;
-      }
-      return returnObject;
-    }
-  };
-
-  this.BaixarArquivo_URL = function(arq) {
-    return this.executor.getMethodURL("BaixarArquivo", "GET", [arq], arguments[1])[0];
-  };
-
-  this.fazerumteste = function() {
-    this.executor.executeMethod('fazerumteste', "GET", [], arguments[0], false, arguments[1], arguments[2]);
-  };
-
-  this.fazerumteste_URL = function() {
-    return this.executor.getMethodURL("fazerumteste", "GET", [], arguments[0])[0];
-  };
-
-  this.LimpaMemoria = function() {
-    this.executor.executeMethod('LimpaMemoria', "GET", [], arguments[0], false, arguments[1], arguments[2]);
-  };
-
-  this.LimpaMemoria_URL = function() {
-    return this.executor.getMethodURL("LimpaMemoria", "GET", [], arguments[0])[0];
-  };
-
-  /*
-   * @param pUsuario [in] - Type on server: string
-   * @param pSenha [in] - Type on server: string
-   * @return result - Type on server: Boolean
-   */
-  this.ValidarAD = function(pUsuario, pSenha) {
-    var returnObject = this.executor.executeMethod('ValidarAD', "GET", [pUsuario, pSenha], arguments[2], true, arguments[3], arguments[4]);
-    if (arguments[2] == null) {
-      if (returnObject != null && returnObject.result != null && isArray(returnObject.result)) {
-        var resultArray = returnObject.result;
-        var resultObject = new Object();
-        resultObject.pUsuario = pUsuario;
-        resultObject.pSenha = pSenha;
-        resultObject.result = resultArray[0];
-        return resultObject;
-      }
-      return returnObject;
-    }
-  };
-
-  this.ValidarAD_URL = function(pUsuario, pSenha) {
-    return this.executor.getMethodURL("ValidarAD", "GET", [pUsuario, pSenha], arguments[2])[0];
-  };
 }
 
 var JSProxyClassList = {
   "DSAdmin": ["GetPlatformName","ClearResources","FindPackages","FindClasses","FindMethods","CreateServerClasses","DropServerClasses","CreateServerMethods","DropServerMethods","GetServerClasses","ListClasses","DescribeClass","ListMethods","DescribeMethod","GetServerMethods","GetServerMethodParameters","GetDatabaseConnectionProperties","GetDSServerName","ConsumeClientChannel","ConsumeClientChannelTimeout","CloseClientChannel","RegisterClientCallbackServer","UnregisterClientCallback","BroadcastToChannel","BroadcastObjectToChannel","NotifyCallback","NotifyObject"],
-  "TServerMethods1": ["DSServerModuleDestroy","DSServerModuleCreate","EchoString","ReverseString","RetornarParametrosConn","RetornarParametroAD","GravarLOGAD","RetornarDadosBanco","PersistirBanco","BaixarArquivo","fazerumteste","LimpaMemoria","ValidarAD"]
+  "TServerMethods1": ["EchoString","ReverseString"]
 };
 

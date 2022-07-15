@@ -167,6 +167,7 @@ type
     Function RetornarContaCPF(arquivo, cpf : String) : String;
     Function RetornarContaNome(arquivo, nome, sobrenome : String) : String;
     Function RetornarContaAux(arquivo, contaaux : String) : String;
+    function RetornarContaEmpresa(arquivo : String; conta : Int64): String;
   end;
 
 implementation
@@ -752,6 +753,15 @@ begin
   result := DadosDeCartao.Text;
 end;
 
+function TServerMethods1.RetornarContaEmpresa(arquivo : String; conta : Int64): String;
+begin
+  AssignFile(ArqIndiceContaCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'CONTAEMPRESA.IND');
+  DadosDeContaDePortadores.Clear;
+  Reset(ArqIndiceContaCartao);
+  DadosDeContaDePortadores.Text := PesquisaCarregaContaCartao(conta, arquivo);
+  result := DadosDeContaDePortadores.Text;
+end;
+
 Function TServerMethods1.PesquisaNomeCartao(Nome : AnsiString; Var ArqIndiceNomeCartao : TgArqIndiceNomeCartao) : Boolean;
 Var
   L,
@@ -882,7 +892,7 @@ If PesquisaNomeCartao(Nome, ArqIndiceNomeCartao) Then
         Inc(QtdReal);
         If QtdReal = 1000 Then
           Begin
-          ShowMessage('Redefina a sua pesquisa. Mais de 1000 registros encontrados, desprezando o restante...');
+          //ShowMessage('Redefina a sua pesquisa. Mais de 1000 registros encontrados, desprezando o restante...');
 //        Qtd := 0;
           Break;
           End;

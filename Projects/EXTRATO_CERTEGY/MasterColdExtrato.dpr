@@ -22,7 +22,9 @@ uses
   SuTypGer in '..\Subrug\SuTypGer.pas',
   ZLIBEX in '..\Subrug\DelphiZLib\ZLIBEX.PAS',
   Subrug in '..\Subrug\Subrug.pas',
-  Pilha in '..\CR CONSULTING\Pilha.pas';
+  Pilha in '..\CR CONSULTING\Pilha.pas',
+  UMetodosServer in '..\..\server_master\UMetodosServer.pas',
+  ClientClassesUnit2 in '..\..\server_master\ClientClassesUnit2.pas';
 
 {$R *.RES}
 

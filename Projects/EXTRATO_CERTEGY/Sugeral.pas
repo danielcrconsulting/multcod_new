@@ -5,7 +5,7 @@ Interface
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Db, {DBTables,} IniFiles, SuTypGer, IBX.IBDatabase, IBX.IBSQL, IBX.IBCustomDataSet,
-  IBX.IBTable, IBX.IBQuery, StdCtrls, Data.DBXFirebird, Data.SqlExpr{, dfPdf};
+  IBX.IBTable, IBX.IBQuery, StdCtrls, Data.DBXFirebird, Data.SqlExpr{, dfPdf}, uMetodosServer;
 
 Type
   TFormGeral = Class(TForm)

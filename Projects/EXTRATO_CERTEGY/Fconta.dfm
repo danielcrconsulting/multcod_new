@@ -1,20 +1,19 @@
 object ContaForm: TContaForm
   Left = 111
   Top = 148
-  Width = 704
-  Height = 517
   Caption = 'Dados de Conta'
+  ClientHeight = 478
+  ClientWidth = 688
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Image1: TImage
     Left = 583
     Top = 8
@@ -25,29 +24,29 @@ object ContaForm: TContaForm
   object Label27: TLabel
     Left = 144
     Top = 64
-    Width = 17
-    Height = 13
+    Width = 18
+    Height = 14
     Caption = 'Org'
   end
   object Label28: TLabel
     Left = 376
     Top = 64
     Width = 24
-    Height = 13
+    Height = 14
     Caption = 'Logo'
   end
   object Label29: TLabel
     Left = 144
     Top = 96
     Width = 28
-    Height = 13
+    Height = 14
     Caption = 'Conta'
   end
   object Label30: TLabel
     Left = 144
     Top = 120
-    Width = 28
-    Height = 13
+    Width = 27
+    Height = 14
     Caption = 'Nome'
   end
   object Image2: TImage
@@ -153,50 +152,50 @@ object ContaForm: TContaForm
       object Label4: TLabel
         Left = 16
         Top = 40
-        Width = 72
-        Height = 13
+        Width = 73
+        Height = 14
         Caption = 'Conta Empresa'
       end
       object Label5: TLabel
         Left = 16
         Top = 64
-        Width = 40
-        Height = 13
+        Width = 39
+        Height = 14
         Caption = 'Cpf/Cgc'
       end
       object Label6: TLabel
         Left = 16
         Top = 88
-        Width = 30
-        Height = 13
+        Width = 31
+        Height = 14
         Caption = 'Status'
       end
       object Label7: TLabel
         Left = 16
         Top = 112
-        Width = 75
-        Height = 13
+        Width = 74
+        Height = 14
         Caption = 'Nome Completo'
       end
       object Label17: TLabel
         Left = 16
         Top = 152
         Width = 32
-        Height = 13
+        Height = 14
         Caption = 'Op'#231#227'o'
       end
       object Label1: TLabel
         Left = 200
         Top = 152
         Width = 32
-        Height = 13
+        Height = 14
         Caption = 'Label1'
       end
       object Edit7: TEdit
         Left = 144
         Top = 104
         Width = 377
-        Height = 21
+        Height = 22
         TabOrder = 0
         Text = 'Edit7'
       end
@@ -204,7 +203,7 @@ object ContaForm: TContaForm
         Left = 144
         Top = 80
         Width = 41
-        Height = 21
+        Height = 22
         TabOrder = 1
         Text = 'Edit6'
       end
@@ -212,7 +211,7 @@ object ContaForm: TContaForm
         Left = 144
         Top = 56
         Width = 121
-        Height = 21
+        Height = 22
         TabOrder = 2
         Text = 'Edit5'
       end
@@ -220,7 +219,7 @@ object ContaForm: TContaForm
         Left = 144
         Top = 32
         Width = 121
-        Height = 21
+        Height = 22
         TabOrder = 3
         Text = 'Edit4'
       end
@@ -228,7 +227,7 @@ object ContaForm: TContaForm
         Left = 144
         Top = 144
         Width = 41
-        Height = 21
+        Height = 22
         TabOrder = 4
         Text = 'Edit17'
       end
@@ -240,63 +239,63 @@ object ContaForm: TContaForm
         Left = 16
         Top = 16
         Width = 104
-        Height = 13
+        Height = 14
         Caption = 'Endere'#231'o Residencial'
       end
       object Label9: TLabel
         Left = 16
         Top = 40
         Width = 64
-        Height = 13
+        Height = 14
         Caption = 'Complemento'
       end
       object Label10: TLabel
         Left = 16
         Top = 64
-        Width = 27
-        Height = 13
+        Width = 29
+        Height = 14
         Caption = 'Bairro'
       end
       object Label11: TLabel
         Left = 16
         Top = 88
         Width = 19
-        Height = 13
+        Height = 14
         Caption = 'Cep'
       end
       object Label12: TLabel
         Left = 16
         Top = 112
         Width = 33
-        Height = 13
+        Height = 14
         Caption = 'Cidade'
       end
       object Label13: TLabel
         Left = 16
         Top = 136
-        Width = 14
-        Height = 13
+        Width = 13
+        Height = 14
         Caption = 'UF'
       end
       object Label14: TLabel
         Left = 16
         Top = 160
-        Width = 24
-        Height = 13
+        Width = 21
+        Height = 14
         Caption = 'DDD'
       end
       object Label15: TLabel
         Left = 16
         Top = 184
-        Width = 15
-        Height = 13
+        Width = 13
+        Height = 14
         Caption = 'Tel'
       end
       object Label16: TLabel
         Left = 16
         Top = 208
-        Width = 30
-        Height = 13
+        Width = 29
+        Height = 14
         Caption = 'Ramal'
       end
       object Edit8: TEdit
@@ -378,64 +377,64 @@ object ContaForm: TContaForm
       object Label18: TLabel
         Left = 16
         Top = 208
-        Width = 30
-        Height = 13
+        Width = 29
+        Height = 14
         Caption = 'Ramal'
       end
       object Label19: TLabel
         Left = 16
         Top = 184
-        Width = 15
-        Height = 13
+        Width = 13
+        Height = 14
         Caption = 'Tel'
       end
       object Label20: TLabel
         Left = 16
         Top = 160
-        Width = 24
-        Height = 13
+        Width = 21
+        Height = 14
         Caption = 'DDD'
       end
       object Label21: TLabel
         Left = 16
         Top = 136
-        Width = 14
-        Height = 13
+        Width = 13
+        Height = 14
         Caption = 'UF'
       end
       object Label22: TLabel
         Left = 16
         Top = 112
         Width = 33
-        Height = 13
+        Height = 14
         Caption = 'Cidade'
       end
       object Label23: TLabel
         Left = 16
         Top = 88
         Width = 19
-        Height = 13
+        Height = 14
         Caption = 'Cep'
       end
       object Label24: TLabel
         Left = 16
         Top = 64
-        Width = 27
-        Height = 13
+        Width = 29
+        Height = 14
         Caption = 'Bairro'
       end
       object Label25: TLabel
         Left = 16
         Top = 40
         Width = 64
-        Height = 13
+        Height = 14
         Caption = 'Complemento'
       end
       object Label26: TLabel
         Left = 16
         Top = 16
-        Width = 95
-        Height = 13
+        Width = 96
+        Height = 14
         Caption = 'Endere'#231'o Comercial'
       end
       object Edit26: TEdit
@@ -517,43 +516,43 @@ object ContaForm: TContaForm
       object Label33: TLabel
         Left = 16
         Top = 64
-        Width = 70
-        Height = 13
+        Width = 67
+        Height = 14
         Caption = 'D'#233'bito em C/C'
       end
       object Label32: TLabel
         Left = 16
         Top = 88
         Width = 101
-        Height = 13
+        Height = 14
         Caption = 'C'#243'digo do Bloqueio 1'
       end
       object Label31: TLabel
         Left = 16
         Top = 112
-        Width = 91
-        Height = 13
+        Width = 90
+        Height = 14
         Caption = 'Data do Bloqueio 1'
       end
       object Label3: TLabel
         Left = 16
         Top = 136
         Width = 101
-        Height = 13
+        Height = 14
         Caption = 'C'#243'digo do Bloqueio 2'
       end
       object Label2: TLabel
         Left = 16
         Top = 160
-        Width = 91
-        Height = 13
+        Width = 90
+        Height = 14
         Caption = 'Data do Bloqueio 2'
       end
       object Edit28: TEdit
         Left = 144
         Top = 56
         Width = 121
-        Height = 21
+        Height = 22
         TabOrder = 0
         Text = 'Edit28'
       end
@@ -561,7 +560,7 @@ object ContaForm: TContaForm
         Left = 144
         Top = 80
         Width = 121
-        Height = 21
+        Height = 22
         TabOrder = 1
         Text = 'Edit27'
       end
@@ -569,7 +568,7 @@ object ContaForm: TContaForm
         Left = 144
         Top = 104
         Width = 121
-        Height = 21
+        Height = 22
         TabOrder = 2
         Text = 'Edit3'
       end
@@ -577,7 +576,7 @@ object ContaForm: TContaForm
         Left = 144
         Top = 128
         Width = 121
-        Height = 21
+        Height = 22
         TabOrder = 3
         Text = 'Edit2'
       end
@@ -585,7 +584,7 @@ object ContaForm: TContaForm
         Left = 144
         Top = 152
         Width = 121
-        Height = 21
+        Height = 22
         TabOrder = 4
         Text = 'Edit1'
       end
