@@ -480,12 +480,13 @@ If EditConta.Text <> '' Then
 If EditCartao.Text <> '' Then
   Begin
   //showMessage('Path do índice cartões:'+#13#10+ExtractFilePath(NArqCart));
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CARTAO.IND');
+  //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CARTAO.IND');
   DadosDeCartao.Clear;
-  Reset(ArqIndiceContaCartao);
+  //Reset(ArqIndiceContaCartao);
   NumCartao := StrToInt64(EditCartao.Text);
-  DadosDeCartao.Text := PesquisaCarregaContaCartao(NumCartao, NArqCart);
-  CloseFile(ArqIndiceContaCartao);
+  //DadosDeCartao.Text := PesquisaCarregaContaCartao(NumCartao, NArqCart);
+  DadosDeCartao.Text := formGeral.RetornarContaCartao(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CARTAO.IND', EditCartao.Text, NArqCart);
+  //CloseFile(ArqIndiceContaCartao);
   If DadosDeCartao.Count = 0 Then
     Begin
     ShowMessage('Dados deste Cartão não encontrados, verifique...');
@@ -496,12 +497,13 @@ If EditCartao.Text <> '' Then
 If EditCpf.Text <> '' Then
   Begin
   //showMessage('Path do índice de cpf/cnpj:'+#13#10+ExtractFilePath(NArqCont));
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CPFCGC.IND');
+  //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CPFCGC.IND');
   DadosDeConta.Clear;
-  Reset(ArqIndiceContaCartao);
+  //Reset(ArqIndiceContaCartao);
   NumCpf := StrToInt64(EditCpf.Text);
-  DadosDeConta.Text := PesquisaCarregaContaCartao(NumCpf, NArqCont);
-  CloseFile(ArqIndiceContaCartao);
+  //DadosDeConta.Text := PesquisaCarregaContaCartao(NumCpf, NArqCont);
+  DadosDeConta.Text := formGeral.RetornarContaCPF(ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CPFCGC.IND', EditCpf.Text);
+  //CloseFile(ArqIndiceContaCartao);
   If DadosDeConta.Count = 0 Then
     Begin
     ShowMessage('Dados de conta deste Cpf não encontrados, verifique...');
@@ -518,12 +520,13 @@ If EditNome.Text <> '' Then
   Begin
   Screen.Cursor := crHourGlass;
   //showMessage('Path do índice de nomes:'+#13#10+ExtractFilePath(NArqCart));
-  AssignFile(ArqIndiceNomeCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND');
+  //AssignFile(ArqIndiceNomeCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND');
 //  ShowMessage(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND');
   DadosDeCartao.Clear;
-  Reset(ArqIndiceNomeCartao);
-  DadosDeCartao.Text := PesquisaCarregaNomeCartao(EditNome.Text, EditSobreNome.Text, NArqCart);
-  CloseFile(ArqIndiceNomeCartao);
+  //Reset(ArqIndiceNomeCartao);
+  //DadosDeCartao.Text := PesquisaCarregaNomeCartao(EditNome.Text, EditSobreNome.Text, NArqCart);
+  DadosDeCartao.Text := formGeral.RetornarContaNome(NArqCart, EditNome.Text, EditSobreNome.Text);
+  //CloseFile(ArqIndiceNomeCartao);
   Screen.Cursor := crDefault;
   If DadosDeCartao.Count = 0 Then
     Begin
@@ -536,13 +539,13 @@ If EditNome.Text <> '' Then
 If AuxConta <> '' Then // Verificar
   Begin
   //showMessage('Path do índice de contas:'+#13#10+ExtractFilePath(NArqCart));
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND');
+  //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND');
   DadosDeCartao.Clear;
-  Reset(ArqIndiceContaCartao);
+  //Reset(ArqIndiceContaCartao);
   IConta := 1;
   Repeat
     NumConta := StrToInt64(AuxConta);
-    DadosDeCartao.Text := DadosDeCartao.Text + PesquisaCarregaContaCartao(NumConta, NArqCart);
+    DadosDeCartao.Text := DadosDeCartao.Text + formGeral.RetornarContaCartao(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND', AuxConta, NArqCart);
     Inc(IConta);
 //    If IConta >= DadosDeConta.Count Then  // O último ficava de fora.....
     If IConta > DadosDeConta.Count Then
@@ -553,19 +556,20 @@ If AuxConta <> '' Then // Verificar
     Move(AuxStr[1],RgRcb.RegUnsrContAux,Length(DadosDeConta[IConta-1]));
     AuxConta := Trim(RgRcb.RegUnsrContAux.ContNormal.Conta);
   Until False;
-  CloseFile(ArqIndiceContaCartao);
+  //CloseFile(ArqIndiceContaCartao);
 
   If DadosDeCartao.Count = 0 Then
     Begin
 
 //    Tenta Buscar Info de Conta se ainda não pesquisou...
-    AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND');
+    //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND');
     If DadosDeConta.Count = 0 Then
       Begin
       DadosDeConta.Clear;
-      Reset(ArqIndiceContaCartao);
-      DadosDeConta.Text := PesquisaCarregaContaCartao(NumConta, NArqCont);
-      CloseFile(ArqIndiceContaCartao);
+      //Reset(ArqIndiceContaCartao);
+      //DadosDeConta.Text := PesquisaCarregaContaCartao(NumConta, NArqCont);
+      DadosDeCartao.Text := formGeral.RetornarContaCartao(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND', AuxConta, NArqCart);
+      //CloseFile(ArqIndiceContaCartao);
       End;
 
     If DadosDeConta.Count = 0 Then

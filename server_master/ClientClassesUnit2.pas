@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 13/07/2022 18:19:09
+// 18/07/2022 18:35:03
 //
 
 unit ClientClassesUnit2;
@@ -49,7 +49,7 @@ type
     procedure fazerumteste;
     procedure LimpaMemoria;
     function ValidarAD(pUsuario: string; pSenha: string; const ARequestFilter: string = ''): Boolean;
-    function RetornarContaCartao(arquivo: string; cartao: string; const ARequestFilter: string = ''): string;
+    function RetornarContaCartao(arquivo: string; cartao: string; NArqCart: string; const ARequestFilter: string = ''): string;
     function RetornarContaCPF(arquivo: string; cpf: string; const ARequestFilter: string = ''): string;
     function RetornarContaNome(arquivo: string; nome: string; sobrenome: string; const ARequestFilter: string = ''): string;
     function RetornarContaAux(arquivo: string; contaaux: string; const ARequestFilter: string = ''): string;
@@ -134,10 +134,11 @@ const
     (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
   );
 
-  TServerMethods1_RetornarContaCartao: array [0..2] of TDSRestParameterMetaData =
+  TServerMethods1_RetornarContaCartao: array [0..3] of TDSRestParameterMetaData =
   (
     (Name: 'arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: 'cartao'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'NArqCart'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
@@ -398,7 +399,7 @@ begin
   Result := FValidarADCommand.Parameters[2].Value.GetBoolean;
 end;
 
-function TServerMethods1Client.RetornarContaCartao(arquivo: string; cartao: string; const ARequestFilter: string): string;
+function TServerMethods1Client.RetornarContaCartao(arquivo: string; cartao: string; NArqCart: string; const ARequestFilter: string): string;
 begin
   if FRetornarContaCartaoCommand = nil then
   begin
@@ -409,8 +410,9 @@ begin
   end;
   FRetornarContaCartaoCommand.Parameters[0].Value.SetWideString(arquivo);
   FRetornarContaCartaoCommand.Parameters[1].Value.SetWideString(cartao);
+  FRetornarContaCartaoCommand.Parameters[2].Value.SetWideString(NArqCart);
   FRetornarContaCartaoCommand.Execute(ARequestFilter);
-  Result := FRetornarContaCartaoCommand.Parameters[2].Value.GetWideString;
+  Result := FRetornarContaCartaoCommand.Parameters[3].Value.GetWideString;
 end;
 
 function TServerMethods1Client.RetornarContaCPF(arquivo: string; cpf: string; const ARequestFilter: string): string;

@@ -10,6 +10,7 @@ object FormGeral: TFormGeral
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 14
