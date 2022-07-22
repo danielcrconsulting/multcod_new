@@ -14,7 +14,7 @@ uses System.SysUtils, System.Classes, System.Json,
   FireDAC.Phys.MSSQL, FireDAC.Stan.StorageBin, FireDAC.Comp.UI, System.Zlib,
   System.Zip, System.Variants, SutypGer, Subrug, SuTypMultiCold, Pilha,
   Bde.DBTables, dm, UclsAux, UMulticoldReport, Windows, FireDAC.Phys.FB,
-  FireDAC.Phys.FBDef;
+  FireDAC.Phys.FBDef, ZLibEx;
 
 
 
@@ -165,7 +165,7 @@ type
     function ValidarAD(pUsuario, pSenha: String): Boolean;
     Function RetornarContaCartao(arquivo, cartao, NArqCart : String) : String;
     Function RetornarContaCPF(arquivo, cpf : String) : String;
-    Function RetornarContaNome(arquivo, nome, sobrenome : String) : String;
+    Function RetornarContaNome(arquivo, NArqCart, nome, sobrenome : String) : String;
     Function RetornarContaAux(arquivo, contaaux : String) : String;
     function RetornarContaEmpresa(arquivo : String; conta : Int64): String;
   end;
@@ -750,13 +750,13 @@ begin
   FreeAndNil(DadosDeConta);
 end;
 
-function TServerMethods1.RetornarContaNome(arquivo, nome, sobrenome: String): String;
+function TServerMethods1.RetornarContaNome(arquivo, NArqCart, nome, sobrenome: String): String;
 begin
   AssignFile(ArqIndiceNomeCartao,arquivo);
   DadosDeCartao := TStringList.Create;
   DadosDeCartao.Clear;
   Reset(ArqIndiceNomeCartao);
-  DadosDeCartao.Text := PesquisaCarregaNomeCartao(nome, sobrenome, arquivo);
+  DadosDeCartao.Text := PesquisaCarregaNomeCartao(nome, sobrenome, NArqCart);
   result := DadosDeCartao.Text;
   FreeAndNil(DadosDeCartao);
 end;

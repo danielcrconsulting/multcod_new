@@ -522,10 +522,10 @@ If EditNome.Text <> '' Then
   //showMessage('Path do índice de nomes:'+#13#10+ExtractFilePath(NArqCart));
   //AssignFile(ArqIndiceNomeCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND');
 //  ShowMessage(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND');
-  DadosDeCartao.Clear;
+  //DadosDeCartao.Clear;
   //Reset(ArqIndiceNomeCartao);
   //DadosDeCartao.Text := PesquisaCarregaNomeCartao(EditNome.Text, EditSobreNome.Text, NArqCart);
-  DadosDeCartao.Text := formGeral.RetornarContaNome(NArqCart, EditNome.Text, EditSobreNome.Text);
+  DadosDeCartao.Text := formGeral.RetornarContaNome(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND', NArqCart , EditNome.Text, EditSobreNome.Text);
   //CloseFile(ArqIndiceNomeCartao);
   Screen.Cursor := crDefault;
   If DadosDeCartao.Count = 0 Then
@@ -539,13 +539,13 @@ If EditNome.Text <> '' Then
 If AuxConta <> '' Then // Verificar
   Begin
   //showMessage('Path do índice de contas:'+#13#10+ExtractFilePath(NArqCart));
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND');
+  //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND');
   DadosDeCartao.Clear;
-  Reset(ArqIndiceContaCartao);
+  //Reset(ArqIndiceContaCartao);
   IConta := 1;
   Repeat
     NumConta := StrToInt64(AuxConta);
-    DadosDeCartao.Text := DadosDeCartao.Text + PesquisaCarregaContaCartao(NumConta, NArqCart);
+    DadosDeCartao.Text := DadosDeCartao.Text + formGeral.RetornarContaCartao(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND', AuxConta, NArqCart);
     Inc(IConta);
 //    If IConta >= DadosDeConta.Count Then  // O último ficava de fora.....
     If IConta > DadosDeConta.Count Then
@@ -556,19 +556,20 @@ If AuxConta <> '' Then // Verificar
     Move(AuxStr[1],RgRcb.RegUnsrContAux,Length(DadosDeConta[IConta-1]));
     AuxConta := Trim(RgRcb.RegUnsrContAux.ContNormal.Conta);
   Until False;
-  CloseFile(ArqIndiceContaCartao);
+  //CloseFile(ArqIndiceContaCartao);
 
   If DadosDeCartao.Count = 0 Then
     Begin
 
 //    Tenta Buscar Info de Conta se ainda não pesquisou...
-    AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND');
+    //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND');
     If DadosDeConta.Count = 0 Then
       Begin
       DadosDeConta.Clear;
-      Reset(ArqIndiceContaCartao);
-      DadosDeConta.Text := PesquisaCarregaContaCartao(NumConta, NArqCont);
-      CloseFile(ArqIndiceContaCartao);
+      //Reset(ArqIndiceContaCartao);
+      //DadosDeConta.Text := PesquisaCarregaContaCartao(NumConta, NArqCont);
+      DadosDeCartao.Text := formGeral.RetornarContaCartao(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND', AuxConta, NArqCart);
+      //CloseFile(ArqIndiceContaCartao);
       End;
 
     If DadosDeConta.Count = 0 Then
@@ -794,12 +795,16 @@ Screen.Cursor := crHourGlass;
 
 // Carrega os dados de cartão conforme a linha do grid selecionada...
 
-AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND');
+//AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND');
 DadosDeCartao.Clear;
-Reset(ArqIndiceContaCartao);
+//Reset(ArqIndiceContaCartao);
 NumConta := StrToInt64(Trim(StringGrid1.Cells[0,StringGrid1.Row]));
-DadosDeCartao.Text := PesquisaCarregaContaCartao(NumConta, NArqCart);
-CloseFile(ArqIndiceContaCartao);
+//DadosDeCartao.Text := PesquisaCarregaContaCartao(NumConta, NArqCart);
+
+DadosDeCartao.Text := formGeral.RetornarContaCartao(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND', IntToStr(NumConta), NArqCart);
+
+
+//CloseFile(ArqIndiceContaCartao);
 
 If (DadosDeCartao.Count = 0) And (Parcial = False) Then
   Begin
@@ -845,13 +850,16 @@ If SubForm = 'EMPRESARIAL3' Then
 
   PortaForm.EditCgc.Text := RgRcb.RegUnsrCont.ContNormal.CpfCgc;
 
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTAEMPRESA.IND');
+  //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTAEMPRESA.IND');
 
   DadosDeContaDePortadores.Clear;
-  Reset(ArqIndiceContaCartao);
+  //Reset(ArqIndiceContaCartao);
   TestarFlag := False;
-  DadosDeContaDePortadores.Text := PesquisaCarregaContaCartao(NumConta, NArqCont);
-  CloseFile(ArqIndiceContaCartao);
+  //DadosDeContaDePortadores.Text := PesquisaCarregaContaCartao(NumConta, NArqCont);
+
+  DadosDeContaDePortadores.Text := formGeral.RetornarContaCartao(ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTAEMPRESA.IND', IntToStr(NumConta), NArqCont);
+
+  //CloseFile(ArqIndiceContaCartao);
 
   If DadosDeContaDePortadores.Count = 0 Then
     Begin
@@ -863,10 +871,10 @@ If SubForm = 'EMPRESARIAL3' Then
 //  Move(AuxStr[1],RegUnsrContAux,Length(DadosDeContaDePortadores[0]));
 //  AuxConta := Trim(RegUnsrContAux.Conta);
 
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND');
+  //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND');
 
   DadosDeCartaoDePortadores.Clear;
-  Reset(ArqIndiceContaCartao);
+  //Reset(ArqIndiceContaCartao);
   IConta := 0;
   Repeat
     AuxStr := DadosDeContaDePortadores[IConta];
@@ -874,7 +882,9 @@ If SubForm = 'EMPRESARIAL3' Then
 //    AuxConta := Trim(RegUnsrContAux.Conta);
     NumContaAux := StrToInt64(Trim(RgRcb.RegUnsrContAux.ContNormal.Conta));
     TestarFlag := False;
-    DadosDeCartaoDePortadores.Text := DadosDeCartaoDePortadores.Text + PesquisaCarregaContaCartao(NumContaAux, NArqCart);
+    //DadosDeCartaoDePortadores.Text := DadosDeCartaoDePortadores.Text + PesquisaCarregaContaCartao(NumContaAux, NArqCart);
+    DadosDeCartaoDePortadores.Text := DadosDeCartaoDePortadores.Text + formGeral.RetornarContaCartao(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND', IntToStr(NumContaAux), NArqCart);
+
     Inc(IConta);
     If IConta >= DadosDeContaDePortadores.Count Then
       Break;
@@ -962,14 +972,18 @@ If (SubForm = 'EXTR1') Or (SubForm = 'EMPRESARIAL1') Then
   DadosDeExtrato.Clear;
   For J := 0 To NArqExtr.Count - 1 Do
     Begin
-    AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqExtr[J])+SeArquivoSemExt(NArqExtr[J])+'CONTA.IND');
-    Reset(ArqIndiceContaCartao);
+    //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqExtr[J])+SeArquivoSemExt(NArqExtr[J])+'CONTA.IND');
+    //Reset(ArqIndiceContaCartao);
 //    If J = 73 Then
 //      ShowMessage('Esse é o cara!');
-    AuxStr := PesquisaCarregaContaCartao(NumConta, NArqExtr[J]);
+    //AuxStr := PesquisaCarregaContaCartao(NumConta, NArqExtr[J]);
+
+    AuxStr := formGeral.RetornarContaCartao(ExtractFilePath(NArqExtr[J])+SeArquivoSemExt(NArqExtr[J])+'CONTA.IND', IntToStr(NumConta), NArqCart);
+
+
     If AuxStr <> '' Then
       DadosDeExtrato.Text := DadosDeExtrato.Text + AuxStr;
-    CloseFile(ArqIndiceContaCartao);
+    //CloseFile(ArqIndiceContaCartao);
     End;
 
   If DadosDeExtrato.Count = 0 Then
@@ -1016,13 +1030,16 @@ If (SubForm = 'EXTR2') Or (SubForm = 'EXTR3') Or (SubForm = 'EMPRESARIAL4') Then
   DadosDeExtrato.Clear;
   For I := 0 To NArqExtr.Count - 1 Do
     Begin
-    AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqExtr[I])+SeArquivoSemExt(NArqExtr[I])+'CONTA.IND');
-    Reset(ArqIndiceContaCartao);
-    AuxStr := PesquisaCarregaContaCartao(NumConta, NArqExtr[I]);
+    //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqExtr[I])+SeArquivoSemExt(NArqExtr[I])+'CONTA.IND');
+    //Reset(ArqIndiceContaCartao);
+    //AuxStr := PesquisaCarregaContaCartao(NumConta, NArqExtr[I]);
+
+    AuxStr := formGeral.RetornarContaCartao(ExtractFilePath(NArqExtr[I])+SeArquivoSemExt(NArqExtr[I])+'CONTA.IND', IntToStr(NumConta), NArqCart);
+
     If AuxStr <> '' Then
       DadosDeExtrato.Text := DadosDeExtrato.Text + AuxStr;  // Para carregar mais de um mês, se houver...
 //      DadosDeExtrato.Add(AuxStr);
-    CloseFile(ArqIndiceContaCartao);
+    //CloseFile(ArqIndiceContaCartao);
     End;
 
   If DadosDeExtrato.Count = 0 Then

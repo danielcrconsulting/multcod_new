@@ -520,13 +520,13 @@ If EditNome.Text <> '' Then
   Begin
   Screen.Cursor := crHourGlass;
   //showMessage('Path do índice de nomes:'+#13#10+ExtractFilePath(NArqCart));
-  //AssignFile(ArqIndiceNomeCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND');
+  AssignFile(ArqIndiceNomeCartao,ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND');
 //  ShowMessage(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND');
   DadosDeCartao.Clear;
-  //Reset(ArqIndiceNomeCartao);
+  Reset(ArqIndiceNomeCartao);
   //DadosDeCartao.Text := PesquisaCarregaNomeCartao(EditNome.Text, EditSobreNome.Text, NArqCart);
-  DadosDeCartao.Text := formGeral.RetornarContaNome(NArqCart, EditNome.Text, EditSobreNome.Text);
-  //CloseFile(ArqIndiceNomeCartao);
+  DadosDeCartao.Text := formGeral.RetornarContaNome(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'NOMECARTAO.IND', NArqCart , EditNome.Text, EditSobreNome.Text);
+  CloseFile(ArqIndiceNomeCartao);
   Screen.Cursor := crDefault;
   If DadosDeCartao.Count = 0 Then
     Begin
@@ -569,7 +569,6 @@ If AuxConta <> '' Then // Verificar
       //Reset(ArqIndiceContaCartao);
       //DadosDeConta.Text := PesquisaCarregaContaCartao(NumConta, NArqCont);
       DadosDeCartao.Text := formGeral.RetornarContaCartao(ExtractFilePath(NArqCart)+SeArquivoSemExt(NArqCart)+'CONTA.IND', AuxConta, NArqCart);
-
       //CloseFile(ArqIndiceContaCartao);
       End;
 

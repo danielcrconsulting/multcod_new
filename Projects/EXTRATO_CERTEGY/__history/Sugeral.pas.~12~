@@ -5,7 +5,7 @@ Interface
 Uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Db, {DBTables,} IniFiles, SuTypGer, IBX.IBDatabase, IBX.IBSQL, IBX.IBCustomDataSet,
-  IBX.IBTable, IBX.IBQuery, StdCtrls, Data.DBXFirebird, Data.SqlExpr{, dfPdf};
+  IBX.IBTable, IBX.IBQuery, StdCtrls, Data.DBXFirebird, Data.SqlExpr{, dfPdf}, uMetodosServer;
 
 Type
   TFormGeral = Class(TForm)
@@ -41,14 +41,21 @@ Type
     procedure TableDFNAfterInsert(DataSet: TDataSet);
     procedure TableGruposDFNAfterPost(DataSet: TDataSet);
     procedure TableGUsuariosAfterPost(DataSet: TDataSet);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   Private
     { Private declarations }
+    OMetodosServer : clsMetodosServer;
   Public
     { Public declarations }
   Procedure MapeiaBase;
   Procedure InsereLog(Arquivo,Mensagem : AnsiString; Var SeqLog : Integer; Agora : TDateTime);
   Procedure Conecta;
   Procedure IniciaTransacaoLog;
+  Function RetornarContaCartao(arquivo, cartao, NArqCart : String) : String;
+  Function RetornarContaCPF(arquivo, cpf : String) : String;
+  Function RetornarContaNome(arquivo, nome, sobrenome : String) : String;
+  Function RetornarContaAux(arquivo, contaaux : String) : String;
+  function RetornarContaEmpresa(arquivo : String; conta : Int64): String;
   End;
 
 Procedure LerIni(TheFileName : AnsiString);
@@ -736,6 +743,36 @@ If (UpperCase(ExtractFileName(TheFileName)) = 'MASTERCOLD.EXE') Or
   End;
 End;
 
+function TFormGeral.RetornarContaAux(arquivo, contaaux: String): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarContaAux(arquivo, contaaux);
+end;
+
+function TFormGeral.RetornarContaCartao(arquivo, cartao, NArqCart: String): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarContaCartao(arquivo, cartao, NArqCart);
+end;
+
+function TFormGeral.RetornarContaCPF(arquivo, cpf: String): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarContaCPF(arquivo, cpf);
+end;
+
+function TFormGeral.RetornarContaEmpresa(arquivo: String; conta: Int64): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarContaEmpresa(arquivo, conta);
+end;
+
+function TFormGeral.RetornarContaNome(arquivo, nome, sobrenome: String): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarContaNome(arquivo, nome, sobrenome);
+end;
+
+procedure TFormGeral.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  FreeAndNil(OMetodosServer);
+end;
+
 Procedure TFormGeral.FormCreate(Sender: TObject);
 Begin
 MapeiaBase;
@@ -752,7 +789,8 @@ DefReport.StatusTabelas[3].Tabela := TableUsuarios;
 DefReport.StatusTabelas[4].Tabela := TableGUsuarios;
 DefReport.StatusTabelas[5].Tabela := TableDFN;
 DefReport.StatusTabelas[6].Tabela := TableUsuRel;
-
+  OMetodosServer := clsMetodosServer.Create(nil);
+  OMetodosServer.Configurar;
 End;
 
 Procedure LerIni(TheFileName : AnsiString);

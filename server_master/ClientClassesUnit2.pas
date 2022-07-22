@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 18/07/2022 18:35:03
+// 21/07/2022 17:51:49
 //
 
 unit ClientClassesUnit2;
@@ -51,7 +51,7 @@ type
     function ValidarAD(pUsuario: string; pSenha: string; const ARequestFilter: string = ''): Boolean;
     function RetornarContaCartao(arquivo: string; cartao: string; NArqCart: string; const ARequestFilter: string = ''): string;
     function RetornarContaCPF(arquivo: string; cpf: string; const ARequestFilter: string = ''): string;
-    function RetornarContaNome(arquivo: string; nome: string; sobrenome: string; const ARequestFilter: string = ''): string;
+    function RetornarContaNome(arquivo: string; NArqCart: string; nome: string; sobrenome: string; const ARequestFilter: string = ''): string;
     function RetornarContaAux(arquivo: string; contaaux: string; const ARequestFilter: string = ''): string;
     function RetornarContaEmpresa(arquivo: string; conta: Int64; const ARequestFilter: string = ''): string;
   end;
@@ -149,9 +149,10 @@ const
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
-  TServerMethods1_RetornarContaNome: array [0..3] of TDSRestParameterMetaData =
+  TServerMethods1_RetornarContaNome: array [0..4] of TDSRestParameterMetaData =
   (
     (Name: 'arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'NArqCart'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: 'nome'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: 'sobrenome'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
@@ -430,7 +431,7 @@ begin
   Result := FRetornarContaCPFCommand.Parameters[2].Value.GetWideString;
 end;
 
-function TServerMethods1Client.RetornarContaNome(arquivo: string; nome: string; sobrenome: string; const ARequestFilter: string): string;
+function TServerMethods1Client.RetornarContaNome(arquivo: string; NArqCart: string; nome: string; sobrenome: string; const ARequestFilter: string): string;
 begin
   if FRetornarContaNomeCommand = nil then
   begin
@@ -440,10 +441,11 @@ begin
     FRetornarContaNomeCommand.Prepare(TServerMethods1_RetornarContaNome);
   end;
   FRetornarContaNomeCommand.Parameters[0].Value.SetWideString(arquivo);
-  FRetornarContaNomeCommand.Parameters[1].Value.SetWideString(nome);
-  FRetornarContaNomeCommand.Parameters[2].Value.SetWideString(sobrenome);
+  FRetornarContaNomeCommand.Parameters[1].Value.SetWideString(NArqCart);
+  FRetornarContaNomeCommand.Parameters[2].Value.SetWideString(nome);
+  FRetornarContaNomeCommand.Parameters[3].Value.SetWideString(sobrenome);
   FRetornarContaNomeCommand.Execute(ARequestFilter);
-  Result := FRetornarContaNomeCommand.Parameters[3].Value.GetWideString;
+  Result := FRetornarContaNomeCommand.Parameters[4].Value.GetWideString;
 end;
 
 function TServerMethods1Client.RetornarContaAux(arquivo: string; contaaux: string; const ARequestFilter: string): string;

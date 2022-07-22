@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 06/04/2022 18:33:31
+// 18/07/2022 18:35:03
 //
 
 unit ClientClassesUnit2;
@@ -17,17 +17,20 @@ type
     FEchoStringCommand: TDSRestCommand;
     FReverseStringCommand: TDSRestCommand;
     FRetornarParametrosConnCommand: TDSRestCommand;
+    FRetornarParametroADCommand: TDSRestCommand;
+    FGravarLOGADCommand: TDSRestCommand;
     FRetornarDadosBancoCommand: TDSRestCommand;
     FPersistirBancoCommand: TDSRestCommand;
     FBaixarArquivoCommand: TDSRestCommand;
     FBaixarArquivoCommand_Cache: TDSRestCommand;
-    FAbreRelatorioCommand: TDSRestCommand;
-    FInsereEventosVisuCommand: TDSRestCommand;
     FfazerumtesteCommand: TDSRestCommand;
-    FGetPaginaCommand: TDSRestCommand;
-    FLogInCommand: TDSRestCommand;
-    FGetRelatorioCommand: TDSRestCommand;
-    FExecutaNovaQueryFacilCommand: TDSRestCommand;
+    FLimpaMemoriaCommand: TDSRestCommand;
+    FValidarADCommand: TDSRestCommand;
+    FRetornarContaCartaoCommand: TDSRestCommand;
+    FRetornarContaCPFCommand: TDSRestCommand;
+    FRetornarContaNomeCommand: TDSRestCommand;
+    FRetornarContaAuxCommand: TDSRestCommand;
+    FRetornarContaEmpresaCommand: TDSRestCommand;
   public
     constructor Create(ARestConnection: TDSRestConnection); overload;
     constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
@@ -37,17 +40,20 @@ type
     function EchoString(Value: string; const ARequestFilter: string = ''): string;
     function ReverseString(Value: string; const ARequestFilter: string = ''): string;
     function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
+    function RetornarParametroAD(const ARequestFilter: string = ''): string;
+    procedure GravarLOGAD(usuario: string; status: string);
     function RetornarDadosBanco(SQL: string; bd: Integer; const ARequestFilter: string = ''): string;
     procedure PersistirBanco(SQL: string; bd: Integer);
     function BaixarArquivo(arq: string; const ARequestFilter: string = ''): TJSONArray;
     function BaixarArquivo_Cache(arq: string; const ARequestFilter: string = ''): IDSRestCachedJSONArray;
-    function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; log: Boolean; const ARequestFilter: string = ''): string;
-    procedure InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
     procedure fazerumteste;
-    function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; const ARequestFilter: string = ''): string;
-    function LogIn(Usuario: WideString; Senha: WideString; ConnectionID: Integer; const ARequestFilter: string = ''): string;
-    function GetRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString; tipo: Integer; const ARequestFilter: string = ''): string;
-    function ExecutaNovaQueryFacil(gridXML: WideString; fileName: WideString; usuario: WideString; mensagem: WideString; xmlData: WideString; const ARequestFilter: string = ''): string;
+    procedure LimpaMemoria;
+    function ValidarAD(pUsuario: string; pSenha: string; const ARequestFilter: string = ''): Boolean;
+    function RetornarContaCartao(arquivo: string; cartao: string; NArqCart: string; const ARequestFilter: string = ''): string;
+    function RetornarContaCPF(arquivo: string; cpf: string; const ARequestFilter: string = ''): string;
+    function RetornarContaNome(arquivo: string; nome: string; sobrenome: string; const ARequestFilter: string = ''): string;
+    function RetornarContaAux(arquivo: string; contaaux: string; const ARequestFilter: string = ''): string;
+    function RetornarContaEmpresa(arquivo: string; conta: Int64; const ARequestFilter: string = ''): string;
   end;
 
 const
@@ -85,6 +91,17 @@ const
     (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
   );
 
+  TServerMethods1_RetornarParametroAD: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
+  );
+
+  TServerMethods1_GravarLOGAD: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'usuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'status'; Direction: 1; DBXType: 26; TypeName: 'string')
+  );
+
   TServerMethods1_RetornarDadosBanco: array [0..2] of TDSRestParameterMetaData =
   (
     (Name: 'SQL'; Direction: 1; DBXType: 26; TypeName: 'string'),
@@ -110,72 +127,47 @@ const
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
   );
 
-  TServerMethods1_AbreRelatorio: array [0..11] of TDSRestParameterMetaData =
+  TServerMethods1_ValidarAD: array [0..2] of TDSRestParameterMetaData =
   (
-    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
-    (Name: 'FullPath'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'QtdPaginas'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
-    (Name: 'StrCampos'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'Rel64'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
-    (Name: 'Rel133'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
-    (Name: 'CmprBrncs'; Direction: 1; DBXType: 29; TypeName: 'Byte'),
-    (Name: 'tipo'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
-    (Name: 'log'; Direction: 1; DBXType: 4; TypeName: 'Boolean'),
+    (Name: 'pUsuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'pSenha'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
+  );
+
+  TServerMethods1_RetornarContaCartao: array [0..3] of TDSRestParameterMetaData =
+  (
+    (Name: 'arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'cartao'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'NArqCart'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
-  TServerMethods1_InsereEventosVisu: array [0..7] of TDSRestParameterMetaData =
+  TServerMethods1_RetornarContaCPF: array [0..2] of TDSRestParameterMetaData =
   (
-    (Name: 'Arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
-    (Name: 'Diretorio'; Direction: 1; DBXType: 26; TypeName: 'string'),
-    (Name: 'CodRel'; Direction: 1; DBXType: 26; TypeName: 'string'),
-    (Name: 'CodUsuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
-    (Name: 'NomeGrupoUsuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
-    (Name: 'Grupo'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
-    (Name: 'SubGrupo'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
-    (Name: 'CodMens'; Direction: 1; DBXType: 6; TypeName: 'Integer')
-  );
-
-  TServerMethods1_GetPagina: array [0..7] of TDSRestParameterMetaData =
-  (
-    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
-    (Name: 'Relatorio'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'PagNum'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
-    (Name: 'QtdBytes'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
-    (Name: 'Pagina'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'cpf'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
-  TServerMethods1_LogIn: array [0..3] of TDSRestParameterMetaData =
+  TServerMethods1_RetornarContaNome: array [0..3] of TDSRestParameterMetaData =
   (
-    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'nome'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'sobrenome'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
-  TServerMethods1_GetRelatorio: array [0..6] of TDSRestParameterMetaData =
+  TServerMethods1_RetornarContaAux: array [0..2] of TDSRestParameterMetaData =
   (
-    (Name: 'Usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'Senha'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'ConnectionID'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
-    (Name: 'ListaCodRel'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'FullPaths'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'tipo'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: 'arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'contaaux'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
-  TServerMethods1_ExecutaNovaQueryFacil: array [0..5] of TDSRestParameterMetaData =
+  TServerMethods1_RetornarContaEmpresa: array [0..2] of TDSRestParameterMetaData =
   (
-    (Name: 'gridXML'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'fileName'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'usuario'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'mensagem'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
-    (Name: 'xmlData'; Direction: 1; DBXType: 26; TypeName: 'WideString'),
+    (Name: 'arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'conta'; Direction: 1; DBXType: 18; TypeName: 'Int64'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
@@ -286,6 +278,33 @@ begin
   Result := FRetornarParametrosConnCommand.Parameters[7].Value.GetBoolean;
 end;
 
+function TServerMethods1Client.RetornarParametroAD(const ARequestFilter: string): string;
+begin
+  if FRetornarParametroADCommand = nil then
+  begin
+    FRetornarParametroADCommand := FConnection.CreateCommand;
+    FRetornarParametroADCommand.RequestType := 'GET';
+    FRetornarParametroADCommand.Text := 'TServerMethods1.RetornarParametroAD';
+    FRetornarParametroADCommand.Prepare(TServerMethods1_RetornarParametroAD);
+  end;
+  FRetornarParametroADCommand.Execute(ARequestFilter);
+  Result := FRetornarParametroADCommand.Parameters[0].Value.GetWideString;
+end;
+
+procedure TServerMethods1Client.GravarLOGAD(usuario: string; status: string);
+begin
+  if FGravarLOGADCommand = nil then
+  begin
+    FGravarLOGADCommand := FConnection.CreateCommand;
+    FGravarLOGADCommand.RequestType := 'GET';
+    FGravarLOGADCommand.Text := 'TServerMethods1.GravarLOGAD';
+    FGravarLOGADCommand.Prepare(TServerMethods1_GravarLOGAD);
+  end;
+  FGravarLOGADCommand.Parameters[0].Value.SetWideString(usuario);
+  FGravarLOGADCommand.Parameters[1].Value.SetWideString(status);
+  FGravarLOGADCommand.Execute;
+end;
+
 function TServerMethods1Client.RetornarDadosBanco(SQL: string; bd: Integer; const ARequestFilter: string): string;
 begin
   if FRetornarDadosBancoCommand = nil then
@@ -343,50 +362,6 @@ begin
   Result := TDSRestCachedJSONArray.Create(FBaixarArquivoCommand_Cache.Parameters[1].Value.GetString);
 end;
 
-function TServerMethods1Client.AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; log: Boolean; const ARequestFilter: string): string;
-begin
-  if FAbreRelatorioCommand = nil then
-  begin
-    FAbreRelatorioCommand := FConnection.CreateCommand;
-    FAbreRelatorioCommand.RequestType := 'GET';
-    FAbreRelatorioCommand.Text := 'TServerMethods1.AbreRelatorio';
-    FAbreRelatorioCommand.Prepare(TServerMethods1_AbreRelatorio);
-  end;
-  FAbreRelatorioCommand.Parameters[0].Value.SetWideString(Usuario);
-  FAbreRelatorioCommand.Parameters[1].Value.SetWideString(Senha);
-  FAbreRelatorioCommand.Parameters[2].Value.SetInt32(ConnectionID);
-  FAbreRelatorioCommand.Parameters[3].Value.SetWideString(FullPath);
-  FAbreRelatorioCommand.Parameters[4].Value.SetInt32(QtdPaginas);
-  FAbreRelatorioCommand.Parameters[5].Value.SetWideString(StrCampos);
-  FAbreRelatorioCommand.Parameters[6].Value.SetUInt8(Rel64);
-  FAbreRelatorioCommand.Parameters[7].Value.SetUInt8(Rel133);
-  FAbreRelatorioCommand.Parameters[8].Value.SetUInt8(CmprBrncs);
-  FAbreRelatorioCommand.Parameters[9].Value.SetInt32(tipo);
-  FAbreRelatorioCommand.Parameters[10].Value.SetBoolean(log);
-  FAbreRelatorioCommand.Execute(ARequestFilter);
-  Result := FAbreRelatorioCommand.Parameters[11].Value.GetWideString;
-end;
-
-procedure TServerMethods1Client.InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
-begin
-  if FInsereEventosVisuCommand = nil then
-  begin
-    FInsereEventosVisuCommand := FConnection.CreateCommand;
-    FInsereEventosVisuCommand.RequestType := 'GET';
-    FInsereEventosVisuCommand.Text := 'TServerMethods1.InsereEventosVisu';
-    FInsereEventosVisuCommand.Prepare(TServerMethods1_InsereEventosVisu);
-  end;
-  FInsereEventosVisuCommand.Parameters[0].Value.SetWideString(Arquivo);
-  FInsereEventosVisuCommand.Parameters[1].Value.SetWideString(Diretorio);
-  FInsereEventosVisuCommand.Parameters[2].Value.SetWideString(CodRel);
-  FInsereEventosVisuCommand.Parameters[3].Value.SetWideString(CodUsuario);
-  FInsereEventosVisuCommand.Parameters[4].Value.SetWideString(NomeGrupoUsuario);
-  FInsereEventosVisuCommand.Parameters[5].Value.SetInt32(Grupo);
-  FInsereEventosVisuCommand.Parameters[6].Value.SetInt32(SubGrupo);
-  FInsereEventosVisuCommand.Parameters[7].Value.SetInt32(CodMens);
-  FInsereEventosVisuCommand.Execute;
-end;
-
 procedure TServerMethods1Client.fazerumteste;
 begin
   if FfazerumtesteCommand = nil then
@@ -398,77 +373,107 @@ begin
   FfazerumtesteCommand.Execute;
 end;
 
-function TServerMethods1Client.GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; const ARequestFilter: string): string;
+procedure TServerMethods1Client.LimpaMemoria;
 begin
-  if FGetPaginaCommand = nil then
+  if FLimpaMemoriaCommand = nil then
   begin
-    FGetPaginaCommand := FConnection.CreateCommand;
-    FGetPaginaCommand.RequestType := 'GET';
-    FGetPaginaCommand.Text := 'TServerMethods1.GetPagina';
-    FGetPaginaCommand.Prepare(TServerMethods1_GetPagina);
+    FLimpaMemoriaCommand := FConnection.CreateCommand;
+    FLimpaMemoriaCommand.RequestType := 'GET';
+    FLimpaMemoriaCommand.Text := 'TServerMethods1.LimpaMemoria';
   end;
-  FGetPaginaCommand.Parameters[0].Value.SetWideString(Usuario);
-  FGetPaginaCommand.Parameters[1].Value.SetWideString(Senha);
-  FGetPaginaCommand.Parameters[2].Value.SetInt32(ConnectionID);
-  FGetPaginaCommand.Parameters[3].Value.SetWideString(Relatorio);
-  FGetPaginaCommand.Parameters[4].Value.SetInt32(PagNum);
-  FGetPaginaCommand.Parameters[5].Value.SetInt32(QtdBytes);
-  FGetPaginaCommand.Parameters[6].Value.SetWideString(Pagina);
-  FGetPaginaCommand.Execute(ARequestFilter);
-  Result := FGetPaginaCommand.Parameters[7].Value.GetWideString;
+  FLimpaMemoriaCommand.Execute;
 end;
 
-function TServerMethods1Client.LogIn(Usuario: WideString; Senha: WideString; ConnectionID: Integer; const ARequestFilter: string): string;
+function TServerMethods1Client.ValidarAD(pUsuario: string; pSenha: string; const ARequestFilter: string): Boolean;
 begin
-  if FLogInCommand = nil then
+  if FValidarADCommand = nil then
   begin
-    FLogInCommand := FConnection.CreateCommand;
-    FLogInCommand.RequestType := 'GET';
-    FLogInCommand.Text := 'TServerMethods1.LogIn';
-    FLogInCommand.Prepare(TServerMethods1_LogIn);
+    FValidarADCommand := FConnection.CreateCommand;
+    FValidarADCommand.RequestType := 'GET';
+    FValidarADCommand.Text := 'TServerMethods1.ValidarAD';
+    FValidarADCommand.Prepare(TServerMethods1_ValidarAD);
   end;
-  FLogInCommand.Parameters[0].Value.SetWideString(Usuario);
-  FLogInCommand.Parameters[1].Value.SetWideString(Senha);
-  FLogInCommand.Parameters[2].Value.SetInt32(ConnectionID);
-  FLogInCommand.Execute(ARequestFilter);
-  Result := FLogInCommand.Parameters[3].Value.GetWideString;
+  FValidarADCommand.Parameters[0].Value.SetWideString(pUsuario);
+  FValidarADCommand.Parameters[1].Value.SetWideString(pSenha);
+  FValidarADCommand.Execute(ARequestFilter);
+  Result := FValidarADCommand.Parameters[2].Value.GetBoolean;
 end;
 
-function TServerMethods1Client.GetRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; ListaCodRel: WideString; FullPaths: WideString; tipo: Integer; const ARequestFilter: string): string;
+function TServerMethods1Client.RetornarContaCartao(arquivo: string; cartao: string; NArqCart: string; const ARequestFilter: string): string;
 begin
-  if FGetRelatorioCommand = nil then
+  if FRetornarContaCartaoCommand = nil then
   begin
-    FGetRelatorioCommand := FConnection.CreateCommand;
-    FGetRelatorioCommand.RequestType := 'GET';
-    FGetRelatorioCommand.Text := 'TServerMethods1.GetRelatorio';
-    FGetRelatorioCommand.Prepare(TServerMethods1_GetRelatorio);
+    FRetornarContaCartaoCommand := FConnection.CreateCommand;
+    FRetornarContaCartaoCommand.RequestType := 'GET';
+    FRetornarContaCartaoCommand.Text := 'TServerMethods1.RetornarContaCartao';
+    FRetornarContaCartaoCommand.Prepare(TServerMethods1_RetornarContaCartao);
   end;
-  FGetRelatorioCommand.Parameters[0].Value.SetWideString(Usuario);
-  FGetRelatorioCommand.Parameters[1].Value.SetWideString(Senha);
-  FGetRelatorioCommand.Parameters[2].Value.SetInt32(ConnectionID);
-  FGetRelatorioCommand.Parameters[3].Value.SetWideString(ListaCodRel);
-  FGetRelatorioCommand.Parameters[4].Value.SetWideString(FullPaths);
-  FGetRelatorioCommand.Parameters[5].Value.SetInt32(tipo);
-  FGetRelatorioCommand.Execute(ARequestFilter);
-  Result := FGetRelatorioCommand.Parameters[6].Value.GetWideString;
+  FRetornarContaCartaoCommand.Parameters[0].Value.SetWideString(arquivo);
+  FRetornarContaCartaoCommand.Parameters[1].Value.SetWideString(cartao);
+  FRetornarContaCartaoCommand.Parameters[2].Value.SetWideString(NArqCart);
+  FRetornarContaCartaoCommand.Execute(ARequestFilter);
+  Result := FRetornarContaCartaoCommand.Parameters[3].Value.GetWideString;
 end;
 
-function TServerMethods1Client.ExecutaNovaQueryFacil(gridXML: WideString; fileName: WideString; usuario: WideString; mensagem: WideString; xmlData: WideString; const ARequestFilter: string): string;
+function TServerMethods1Client.RetornarContaCPF(arquivo: string; cpf: string; const ARequestFilter: string): string;
 begin
-  if FExecutaNovaQueryFacilCommand = nil then
+  if FRetornarContaCPFCommand = nil then
   begin
-    FExecutaNovaQueryFacilCommand := FConnection.CreateCommand;
-    FExecutaNovaQueryFacilCommand.RequestType := 'GET';
-    FExecutaNovaQueryFacilCommand.Text := 'TServerMethods1.ExecutaNovaQueryFacil';
-    FExecutaNovaQueryFacilCommand.Prepare(TServerMethods1_ExecutaNovaQueryFacil);
+    FRetornarContaCPFCommand := FConnection.CreateCommand;
+    FRetornarContaCPFCommand.RequestType := 'GET';
+    FRetornarContaCPFCommand.Text := 'TServerMethods1.RetornarContaCPF';
+    FRetornarContaCPFCommand.Prepare(TServerMethods1_RetornarContaCPF);
   end;
-  FExecutaNovaQueryFacilCommand.Parameters[0].Value.SetWideString(gridXML);
-  FExecutaNovaQueryFacilCommand.Parameters[1].Value.SetWideString(fileName);
-  FExecutaNovaQueryFacilCommand.Parameters[2].Value.SetWideString(usuario);
-  FExecutaNovaQueryFacilCommand.Parameters[3].Value.SetWideString(mensagem);
-  FExecutaNovaQueryFacilCommand.Parameters[4].Value.SetWideString(xmlData);
-  FExecutaNovaQueryFacilCommand.Execute(ARequestFilter);
-  Result := FExecutaNovaQueryFacilCommand.Parameters[5].Value.GetWideString;
+  FRetornarContaCPFCommand.Parameters[0].Value.SetWideString(arquivo);
+  FRetornarContaCPFCommand.Parameters[1].Value.SetWideString(cpf);
+  FRetornarContaCPFCommand.Execute(ARequestFilter);
+  Result := FRetornarContaCPFCommand.Parameters[2].Value.GetWideString;
+end;
+
+function TServerMethods1Client.RetornarContaNome(arquivo: string; nome: string; sobrenome: string; const ARequestFilter: string): string;
+begin
+  if FRetornarContaNomeCommand = nil then
+  begin
+    FRetornarContaNomeCommand := FConnection.CreateCommand;
+    FRetornarContaNomeCommand.RequestType := 'GET';
+    FRetornarContaNomeCommand.Text := 'TServerMethods1.RetornarContaNome';
+    FRetornarContaNomeCommand.Prepare(TServerMethods1_RetornarContaNome);
+  end;
+  FRetornarContaNomeCommand.Parameters[0].Value.SetWideString(arquivo);
+  FRetornarContaNomeCommand.Parameters[1].Value.SetWideString(nome);
+  FRetornarContaNomeCommand.Parameters[2].Value.SetWideString(sobrenome);
+  FRetornarContaNomeCommand.Execute(ARequestFilter);
+  Result := FRetornarContaNomeCommand.Parameters[3].Value.GetWideString;
+end;
+
+function TServerMethods1Client.RetornarContaAux(arquivo: string; contaaux: string; const ARequestFilter: string): string;
+begin
+  if FRetornarContaAuxCommand = nil then
+  begin
+    FRetornarContaAuxCommand := FConnection.CreateCommand;
+    FRetornarContaAuxCommand.RequestType := 'GET';
+    FRetornarContaAuxCommand.Text := 'TServerMethods1.RetornarContaAux';
+    FRetornarContaAuxCommand.Prepare(TServerMethods1_RetornarContaAux);
+  end;
+  FRetornarContaAuxCommand.Parameters[0].Value.SetWideString(arquivo);
+  FRetornarContaAuxCommand.Parameters[1].Value.SetWideString(contaaux);
+  FRetornarContaAuxCommand.Execute(ARequestFilter);
+  Result := FRetornarContaAuxCommand.Parameters[2].Value.GetWideString;
+end;
+
+function TServerMethods1Client.RetornarContaEmpresa(arquivo: string; conta: Int64; const ARequestFilter: string): string;
+begin
+  if FRetornarContaEmpresaCommand = nil then
+  begin
+    FRetornarContaEmpresaCommand := FConnection.CreateCommand;
+    FRetornarContaEmpresaCommand.RequestType := 'GET';
+    FRetornarContaEmpresaCommand.Text := 'TServerMethods1.RetornarContaEmpresa';
+    FRetornarContaEmpresaCommand.Prepare(TServerMethods1_RetornarContaEmpresa);
+  end;
+  FRetornarContaEmpresaCommand.Parameters[0].Value.SetWideString(arquivo);
+  FRetornarContaEmpresaCommand.Parameters[1].Value.SetInt64(conta);
+  FRetornarContaEmpresaCommand.Execute(ARequestFilter);
+  Result := FRetornarContaEmpresaCommand.Parameters[2].Value.GetWideString;
 end;
 
 constructor TServerMethods1Client.Create(ARestConnection: TDSRestConnection);
@@ -488,17 +493,20 @@ begin
   FEchoStringCommand.DisposeOf;
   FReverseStringCommand.DisposeOf;
   FRetornarParametrosConnCommand.DisposeOf;
+  FRetornarParametroADCommand.DisposeOf;
+  FGravarLOGADCommand.DisposeOf;
   FRetornarDadosBancoCommand.DisposeOf;
   FPersistirBancoCommand.DisposeOf;
   FBaixarArquivoCommand.DisposeOf;
   FBaixarArquivoCommand_Cache.DisposeOf;
-  FAbreRelatorioCommand.DisposeOf;
-  FInsereEventosVisuCommand.DisposeOf;
   FfazerumtesteCommand.DisposeOf;
-  FGetPaginaCommand.DisposeOf;
-  FLogInCommand.DisposeOf;
-  FGetRelatorioCommand.DisposeOf;
-  FExecutaNovaQueryFacilCommand.DisposeOf;
+  FLimpaMemoriaCommand.DisposeOf;
+  FValidarADCommand.DisposeOf;
+  FRetornarContaCartaoCommand.DisposeOf;
+  FRetornarContaCPFCommand.DisposeOf;
+  FRetornarContaNomeCommand.DisposeOf;
+  FRetornarContaAuxCommand.DisposeOf;
+  FRetornarContaEmpresaCommand.DisposeOf;
   inherited;
 end;
 

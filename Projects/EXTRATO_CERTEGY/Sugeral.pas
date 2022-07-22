@@ -53,7 +53,7 @@ Type
   Procedure IniciaTransacaoLog;
   Function RetornarContaCartao(arquivo, cartao, NArqCart : String) : String;
   Function RetornarContaCPF(arquivo, cpf : String) : String;
-  Function RetornarContaNome(arquivo, nome, sobrenome : String) : String;
+  Function RetornarContaNome(arquivo, NArqCart, nome, sobrenome : String) : String;
   Function RetornarContaAux(arquivo, contaaux : String) : String;
   function RetornarContaEmpresa(arquivo : String; conta : Int64): String;
   End;
@@ -763,9 +763,9 @@ begin
   result := OMetodosServer.ServerMethodsPrincipalClient.RetornarContaEmpresa(arquivo, conta);
 end;
 
-function TFormGeral.RetornarContaNome(arquivo, nome, sobrenome: String): String;
+function TFormGeral.RetornarContaNome(arquivo, NArqCart, nome, sobrenome: String): String;
 begin
-  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarContaNome(arquivo, nome, sobrenome);
+  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarContaNome(arquivo, NArqCart, nome, sobrenome);
 end;
 
 procedure TFormGeral.FormClose(Sender: TObject; var Action: TCloseAction);

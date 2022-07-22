@@ -11,10 +11,10 @@ uses System.SysUtils, System.Classes, System.Json,
   FireDAC.Stan.StorageJSON, Data.FireDACJSONReflect,
   FireDAC.UI.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys,
   FireDAC.VCLUI.Wait, FireDAC.Phys.MSSQLDef, FireDAC.Phys.ODBCBase,
-  FireDAC.Phys.MSSQL, FireDAC.Stan.StorageBin, FireDAC.Comp.UI, System.Zlib,
+  FireDAC.Phys.MSSQL, FireDAC.Stan.StorageBin, FireDAC.Comp.UI, {System.Zlib,}
   System.Zip, System.Variants, SutypGer, Subrug, SuTypMultiCold, Pilha,
   Bde.DBTables, dm, UclsAux, UMulticoldReport, Windows, FireDAC.Phys.FB,
-  FireDAC.Phys.FBDef;
+  FireDAC.Phys.FBDef, ZLibEx;
 
 
 
@@ -713,23 +713,25 @@ var
   NumConta : Int64;
 begin
   AssignFile(ArqIndiceContaCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'CONTA.IND');
+  DadosDeCartao := TStringList.Create;
   DadosDeCartao.Clear;
   Reset(ArqIndiceContaCartao);
   NumConta := StrToInt64(contaaux);
   DadosDeCartao.Text := DadosDeCartao.Text + PesquisaCarregaContaCartao(NumConta, arquivo);
   result := DadosDeCartao.Text;
+  FreeAndNil(DadosDeCartao);
 end;
 
 function TServerMethods1.RetornarContaCartao(arquivo, cartao, NArqCart: String): String;
 var
   NumCartao : Int64;
 begin
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'CARTAO.IND');
+  AssignFile(ArqIndiceContaCartao,arquivo);
   DadosDeCartao := TStringList.Create;
   DadosDeCartao.Clear;
   Reset(ArqIndiceContaCartao);
   NumCartao := StrToInt64(cartao);
-  DadosDeCartao.Text := PesquisaCarregaContaCartao(NumCartao, arquivo);
+  DadosDeCartao.Text := PesquisaCarregaContaCartao(NumCartao, NArqCart);
   result := DadosDeCartao.Text;
   FreeAndNil(DadosDeCartao);
 end;
@@ -738,30 +740,36 @@ function TServerMethods1.RetornarContaCPF(arquivo, cpf: String): String;
 var
   NumCpf : Int64;
 begin
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'CPFCGC.IND');
+  AssignFile(ArqIndiceContaCartao,arquivo);
+  DadosDeConta := TStringList.Create;
   DadosDeConta.Clear;
   Reset(ArqIndiceContaCartao);
   NumCpf := StrToInt64(cpf);
   DadosDeConta.Text := PesquisaCarregaContaCartao(NumCpf, arquivo);
   result := DadosDeConta.Text;
+  FreeAndNil(DadosDeConta);
 end;
 
 function TServerMethods1.RetornarContaNome(arquivo, nome, sobrenome: String): String;
 begin
-  AssignFile(ArqIndiceNomeCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'NOMECARTAO.IND');
+  AssignFile(ArqIndiceNomeCartao,arquivo);
+  DadosDeCartao := TStringList.Create;
   DadosDeCartao.Clear;
   Reset(ArqIndiceNomeCartao);
   DadosDeCartao.Text := PesquisaCarregaNomeCartao(nome, sobrenome, arquivo);
   result := DadosDeCartao.Text;
+  FreeAndNil(DadosDeCartao);
 end;
 
 function TServerMethods1.RetornarContaEmpresa(arquivo : String; conta : Int64): String;
 begin
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(arquivo)+SeArquivoSemExt(arquivo)+'CONTAEMPRESA.IND');
+  AssignFile(ArqIndiceContaCartao,arquivo);
+  DadosDeContaDePortadores := TStringList.Create;
   DadosDeContaDePortadores.Clear;
   Reset(ArqIndiceContaCartao);
   DadosDeContaDePortadores.Text := PesquisaCarregaContaCartao(conta, arquivo);
   result := DadosDeContaDePortadores.Text;
+  FreeAndNil(DadosDeContaDePortadores);
 end;
 
 Function TServerMethods1.PesquisaNomeCartao(Nome : AnsiString; Var ArqIndiceNomeCartao : TgArqIndiceNomeCartao) : Boolean;
