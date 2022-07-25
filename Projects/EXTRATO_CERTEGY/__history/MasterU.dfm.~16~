@@ -1,7 +1,7 @@
 object MasterColdForm: TMasterColdForm
   Left = 195
   Top = 165
-  Caption = 'MasterCold'
+  Caption = 'MasterCold V3.2.0.3 27/07/2021'
   ClientHeight = 488
   ClientWidth = 757
   Color = clBtnFace
@@ -1350,6 +1350,9 @@ object MasterColdForm: TMasterColdForm
       BevelKind = bkFlat
       BorderStyle = bsSingle
       TabOrder = 0
+      DesignSize = (
+        739
+        33)
       object Label1: TLabel
         Left = 11
         Top = 7
@@ -1364,11 +1367,11 @@ object MasterColdForm: TMasterColdForm
         ParentFont = False
       end
       object Label2: TLabel
-        Left = 541
-        Top = 2
+        Left = 539
+        Top = 4
         Width = 196
-        Height = 29
-        Align = alRight
+        Height = 22
+        Anchors = [akTop, akRight]
         Caption = 'V4.0.0.0  -  01/09/2022'
         Font.Charset = ANSI_CHARSET
         Font.Color = clTeal
@@ -1376,7 +1379,6 @@ object MasterColdForm: TMasterColdForm
         Font.Name = 'Arial'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitTop = 4
       end
     end
   end

@@ -1376,7 +1376,7 @@ object MasterColdForm: TMasterColdForm
         Font.Name = 'Arial'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitTop = 4
+        ExplicitTop = 3
       end
     end
   end

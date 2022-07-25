@@ -75,7 +75,7 @@ procedure TMasterColdForm.Timer1Timer(Sender: TObject);
 begin
   Label2.Caption := FormatDateTime('dd-mm-yyyy hh:mm:ss', now);
 end;
-
+                              l
 Procedure TMasterColdForm.FormCreate(Sender: TObject);
 Var
   ArqExtra : System.Text;

@@ -32,7 +32,7 @@ uses
 
 Begin
   Application.Initialize;
-  TStyleManager.TrySetStyle('Sky');
+  TStyleManager.TrySetStyle('Cobalt XEMedia');
   Application.CreateForm(TMasterColdForm, MasterColdForm);
   Application.CreateForm(TDefReport, DefReport);
   Application.CreateForm(TFormGeral, FormGeral);

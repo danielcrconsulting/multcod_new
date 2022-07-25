@@ -24,15 +24,12 @@ uses
   Subrug in '..\Subrug\Subrug.pas',
   Pilha in '..\CR CONSULTING\Pilha.pas',
   UMetodosServer in '..\..\server_master\UMetodosServer.pas',
-  ClientClassesUnit2 in '..\..\server_master\ClientClassesUnit2.pas',
-  Vcl.Themes,
-  Vcl.Styles;
+  ClientClassesUnit2 in '..\..\server_master\ClientClassesUnit2.pas';
 
 {$R *.RES}
 
 Begin
   Application.Initialize;
-  TStyleManager.TrySetStyle('Sky');
   Application.CreateForm(TMasterColdForm, MasterColdForm);
   Application.CreateForm(TDefReport, DefReport);
   Application.CreateForm(TFormGeral, FormGeral);

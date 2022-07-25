@@ -33,7 +33,6 @@ Type
     Panel2: TPanel;
     Label1: TLabel;
     Label2: TLabel;
-    Timer1: TTimer;
     procedure Sair1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -48,7 +47,6 @@ Type
     procedure Demonstrativo2via1Click(Sender: TObject);
     procedure ContaExtratos1Click(Sender: TObject);
     procedure ConsultaResumo1Click(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
   Private
     { Private declarations }
   Public
@@ -70,11 +68,6 @@ Procedure TMasterColdForm.Sair1Click(Sender: TObject);
 Begin
 Close;
 End;
-
-procedure TMasterColdForm.Timer1Timer(Sender: TObject);
-begin
-  Label2.Caption := FormatDateTime('dd-mm-yyyy hh:mm:ss', now);
-end;
 
 Procedure TMasterColdForm.FormCreate(Sender: TObject);
 Var

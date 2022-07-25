@@ -73,7 +73,7 @@ End;
 
 procedure TMasterColdForm.Timer1Timer(Sender: TObject);
 begin
-  Label2.Caption := FormatDateTime('dd-mm-yyyy hh:mm:ss', now);
+  Label2.Caption := FormatDateTime('dd-mm-yyyy hh:mm', now);
 end;
 
 Procedure TMasterColdForm.FormCreate(Sender: TObject);
