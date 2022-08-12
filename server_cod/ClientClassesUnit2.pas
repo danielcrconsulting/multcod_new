@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 20/05/2022 18:01:34
+// 09/08/2022 18:28:12
 //
 
 unit ClientClassesUnit2;
@@ -29,6 +29,7 @@ type
     FAbreRelatorioCommand: TDSRestCommand;
     FInsereEventosVisuCommand: TDSRestCommand;
     FfazerumtesteCommand: TDSRestCommand;
+    FLimpaMemoriaCommand: TDSRestCommand;
     FLocalizarCommand: TDSRestCommand;
     FGetPaginaCommand: TDSRestCommand;
     FGetPaginaLCommand: TDSRestCommand;
@@ -38,6 +39,7 @@ type
     FValidarADCommand: TDSRestCommand;
     FBuscaSequencialCommand: TDSRestCommand;
     FBuscaSequencialCommand_Cache: TDSRestCommand;
+    FExcluirArquivosCommand: TDSRestCommand;
   public
     constructor Create(ARestConnection: TDSRestConnection); overload;
     constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
@@ -56,6 +58,7 @@ type
     function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; log: Boolean; const ARequestFilter: string = ''): string;
     procedure InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
     procedure fazerumteste;
+    procedure LimpaMemoria;
     function Localizar(RetVal: AnsiString; EEE: Integer; varPag: AnsiString; strloc: string; rel133: Byte; CmprBrncs: Byte; linini: string; linfim: string; coluna: string; pagini: string; pagfim: string; const ARequestFilter: string = ''): Boolean;
     function GetPagina(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; const ARequestFilter: string = ''): string;
     function GetPaginaL(Usuario: WideString; Senha: WideString; ConnectionID: Integer; Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina: WideString; strloc: string; rel133: Byte; CmprBrncs: Byte; linini: string; linfim: string; coluna: string; pagini: string; pagfim: string; const ARequestFilter: string = ''): string;
@@ -65,6 +68,7 @@ type
     function ValidarAD(pUsuario: string; pSenha: string; const ARequestFilter: string = ''): Boolean;
     function BuscaSequencial(Usuario: string; Senha: string; ConnectionID: Integer; Relatorio: string; buscaSequencial: TBuscaSequencialDTO_M; const ARequestFilter: string = ''): TResultadoBuscaSequencialDTO;
     function BuscaSequencial_Cache(Usuario: string; Senha: string; ConnectionID: Integer; Relatorio: string; buscaSequencial: TBuscaSequencialDTO_M; const ARequestFilter: string = ''): IDSRestCachedTResultadoBuscaSequencialDTO;
+    function ExcluirArquivos(strid: string; const ARequestFilter: string = ''): Boolean;
   end;
 
   IDSRestCachedTResultadoBuscaSequencialDTO = interface(IDSRestCachedObject<TResultadoBuscaSequencialDTO>)
@@ -274,6 +278,12 @@ const
     (Name: 'Relatorio'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: 'buscaSequencial'; Direction: 1; DBXType: 37; TypeName: 'TBuscaSequencialDTO_M'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
+  );
+
+  TServerMethods1_ExcluirArquivos: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'strid'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
   );
 
 implementation
@@ -522,6 +532,17 @@ begin
   FfazerumtesteCommand.Execute;
 end;
 
+procedure TServerMethods1Client.LimpaMemoria;
+begin
+  if FLimpaMemoriaCommand = nil then
+  begin
+    FLimpaMemoriaCommand := FConnection.CreateCommand;
+    FLimpaMemoriaCommand.RequestType := 'GET';
+    FLimpaMemoriaCommand.Text := 'TServerMethods1.LimpaMemoria';
+  end;
+  FLimpaMemoriaCommand.Execute;
+end;
+
 function TServerMethods1Client.Localizar(RetVal: AnsiString; EEE: Integer; varPag: AnsiString; strloc: string; rel133: Byte; CmprBrncs: Byte; linini: string; linfim: string; coluna: string; pagini: string; pagfim: string; const ARequestFilter: string): Boolean;
 begin
   if FLocalizarCommand = nil then
@@ -734,6 +755,20 @@ begin
   Result := TDSRestCachedTResultadoBuscaSequencialDTO.Create(FBuscaSequencialCommand_Cache.Parameters[5].Value.GetString);
 end;
 
+function TServerMethods1Client.ExcluirArquivos(strid: string; const ARequestFilter: string): Boolean;
+begin
+  if FExcluirArquivosCommand = nil then
+  begin
+    FExcluirArquivosCommand := FConnection.CreateCommand;
+    FExcluirArquivosCommand.RequestType := 'GET';
+    FExcluirArquivosCommand.Text := 'TServerMethods1.ExcluirArquivos';
+    FExcluirArquivosCommand.Prepare(TServerMethods1_ExcluirArquivos);
+  end;
+  FExcluirArquivosCommand.Parameters[0].Value.SetWideString(strid);
+  FExcluirArquivosCommand.Execute(ARequestFilter);
+  Result := FExcluirArquivosCommand.Parameters[1].Value.GetBoolean;
+end;
+
 constructor TServerMethods1Client.Create(ARestConnection: TDSRestConnection);
 begin
   inherited Create(ARestConnection);
@@ -760,6 +795,7 @@ begin
   FAbreRelatorioCommand.DisposeOf;
   FInsereEventosVisuCommand.DisposeOf;
   FfazerumtesteCommand.DisposeOf;
+  FLimpaMemoriaCommand.DisposeOf;
   FLocalizarCommand.DisposeOf;
   FGetPaginaCommand.DisposeOf;
   FGetPaginaLCommand.DisposeOf;
@@ -769,6 +805,7 @@ begin
   FValidarADCommand.DisposeOf;
   FBuscaSequencialCommand.DisposeOf;
   FBuscaSequencialCommand_Cache.DisposeOf;
+  FExcluirArquivosCommand.DisposeOf;
   inherited;
 end;
 

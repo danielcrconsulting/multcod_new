@@ -10,211 +10,210 @@ object ExtrForm: TExtrForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   WindowState = wsMaximized
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Label1: TLabel
     Left = 8
     Top = 128
     Width = 28
-    Height = 13
+    Height = 14
     Caption = 'Conta'
   end
   object Label2: TLabel
     Left = 8
     Top = 96
-    Width = 17
-    Height = 13
+    Width = 18
+    Height = 14
     Caption = 'Org'
   end
   object Label3: TLabel
     Left = 232
     Top = 96
     Width = 24
-    Height = 13
+    Height = 14
     Caption = 'Logo'
   end
   object Label4: TLabel
     Left = 8
     Top = 184
-    Width = 78
-    Height = 13
+    Width = 80
+    Height = 14
     Caption = 'Ano M'#234's Extrato'
   end
   object Label5: TLabel
     Left = 8
     Top = 232
     Width = 23
-    Height = 13
+    Height = 14
     Caption = 'Ciclo'
   end
   object Label6: TLabel
     Left = 368
     Top = 184
     Width = 54
-    Height = 13
+    Height = 14
     Caption = 'Limite Atual'
   end
   object Label7: TLabel
     Left = 368
     Top = 208
     Width = 76
-    Height = 13
+    Height = 14
     Caption = 'Limite de Saque'
   end
   object Label17: TLabel
     Left = 8
     Top = 208
     Width = 56
-    Height = 13
+    Height = 14
     Caption = 'Vencimento'
   end
   object Label8: TLabel
     Left = 432
     Top = 112
-    Width = 53
-    Height = 13
+    Width = 54
+    Height = 14
     Caption = 'Qtd de Extr'
   end
   object Label9: TLabel
     Left = 8
     Top = 264
-    Width = 111
-    Height = 13
+    Width = 112
+    Height = 14
     Caption = 'Total da Fatura Anterior'
   end
   object Label10: TLabel
     Left = 8
     Top = 496
-    Width = 101
-    Height = 13
+    Width = 103
+    Height = 14
     Caption = '(=) Total desta Fatura'
   end
   object Label11: TLabel
     Left = 368
     Top = 352
-    Width = 187
-    Height = 13
+    Width = 189
+    Height = 14
     Caption = 'Total Compra no Exterior (Conver. Real)'
   end
   object Label12: TLabel
     Left = 8
     Top = 328
-    Width = 164
-    Height = 13
+    Width = 168
+    Height = 14
     Caption = '(=) Saldo da Fatura Ant. Atualizado'
   end
   object Label13: TLabel
     Left = 8
     Top = 296
-    Width = 71
-    Height = 13
+    Width = 74
+    Height = 14
     Caption = '(-) Pagamentos'
   end
   object Label18: TLabel
     Left = 8
     Top = 432
-    Width = 140
-    Height = 13
+    Width = 144
+    Height = 14
     Caption = '(+) Compras / Saques do m'#234's'
   end
   object Label19: TLabel
     Left = 8
     Top = 456
-    Width = 83
-    Height = 13
+    Width = 88
+    Height = 14
     Caption = '(+) Parcelas Fixas'
   end
   object Label21: TLabel
     Left = 368
     Top = 328
-    Width = 150
-    Height = 13
+    Width = 153
+    Height = 14
     Caption = 'Total Compra no Exterior (D'#243'lar)'
   end
   object Label14: TLabel
     Left = 8
     Top = 360
-    Width = 60
-    Height = 13
+    Width = 63
+    Height = 14
     Caption = '(+) Encargos'
   end
   object Label15: TLabel
     Left = 8
     Top = 384
-    Width = 106
-    Height = 13
+    Width = 109
+    Height = 14
     Caption = '(+) Taxas e Anuidades'
   end
   object Label16: TLabel
     Left = 8
     Top = 408
-    Width = 52
-    Height = 13
+    Width = 58
+    Height = 14
     Caption = '(+ -)Ajustes'
   end
   object Label23: TLabel
     Left = 368
     Top = 296
     Width = 100
-    Height = 13
+    Height = 14
     Caption = 'Cota'#231#227'o do D'#243'lar em'
   end
   object Label24: TLabel
     Left = 368
     Top = 264
-    Width = 92
-    Height = 13
+    Width = 88
+    Height = 14
     Caption = 'Pagamento M'#237'nimo'
   end
   object Label25: TLabel
     Left = 368
     Top = 408
-    Width = 45
-    Height = 13
+    Width = 46
+    Height = 14
     Caption = 'Encargos'
   end
   object Label26: TLabel
     Left = 424
     Top = 432
-    Width = 68
-    Height = 13
+    Width = 72
+    Height = 14
     Caption = 'Jrs. Por Atrazo'
   end
   object Label27: TLabel
     Left = 424
     Top = 456
-    Width = 84
-    Height = 13
+    Width = 85
+    Height = 14
     Caption = 'Jrs. Prox. Per'#237'odo'
   end
   object Label28: TLabel
     Left = 424
     Top = 480
-    Width = 98
-    Height = 13
+    Width = 100
+    Height = 14
     Caption = 'Atraso Prox. Per'#237'odo'
   end
   object Label29: TLabel
     Left = 8
     Top = 152
-    Width = 28
-    Height = 13
+    Width = 27
+    Height = 14
     Caption = 'Nome'
   end
   object Label20: TLabel
     Left = 368
     Top = 376
-    Width = 108
-    Height = 13
+    Width = 106
+    Height = 14
     Caption = 'Total Compra Nacional'
   end
   object Label22: TLabel
     Left = 424
     Top = 408
-    Width = 55
-    Height = 13
+    Width = 52
+    Height = 14
     Caption = 'No Per'#237'odo'
   end
   object Image1: TImage
@@ -739,7 +738,7 @@ object ExtrForm: TExtrForm
   end
   object ExtratoButton: TButton
     Left = 576
-    Top = 128
+    Top = 133
     Width = 91
     Height = 25
     Caption = '&Extrato'
@@ -778,7 +777,7 @@ object ExtrForm: TExtrForm
   end
   object LancamentosButton: TButton
     Left = 432
-    Top = 144
+    Top = 133
     Width = 91
     Height = 25
     Caption = '&Lan'#231'amentos'

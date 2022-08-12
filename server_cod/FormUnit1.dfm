@@ -24,9 +24,9 @@ object Form1: TForm1
   object Label2: TLabel
     Left = 120
     Top = 8
-    Width = 163
+    Width = 169
     Height = 25
-    Caption = 'Server Multcold'
+    Caption = 'Server Multicold'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -21

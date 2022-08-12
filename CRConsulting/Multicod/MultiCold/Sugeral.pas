@@ -136,6 +136,7 @@ Type
     function BuscaSequencial( Usuario, Senha: String;
                               ConnectionID: Integer; Relatorio: String;
                               buscaSequencial: TBuscaSequencialDTO_M) : TResultadoBuscaSequencialDTO;
+    function ExcluirArquivos(strid: String): Boolean;
   End;
 
 
@@ -795,6 +796,11 @@ begin
   end;
 
   FreeAndNil(OMetodosServer);
+end;
+
+function TFormGeral.ExcluirArquivos(strid: String): Boolean;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.ExcluirArquivos(strid);
 end;
 
 function TFormGeral.ExecutaNovaQueryFacil(gridXML, fileName, usuario, mensagem,

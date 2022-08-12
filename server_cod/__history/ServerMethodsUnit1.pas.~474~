@@ -2072,7 +2072,8 @@ begin
     try
       ConectarBanco(bd);
       FdQry.SQL.Text := SQL;
-      //FdQry.SQL.SaveToFile('c:\rom\sql.sql');
+      //if pos('INSERT INTO PROTOCOLO VALUES', sql) > 0 then
+      //  FdQry.SQL.SaveToFile('c:\temp\sql_' + formatDateTime('dd/mm/yyyy hh:mm:ss', now) + '.sql');
       //if not Assigned(StrParam) then
       //  FdQry.Params := StrParam;
       FdQry.ExecSQL;
@@ -2786,7 +2787,7 @@ begin
     strarq.LoadFromFile(caminho + '_' + data + '.csv')
   else
     strarq.Add('SistemaRotina|UsuarioAlvo|UsuarioResponsavel|OrigemAcesso|Data|Resultado|TipoDeEvento');
-  strarq.Add('426_SOX|' + usuario + '||D4253N001|' + FormatDateTime('YYYY-MM-DD hh:nn:ss', now)+'|'+status+'|1');
+  strarq.Add('426_SOX|' + usuario + '||D4253N001|' + FormatDateTime('YYYY-MM-DD', now)+'|'+status+'|1');
   strarq.SaveToFile(caminho + '_' + data + '.csv');
   FreeAndNil(strarq);
 end;

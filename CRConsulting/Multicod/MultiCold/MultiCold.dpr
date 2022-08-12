@@ -36,7 +36,7 @@ uses
   UMetodosServer in '..\..\..\server_cod\UMetodosServer.pas',
   Vcl.Themes,
   Vcl.Styles,
-  MultiColdServerUnit1 in '..\..\..\rotinas do server antigo\MultiColdServerUnit1.pas' {MultiColdServerForm},
+  //MultiColdServerUnit1 in '..\..\..\rotinas do server antigo\MultiColdServerUnit1.pas' {MultiColdServerForm},
   UclsAux in '..\..\..\server_cod\UclsAux.pas',
   ActiveDs_TLB in '..\..\..\server_cod\ActiveDs_TLB.pas',
   adshlp in '..\..\..\server_cod\adshlp.pas';
@@ -68,7 +68,7 @@ Begin
   Application.CreateForm(TStatusForm, StatusForm);
   Application.CreateForm(TFrmDownloadManager, FrmDownloadManager);
   Application.CreateForm(TFrmConsultaExportacoesRemoto, FrmConsultaExportacoesRemoto);
-  Application.CreateForm(TMultiColdServerForm, MultiColdServerForm);
+  //Application.CreateForm(TMultiColdServerForm, MultiColdServerForm);
   //Application.CreateForm(TAnotaForm, AnotaForm);
   //Application.CreateForm(TAnotaTextoForm, AnotaTextoForm);
   FrameForm.Inicializa;

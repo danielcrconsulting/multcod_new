@@ -230,10 +230,6 @@
         </DCCReference>
         <DCCReference Include="..\..\..\server_cod\ClientClassesUnit2.pas"/>
         <DCCReference Include="..\..\..\server_cod\UMetodosServer.pas"/>
-        <DCCReference Include="..\..\..\rotinas do server antigo\MultiColdServerUnit1.pas">
-            <Form>MultiColdServerForm</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="..\..\..\server_cod\UclsAux.pas"/>
         <DCCReference Include="..\..\..\server_cod\ActiveDs_TLB.pas"/>
         <DCCReference Include="..\..\..\server_cod\adshlp.pas"/>

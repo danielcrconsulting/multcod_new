@@ -24,7 +24,7 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
     Height = 207
     Align = alClient
     DataSource = DSProcessadorTemplate
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
     PopupMenu = PopupMenuGrid
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
@@ -192,8 +192,8 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
         'Erro Execu'#231#227'o')
     end
     object BtnPesquisar: TButton
-      Left = 662
-      Top = 100
+      Left = 438
+      Top = 111
       Width = 193
       Height = 52
       Anchors = [akTop, akRight]
@@ -250,6 +250,23 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
       Height = 17
       Caption = 'Filtrar por Data?'
       TabOrder = 5
+    end
+    object btnexcluir: TButton
+      Left = 662
+      Top = 111
+      Width = 193
+      Height = 52
+      Anchors = [akTop, akRight]
+      Caption = 'Excluir Arquivos'
+      Default = True
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 6
+      OnClick = btnexcluirClick
     end
   end
   object DSProcessadorTemplate: TDataSource

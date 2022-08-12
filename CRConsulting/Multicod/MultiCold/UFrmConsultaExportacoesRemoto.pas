@@ -36,6 +36,7 @@ type
     SaveDialog1: TSaveDialog;
     LblStatus: TLabel;
     ProgressBar1: TProgressBar;
+    btnexcluir: TButton;
     procedure BtnFecharClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BtnPesquisarClick(Sender: TObject);
@@ -43,6 +44,7 @@ type
     procedure BtnDownloadClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure btnexcluirClick(Sender: TObject);
   strict private
     { Private declarations }
     FCodUsuario: String;
@@ -158,6 +160,33 @@ begin
   end else
     MessageDlg('Só é possível baixar o arquivo quando o processamento estiver finalizado.', TMsgDlgType.mtInformation, [mbOk], 0);
 
+end;
+
+procedure TFrmConsultaExportacoesRemoto.btnexcluirClick(Sender: TObject);
+var
+  idx : Integer;
+  strid : String;
+begin
+  strid := '';
+  if DBGridConsultaExportacao.SelectedRows.Count > 0 then
+  begin
+    if MessageDlg('Você tem certeza que deseja excluir estes arquivos ?',mtConfirmation,[mbyes,mbno],0)=mryes then
+    begin
+      for idx := 0 to DBGridConsultaExportacao.SelectedRows.Count -1 do
+      begin
+        DBGridConsultaExportacao.DataSource.DataSet.GotoBookmark((DBGridConsultaExportacao.SelectedRows.Items[idx]));
+        strid := strid + DBGridConsultaExportacao.DataSource.DataSet.FieldByName('id').Value + ',';
+      end;
+      delete(strid,length(strid),1)
+    end;
+    if formGeral.ExcluirArquivos(strid) then
+      ShowMessage('Arquivos excluídos com sucesso !')
+    else
+      ShowMessage('Falha na exclusão dos arquivos !');
+    BtnPesquisar.Click;
+  end
+  else
+    ShowMessage('Atenção nenhum arquivo selecionado !');
 end;
 
 procedure TFrmConsultaExportacoesRemoto.BtnFecharClick(Sender: TObject);

@@ -664,11 +664,12 @@ Var
   AuxStr : AnsiString;
 Begin
 Result := True;
-AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND');
+//AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND');
 DadosDeConta.Clear;
-Reset(ArqIndiceContaCartao);
-DadosDeConta.Text := PesquisaCarregaContaCartao(Conta, NArqCont);
-CloseFile(ArqIndiceContaCartao);
+//Reset(ArqIndiceContaCartao);
+//DadosDeConta.Text := PesquisaCarregaContaCartao(Conta, NArqCont);
+DadosDeConta.Text := FormGeral.RetornarContaCartao(ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND', IntToStr(Conta),NArqCont);
+//CloseFile(ArqIndiceContaCartao);
 
 If DadosDeConta.Count = 0 Then
   Begin
@@ -692,13 +693,14 @@ Else
 If RgRcb.RegUnsrCont.ContNormal.TipoConta = 'P' Then  // Conta de portador, vai buscar o nome da empresa...
   Begin
   Try
-    AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND');
-    Reset(ArqIndiceContaCartao);
-    AuxStr := PesquisaCarregaContaCartao(StrToInt64(Trim(RgRcb.RegUnsrCont.ContNormal.ContaEmpres)), NArqCont);
-    CloseFile(ArqIndiceContaCartao);
+    //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND');
+    //Reset(ArqIndiceContaCartao);
+    //AuxStr := PesquisaCarregaContaCartao(StrToInt64(Trim(RgRcb.RegUnsrCont.ContNormal.ContaEmpres)), NArqCont);
+    AuxStr := FormGeral.RetornarContaCartao(ExtractFilePath(NArqCont)+SeArquivoSemExt(NArqCont)+'CONTA.IND', Trim(RgRcb.RegUnsrCont.ContNormal.ContaEmpres),NArqCont);
+    //CloseFile(ArqIndiceContaCartao);
     Move(AuxStr[1],RgRcb.RegUnsrContEmpresaDoPortador,Length(AuxStr));
   Except
-    End; // Try  
+    End; // Try
   End;
 End;
 
@@ -978,7 +980,8 @@ If (SubForm = 'EXTR1') Or (SubForm = 'EMPRESARIAL1') Then
 //      ShowMessage('Esse é o cara!');
     //AuxStr := PesquisaCarregaContaCartao(NumConta, NArqExtr[J]);
 
-    AuxStr := formGeral.RetornarContaCartao(ExtractFilePath(NArqExtr[J])+SeArquivoSemExt(NArqExtr[J])+'CONTA.IND', IntToStr(NumConta), NArqCart);
+    AuxStr := formGeral.RetornarContaCartao(ExtractFilePath(NArqExtr[J])+SeArquivoSemExt(NArqExtr[J])+'CONTA.IND', IntToStr(NumConta),
+     NArqExtr[J]);
 
 
     If AuxStr <> '' Then

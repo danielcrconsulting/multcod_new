@@ -96,6 +96,7 @@ type
     function BuscaSequencial(Usuario, Senha: String;
                              ConnectionID: Integer; Relatorio: String;
                              buscaSequencial: TBuscaSequencialDTO_M): TResultadoBuscaSequencialDTO;
+    function ExcluirArquivos(strid : String) : Boolean;
   end;
 
 implementation
@@ -247,6 +248,31 @@ except
     logaLocal('TMultiColdDataServer.AbreRelatorio '+e.Message);
 end;
 End;
+
+function TServerMethods1.ExcluirArquivos(strid: String): Boolean;
+begin
+  result := True;
+  try
+    try
+      ConectarBanco(0);
+      FdQry.SQL.Text := ' select PathRelatorio from ProcessadorExtracao where Id in (' + strid + ')';
+      FdQry.open;
+      FdQry.First;
+      while not FdQry.Eof do
+      begin
+        DeleteFile(PChar(FdQry.FieldByName('PathRelatorio').AsString));
+        FdQry.Next;
+      end;
+      FdQry.SQL.Text := ' delete from ProcessadorExtracao where Id in (' + strid + ')';
+      FdQry.ExecSQL;
+    except
+      result := False;
+    end;
+  finally
+    DesconectarBanco;
+    FreeAndNil(FdQry);
+  end;
+end;
 
 function TServerMethods1.ExecutaNovaQueryFacil( gridXML, fileName, usuario : WideString; mensagem, xmlData : WideString): String;
 var
@@ -2779,15 +2805,15 @@ var arqIni : TiniFile;
     caminho, data : String;
     strarq : TStringList;
 begin
-  data := FormatDateTime('YYYYMMDD', now);
+  data := FormatDateTime('YYYYMMDD', now) + '_' + FormatDateTime('HHMMSS', now) ;
   arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
   caminho        := arqIni.ReadString('AD', 'log',    '');
   strarq := TStringList.Create;
   if FileExists(caminho + '_' + data + '.csv') then
     strarq.LoadFromFile(caminho + '_' + data + '.csv')
   else
-    strarq.Add('SistemaRotina|UsuarioAlvo|UsuarioResponsavel|OrigemAcesso|Data|Resultado|TipoDeEvento');
-  strarq.Add('426_SOX|' + usuario + '||D4253N001|' + FormatDateTime('YYYY-MM-DD', now)+'|'+status+'|1');
+    strarq.Add(AnsiToUtf8('SistemaRotina|UsuarioAlvo|UsuarioResponsavel|OrigemAcesso|Data|Resultado|TipoDeEvento'));
+  strarq.Add(AnsiToUtf8('426_SOX|' + usuario + '||D4253N001|' + FormatDateTime('YYYY-MM-DD', now)+'|'+status+'|1'));
   strarq.SaveToFile(caminho + '_' + data + '.csv');
   FreeAndNil(strarq);
 end;

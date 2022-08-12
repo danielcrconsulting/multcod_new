@@ -2,7 +2,7 @@ object ContaForm: TContaForm
   Left = 111
   Top = 148
   Caption = 'Dados de Conta'
-  ClientHeight = 478
+  ClientHeight = 489
   ClientWidth = 688
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
