@@ -56,6 +56,7 @@ Type
   Function RetornarContaNome(arquivo, NArqCart, nome, sobrenome : String) : String;
   Function RetornarContaAux(arquivo, contaaux : String) : String;
   function RetornarContaEmpresa(arquivo : String; conta : Int64): String;
+  function RetornarTamanhoArq(arquivo : String) : Integer;
   End;
 
 Procedure LerIni(TheFileName : AnsiString);
@@ -766,6 +767,11 @@ end;
 function TFormGeral.RetornarContaNome(arquivo, NArqCart, nome, sobrenome: String): String;
 begin
   result := OMetodosServer.ServerMethodsPrincipalClient.RetornarContaNome(arquivo, NArqCart, nome, sobrenome);
+end;
+
+function TFormGeral.RetornarTamanhoArq(arquivo: String): Integer;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarTamanhoArq(arquivo);
 end;
 
 procedure TFormGeral.FormClose(Sender: TObject; var Action: TCloseAction);

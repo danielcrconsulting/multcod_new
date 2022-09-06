@@ -36,10 +36,10 @@ uses
   UMetodosServer in '..\..\..\server_cod\UMetodosServer.pas',
   Vcl.Themes,
   Vcl.Styles,
-  //MultiColdServerUnit1 in '..\..\..\rotinas do server antigo\MultiColdServerUnit1.pas' {MultiColdServerForm},
   UclsAux in '..\..\..\server_cod\UclsAux.pas',
   ActiveDs_TLB in '..\..\..\server_cod\ActiveDs_TLB.pas',
-  adshlp in '..\..\..\server_cod\adshlp.pas';
+  adshlp in '..\..\..\server_cod\adshlp.pas',
+  UAD in 'UAD.pas' {FAd};
 
 {$R *.RES}
 

@@ -98,15 +98,18 @@ For I := 0 To ListBox1.Items.Count-1 Do
     For J := 0 To NArqDetex.Count - 1 Do
       If Pos(ListBox1.Items[I],NArqDetex[J]) <> 0 Then
           Begin
-          AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqDetex[J])+SeArquivoSemExt(NArqDetex[J])+'CONTA.IND');
-          Reset(ArqIndiceContaCartao);
+          //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqDetex[J])+SeArquivoSemExt(NArqDetex[J])+'CONTA.IND');
+          //Reset(ArqIndiceContaCartao);
           TestarFlag := False;
-          AuxStr := Selecons.PesquisaCarregaContaCartao(NumConta, NArqDetex[J]);
+          //AuxStr := Selecons.PesquisaCarregaContaCartao(NumConta, NArqDetex[J]);
+
+          AuxStr := formgeral.RetornarContaCartao(ExtractFilePath(NArqDetex[J])+SeArquivoSemExt(NArqDetex[J])+'CONTA.IND', IntToStr(NumConta), NArqDetex[J] );
+
           Detex.Clear;
           Detex.Sorted := False;
           If AuxStr <> '' Then
             Detex.Text := AuxStr;
-          CloseFile(ArqIndiceContaCartao);
+          //CloseFile(ArqIndiceContaCartao);
 
           If RgRcb.RegUnsrCont.ContNormal.TipoConta = 'J' Then
             Begin

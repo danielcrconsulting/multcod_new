@@ -53,11 +53,12 @@ For J := 0 To NArqExtr.Count - 1 Do
   Else
     LinAux := Copy(NArqExtr[J],PosAux+11,6);
 
-  AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqExtr[J])+SeArquivoSemExt(NArqExtr[J])+'CONTA.IND');
-  Reset(ArqIndiceContaCartao);
-  Memo1.Lines.Add(LinAux+' '+IntToStr(FileSize(ArqIndiceContaCartao)));
+  //AssignFile(ArqIndiceContaCartao,ExtractFilePath(NArqExtr[J])+SeArquivoSemExt(NArqExtr[J])+'CONTA.IND');
+  //Reset(ArqIndiceContaCartao);
+  //Memo1.Lines.Add(LinAux+' '+IntToStr(FileSize(ArqIndiceContaCartao)));
+  Memo1.Lines.Add(LinAux+' '+IntToStr( formgeral.RetornarTamanhoArq(ExtractFilePath(NArqExtr[J])+SeArquivoSemExt(NArqExtr[J])+'CONTA.IND') ));
   Application.ProcessMessages;
-  CloseFile(ArqIndiceContaCartao);
+  //CloseFile(ArqIndiceContaCartao);
   End;
 
 SalvarButton.Enabled := True;

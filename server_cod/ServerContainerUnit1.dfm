@@ -20,4 +20,8 @@ object ServerContainer1: TServerContainer1
     Left = 200
     Top = 11
   end
+  object DSServerClass2: TDSServerClass
+    Left = 272
+    Top = 96
+  end
 end

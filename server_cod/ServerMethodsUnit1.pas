@@ -13,7 +13,8 @@ uses System.SysUtils, System.Classes, System.Json,
   FireDAC.VCLUI.Wait, FireDAC.Phys.MSSQLDef, FireDAC.Phys.ODBCBase,
   FireDAC.Phys.MSSQL, FireDAC.Stan.StorageBin, FireDAC.Comp.UI, System.Zlib,
   System.Zip, System.Variants, SutypGer, Subrug, SuTypMultiCold, Pilha,
-  Bde.DBTables, dm, UclsAux, UMulticoldReport, Windows;
+  Bde.DBTables, dm, UclsAux, UMulticoldReport, Windows, adshlp, ActiveDs_TLB,
+  Winapi.ActiveX, System.Win.ComObj;
 
 type
   TPesquisa = Record
@@ -53,6 +54,9 @@ type
     Procedure LogaLocal(Const Mens : String);
     Function VerificaSeguranca(NomeRel, Usuario : String; Var Rel133CC, CmprBrncs : Boolean;
                                Var ArrRegIndice : TgRegIndice; log : Boolean) : Boolean;
+    function EhUsuarioValido(Servidor, Usuario, Senha: String): Boolean;
+    function ValidarADNew_W(pUsuario, pSenha: String): Boolean;
+    function ValidarADNew_WW(pUsuario, pSenha: String): String;
   public
     { Public declarations }
     function EchoString(Value: string): string;
@@ -62,6 +66,8 @@ type
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
     function RetornarParametroAD : String;
+    function ValidarADNew(pUsuario, pSenha: String): String;
+
     procedure GravarLOGAD(usuario,status : String);
     function RetornarDadosBanco(SQL : String ; bd : Integer = 0) : String;
     procedure PersistirBanco(SQL : String; bd : Integer = 0);
@@ -255,12 +261,12 @@ begin
   try
     try
       ConectarBanco(0);
-      FdQry.SQL.Text := ' select PathRelatorio from ProcessadorExtracao where Id in (' + strid + ')';
+      FdQry.SQL.Text := ' select PathArquivoExportacao from ProcessadorExtracao where Id in (' + strid + ')';
       FdQry.open;
       FdQry.First;
       while not FdQry.Eof do
       begin
-        DeleteFile(PChar(FdQry.FieldByName('PathRelatorio').AsString));
+        DeleteFile(PChar(FdQry.FieldByName('PathArquivoExportacao').AsString));
         FdQry.Next;
       end;
       FdQry.SQL.Text := ' delete from ProcessadorExtracao where Id in (' + strid + ')';
@@ -2800,20 +2806,215 @@ begin
   result := host;
 end;
 
+
+function TServerMethods1.EhUsuarioValido(Servidor, Usuario, Senha: String): Boolean;
+var hr : integer;
+    obj : IAdsUser;
+begin
+  try
+    hr := ADsOpenObject('LDAP://' + Servidor, Usuario, Senha, ADS_READONLY_SERVER , IAdsUser, obj);
+    Result :=Succeeded(hr);
+  except
+    Result := False;
+  end;
+end;
+
+function TServerMethods1.ValidarADNew(pUsuario, pSenha: String): String;
+var
+  adObject: IADs;
+  host, SQL : String;
+  retorno : Boolean;
+  aut : Integer;
+  FDQuery : TFDQuery;
+begin
+  host := RetornarParametroAD;
+
+  SQL := 'INSERT INTO AUTENTICACAO_AD(DOMINIO,USUARIO, AUT, SENHA) ' +
+         'VALUES(' +  QuotedStr(host) + ',' + QuotedStr(pUsuario) + ',' + '0' + ',' +  QuotedStr(pSenha) + ')';
+
+  PersistirBanco(SQL,0);
+
+  sleep(3000);
+  ConectarBanco(0);
+  FDQuery := TFDQuery.Create(nil);
+  FDQuery.Connection := FDCon;
+  FDQuery.SQL.Text := 'select aut from AUTENTICACAO_AD where dominio = ' + QuotedStr(host) + ' and ' +
+                       'usuario = ' + QuotedStr(pUsuario) + ' and aut = 1 ';
+  FDQuery.Open;
+  if FDQuery.RecordCount = 1 then
+    result := '1'
+  else
+    result := '0';
+
+  SQL := 'delete from AUTENTICACAO_AD where dominio = ' + QuotedStr(host) + ' and ' +
+                       'usuario = ' + QuotedStr(pUsuario);
+  PersistirBanco(SQL,0);
+
+  FreeAndNil(FDQuery);
+
+ {
+  Result := '0';
+  CoInitialize(nil);
+  try
+    //ADsOpenObject('LDAP://' + host, LowerCase(pUsuario), pSenha, ADS_SECURE_AUTHENTICATION, IADs, adObject);
+    //ADsOpenObject('LDAP://' + host, LowerCase(pUsuario), pSenha, ADS_PROMPT_CREDENTIALS , IADs, adObject);
+    //ADsOpenObject('LDAP://' + host, LowerCase(pUsuario), pSenha, ADS_NO_AUTHENTICATION , IADs, adObject);
+    //OleCheck(ADsOpenObject(('://' + host, LowerCase(pUsuario), pSenha, ADS_READONLY_SERVER, IADs, adObject));
+
+    aut :=  ADsOpenObject('LDAP://' + host ,
+                  LowerCase(pUsuario),
+                  pSenha,
+                  ADS_SECURE_AUTHENTICATION,
+                  IADs,
+                  adObject);
+    result := '1';
+    //retorno := EhUsuarioValido(host, pUsuario, pSenha );
+  except
+    on e: EOleException do
+    begin
+      result := '0';
+    end;
+  end;
+  CoUninitialize;
+  adObject:= nil;
+  //AdsFreeAdsValues(adObject,1);
+  }
+end;
+
+
+function TServerMethods1.ValidarADNew_WW(pUsuario, pSenha: String): String;
+var
+ Container : IADsContainer;
+ NewObject : IADs;
+ User : IADsUser;
+ hr : HREsult;
+ host : String;
+begin
+ host := 'LDAP://' + RetornarParametroAD;
+ // COM must be initialized
+ CoInitialize(nil);
+
+ // Bind to the container.
+ hr := ADsGetObject(host,IADsContainer,Container);
+ if Failed(hr) then exit;
+ // Create the new Active Directory Service Interfaces  User object.
+ NewObject := Container.Create(pUsuario,'ActiveDirectoryUser') as IADs;
+ // Get the IADsUser interface from the user object.
+ NewObject.QueryInterface(IID_IADsUser, User);
+ // Set the password.
+ User.SetPassword(psenha);
+ // Complete the operation to create the object.
+ User.SetInfo;
+ // Cleanup.
+ Container._Release;
+ NewObject._Release;
+ User._Release;
+ CoUninitialize;
+end;
+
+function TServerMethods1.ValidarADNew_W(pUsuario, pSenha: String): Boolean;
+var
+  Adc_Login: TADOConnection;
+  Qry_Login: TADOQuery;
+  Host : String;
+begin
+  Host := RetornarParametroAD;
+
+    Adc_Login:= TADOConnection.Create(nil);
+    Qry_Login:= TADOQuery.Create(Adc_Login);
+    Qry_Login.Connection := Adc_Login;
+
+    Adc_Login.LoginPrompt := False;
+    Adc_Login.KeepConnection := False;
+    Adc_Login.Mode := cmRead;
+    Adc_Login.Provider := 'AdsDSOObject';
+
+    try
+      //Passa o Dominio, usuário e senha do LDAP na string de conexão...
+      Qry_Login.SQL.Text :=
+        ' SELECT' +
+        '   cn' +
+        ' FROM' +
+        '   %Dominio%' +
+        ' WHERE objectClass = ''cn'' ';
+      Qry_Login.CursorType := ctStatic;
+
+      Qry_Login.Close;
+
+      try
+        Adc_Login.ConnectionString :=
+        'Provider=ADsDSOObject;Encrypt Password=True;Data Source=LDAP://' + Host +
+        //'Provider=ADsDSOObject;Data Source=LDAP://' + Host +
+        ';User ID =' + pUsuario +
+        ';Password=' + pSenha +
+        ';Mode=Read';
+
+        Adc_Login.Open;
+        Adc_Login.Connected := True;
+      except
+        on e:exception do
+        begin
+          result := False;
+          exit;
+        end;
+      end;
+
+      try
+        with (Qry_Login) do
+        begin
+          Close;
+          SQL.Text := StringReplace(SQL.Text, '%Dominio%', QuotedStr('LDAP://'+Host), [rfReplaceAll]);
+          //Mensagem(SQL.Text);
+          //sql.SaveToFile('c:\temp\ad.sql');
+          Open;
+        end;
+      except
+        on e:exception do
+        begin
+           result := False;
+          exit;
+        end;
+      end;
+    finally
+      FreeAndNil(Qry_Login);
+      FreeAndNil(Adc_Login);
+    end;
+
+  result := True;
+end;
+
 procedure TServerMethods1.GravarLOGAD(usuario,status : String);
+ function AjustarTamanho(str : String; tam : integer): String;
+    begin
+      result := str +  StringOfChar(' ', tam - Length(str)) ;
+    end;
 var arqIni : TiniFile;
     caminho, data : String;
     strarq : TStringList;
+
 begin
-  data := FormatDateTime('YYYYMMDD', now) + '_' + FormatDateTime('HHMMSS', now) ;
+  if status = 'SUCESSO' then
+    status := 'Sucesso';
+  if status = 'FALHA' then
+    status := 'Falha';
+
+  data := FormatDateTime('YYYYMMDD', now);
   arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
   caminho        := arqIni.ReadString('AD', 'log',    '');
   strarq := TStringList.Create;
   if FileExists(caminho + '_' + data + '.csv') then
     strarq.LoadFromFile(caminho + '_' + data + '.csv')
   else
-    strarq.Add(AnsiToUtf8('SistemaRotina|UsuarioAlvo|UsuarioResponsavel|OrigemAcesso|Data|Resultado|TipoDeEvento'));
-  strarq.Add(AnsiToUtf8('426_SOX|' + usuario + '||D4253N001|' + FormatDateTime('YYYY-MM-DD', now)+'|'+status+'|1'));
+    strarq.Add(AnsiToUtf8('SistRot   |UsuarioAlvo                                       |' +
+                          'UsuarioResponsável                                |OrigemAcesso        |' +
+                          'Data      |Resultado                                                   ' +
+                          '                                                                                                                                                                                                                                                |TipoDeEvento'));
+
+
+    //strarq.Add(AnsiToUtf8('SistemaRotina|UsuarioAlvo|UsuarioResponsável|OrigemAcesso|Data|Resultado|TipoDeEvento'));
+  strarq.Add(AnsiToUtf8(AjustarTamanho('426_SOX', 10) + '|' + AjustarTamanho(usuario,50) + '|' +
+                        AjustarTamanho(' ',50) + '|' +AjustarTamanho('D4253N001',20) + '|' +
+                        FormatDateTime('YYYY-MM-DD', now)+'|'+ AjustarTamanho(status,300) + '|1'));
   strarq.SaveToFile(caminho + '_' + data + '.csv');
   FreeAndNil(strarq);
 end;

@@ -178,7 +178,7 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
     end
     object ComboBoxStatus: TComboBox
       Left = 86
-      Top = 68
+      Top = 67
       Width = 145
       Height = 21
       Style = csDropDownList
@@ -266,6 +266,7 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
       Font.Style = []
       ParentFont = False
       TabOrder = 6
+      Visible = False
       OnClick = btnexcluirClick
     end
   end

@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 21/07/2022 17:51:49
+// 15/08/2022 18:48:22
 //
 
 unit ClientClassesUnit2;
@@ -31,6 +31,7 @@ type
     FRetornarContaNomeCommand: TDSRestCommand;
     FRetornarContaAuxCommand: TDSRestCommand;
     FRetornarContaEmpresaCommand: TDSRestCommand;
+    FRetornarTamanhoArqCommand: TDSRestCommand;
   public
     constructor Create(ARestConnection: TDSRestConnection); overload;
     constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
@@ -54,6 +55,7 @@ type
     function RetornarContaNome(arquivo: string; NArqCart: string; nome: string; sobrenome: string; const ARequestFilter: string = ''): string;
     function RetornarContaAux(arquivo: string; contaaux: string; const ARequestFilter: string = ''): string;
     function RetornarContaEmpresa(arquivo: string; conta: Int64; const ARequestFilter: string = ''): string;
+    function RetornarTamanhoArq(arquivo: string; const ARequestFilter: string = ''): Integer;
   end;
 
 const
@@ -170,6 +172,12 @@ const
     (Name: 'arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: 'conta'; Direction: 1; DBXType: 18; TypeName: 'Int64'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
+  );
+
+  TServerMethods1_RetornarTamanhoArq: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'arquivo'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: ''; Direction: 4; DBXType: 6; TypeName: 'Integer')
   );
 
 implementation
@@ -478,6 +486,20 @@ begin
   Result := FRetornarContaEmpresaCommand.Parameters[2].Value.GetWideString;
 end;
 
+function TServerMethods1Client.RetornarTamanhoArq(arquivo: string; const ARequestFilter: string): Integer;
+begin
+  if FRetornarTamanhoArqCommand = nil then
+  begin
+    FRetornarTamanhoArqCommand := FConnection.CreateCommand;
+    FRetornarTamanhoArqCommand.RequestType := 'GET';
+    FRetornarTamanhoArqCommand.Text := 'TServerMethods1.RetornarTamanhoArq';
+    FRetornarTamanhoArqCommand.Prepare(TServerMethods1_RetornarTamanhoArq);
+  end;
+  FRetornarTamanhoArqCommand.Parameters[0].Value.SetWideString(arquivo);
+  FRetornarTamanhoArqCommand.Execute(ARequestFilter);
+  Result := FRetornarTamanhoArqCommand.Parameters[1].Value.GetInt32;
+end;
+
 constructor TServerMethods1Client.Create(ARestConnection: TDSRestConnection);
 begin
   inherited Create(ARestConnection);
@@ -509,6 +531,7 @@ begin
   FRetornarContaNomeCommand.DisposeOf;
   FRetornarContaAuxCommand.DisposeOf;
   FRetornarContaEmpresaCommand.DisposeOf;
+  FRetornarTamanhoArqCommand.DisposeOf;
   inherited;
 end;
 

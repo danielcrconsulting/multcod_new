@@ -9,7 +9,10 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, inifiles;
+  FireDAC.Comp.Client, inifiles, adshlp, ActiveDs_TLB,
+  Winapi.ActiveX, System.Win.ComObj, Vcl.ExtCtrls, FireDAC.UI.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.VCLUI.Wait,
+  FireDAC.Comp.UI;
 
 type
   TForm1 = class(TForm)
@@ -22,6 +25,9 @@ type
     Button1: TButton;
     FDQuery1: TFDQuery;
     Label2: TLabel;
+    Timer1: TTimer;
+    fdcon: TFDConnection;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
     procedure FormCreate(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
     procedure ButtonStartClick(Sender: TObject);
@@ -29,10 +35,17 @@ type
     procedure ButtonOpenBrowserClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     FServer: TIdHTTPWebBrokerBridge;
     procedure StartServer;
     { Private declarations }
+    function ValidarADNew(pUsuario, pSenha: String): String;
+    procedure ConectarBanco(bd : integer = 0);
+    function RetornarParametrosConn(var servidor : String; var driverservidor: String;
+                                                var porta : String ; var banco : String;
+                                                var usuario : String ; var senha : String;
+                                                var NomeEstacao : String ) : Boolean;
   public
     { Public declarations }
   end;
@@ -46,6 +59,60 @@ implementation
 
 uses
   WinApi.Windows, Winapi.ShellApi, Datasnap.DSSession;
+
+
+function TForm1.RetornarParametrosConn(var servidor : String; var driverservidor: String;
+                                                var porta : String ; var banco : String;
+                                                var usuario : String ; var senha : String;
+                                                var NomeEstacao : String ) : Boolean;
+var arqIni : TiniFile;
+begin
+  arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
+  servidor       := arqIni.ReadString('configuracoes', 'servidor',    '');
+  driverservidor := arqIni.ReadString('configuracoes', 'driver',      '');
+  porta          := arqIni.ReadString('configuracoes', 'port',        '');
+  banco          := arqIni.ReadString('configuracoes', 'database',    '');
+  usuario        := arqIni.ReadString('configuracoes', 'user',        '');
+  senha          := arqIni.ReadString('configuracoes', 'password',    '');
+  NomeEstacao    := arqIni.ReadString('configuracoes', 'WorkStation', '');
+  result := True;
+end;
+
+function TForm1.ValidarADNew(pUsuario, pSenha: String): String;
+var
+  adObject: IADs;
+  host : String;
+  retorno : Boolean;
+  aut : Integer;
+
+  function RetornarParametroAD : String;
+  var arqIni : TiniFile;
+      host : String;
+  begin
+    arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
+    host           := arqIni.ReadString('AD', 'host',    '');
+
+    result := host;
+  end;
+begin
+  host := RetornarParametroAD;
+  Result := '0';
+  CoInitialize(nil);
+  try
+
+    aut :=  ADsOpenObject('LDAP://' + host ,
+                  LowerCase(pUsuario),
+                  pSenha,
+                  ADS_SECURE_AUTHENTICATION,
+                  IADs,
+                  adObject);
+    result := '1';
+  except
+    result := '0';
+  end;
+  CoUninitialize;
+  adObject:= nil;
+end;
 
 procedure TForm1.ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
 begin
@@ -115,6 +182,77 @@ begin
     FServer.DefaultPort := StrToInt(EditPort.Text);
     FServer.Active := True;
   end;
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+var
+  fdQry, fdQry_up : TFDQuery;
+  function RetornarParametroAD : String;
+  var arqIni : TiniFile;
+      host : String;
+  begin
+    arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
+    host           := arqIni.ReadString('AD', 'host',    '');
+    result := host;
+  end;
+
+begin
+  fdQry    := TFDQuery.Create(nil);
+  fdQry_up := TFDQuery.Create(nil);
+  ConectarBanco(0);
+  fdQry.Connection    := fdcon;
+  fdQry_up.Connection := fdcon;
+  fdQry.SQL.Text := ' select * from autenticacao_ad where dominio = ' + QuotedStr(RetornarParametroAD);
+  fdqry.Open;
+  while not fdQry.eof do
+  begin
+    if ValidarADNew( fdQry.FieldByName('usuario').AsString , fdQry.FieldByName('SENHA').AsString) = '1' then
+    begin
+      fdQry_up.SQL.Text := 'update autenticacao_ad set aut = 1 ' +
+                           'where dominio = ' + QuotedStr(RetornarParametroAD) + ' and ' +
+                           'usuario = ' + QuotedStr(fdQry.FieldByName('usuario').AsString);
+      fdQry_up.ExecSQL;
+    end;
+    fdQry.Next;
+  end;
+
+  fdcon.Close;
+  FreeAndNil(fdQry);
+  FreeAndNil(fdQry_up);
+end;
+
+
+procedure TForm1.ConectarBanco(bd : integer = 0);
+var
+  servidor, driverservidor, porta, banco, usuario,
+  senha, NomeEstacao : String;
+begin
+  RetornarParametrosConn(servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao);
+  {
+  FdCon.ConnectionString := 'Provider='+DriverServidor+';'+
+                                          'Persist Security Info=True;'+
+                                          'User ID='+usuario+';'+
+                                          'Password='+senha+';'+
+                                          'Initial Catalog='+banco+';'+
+                                          'Data Source='+servidor+';'+
+                                          'Auto Translate=True;'+
+                                          'Packet Size=4096;'+
+                                          'Workstation ID='+NomeEstacao+';'+
+                                          'Network Library=DBMSSOCN'+';'+
+                                          'DriverID=MSSQL';
+  }
+  FdCon.Params.Clear;
+  FdCon.Params.Values['DriverID']  := 'MSSQL';
+  FdCon.Params.Values['Server'] := servidor;
+  if bd = 0 then
+    FdCon.Params.Values['Database'] := banco
+  else if bd = 1 then
+     FdCon.Params.Values['Database'] := banco + '_log'
+  else
+     FdCon.Params.Values['Database'] := banco + '_evento';
+  FdCon.Params.Values['User_name'] := usuario;
+  FdCon.Params.Values['Password'] := senha;
+  FdCon.Open;
 end;
 
 end.

@@ -13,7 +13,7 @@ Uses
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.FireDACJSONReflect,
   REST.Response.Adapter, System.JSON, System.Zip, uclsAux, ActiveDs_TLB, adshlp,
-  ComObj, ActiveX;
+  ComObj, ActiveX, UAD;
 
 Type
 
@@ -818,35 +818,32 @@ end;
 
 function TFormGeral.ValidarADNew(pUsuario, pSenha: String): Boolean;
 var
-  adObject: IADs;
-  host : String;
+  //adObject: IADs;
+  host, retorno, SQL : String;
 begin
-  ///Inicialização do COM
-  ///
+  {
   host := OMetodosServer.ServerMethodsPrincipalClient.RetornarParametroAD;
   CoInitialize(nil);
   result := False;
   try
     ADsOpenObject('LDAP://' + host, LowerCase(pUsuario), pSenha, ADS_SECURE_AUTHENTICATION, IADs, adObject);
     result := True;
-    //ShowMessage('Login válido!');
   except
     on e: EOleException do
     begin
-      {
-      if Pos('Falha de logon', e.Message) > 0 then
-        ShowMessage('Login inválido!')
-      else
-        ShowMessage(e.Message);
-      }
       result := False;
     end;
   end;
   CoUninitialize;
+  }
+  retorno := OMetodosServer.ServerMethodsPrincipalClient.ValidarADNew(pUsuario, pSenha);
+  if retorno = '1' then
+    result := True;
 end;
 
 procedure TFormGeral.FormCreate(Sender: TObject);
   var senhaAD : String;
+      vfad : TFAd;
   function usuarioLogado: String;
   var
     I: DWord;
@@ -891,16 +888,21 @@ Begin
     begin
       if OMetodosServer.ServerMethodsPrincipalClient.RetornarParametroAD <> '' then
       begin
-        senhaAD := InputBox('Login AD',#31 + 'Usuário: ' + usuarioLogado + ' Digite a Senha para autencição no AD:','');
-        if (not ValidarADNew(usuarioLogado,senhaAD)) or (Trim(senhaAD) = '') then
+        vfad := TFAd.Create(nil);
+        vfad.ShowModal;
+
+        //senhaAD := InputBox('Login AD',#31 + 'Usuário: ' + usuarioLogado + ' Digite a Senha para autencição no AD:','');
+        if (not ValidarADNew(vfad.adusuario,vfad.adsenha)) or (Trim(vfad.adusuario) = '') or (Trim(vfad.adsenha) = '') then
         begin
           ShowMessage('Usuário da rede não autorizado');
           OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'FALHA');
           Application.Terminate;
+          FreeAndNil(fad);
           Close;
           exit;
         end;
         OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'SUCESSO');
+        FreeAndNil(fad);
       end;
     end;
   end;

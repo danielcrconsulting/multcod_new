@@ -10,14 +10,13 @@ object RangeForm: TRangeForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Label3: TLabel
     Left = 24
     Top = 64
-    Width = 155
-    Height = 13
+    Width = 161
+    Height = 14
     Caption = 'Selecione os extratos desejados:'
   end
   object Image1: TImage
@@ -30,29 +29,29 @@ object RangeForm: TRangeForm
   object Label4: TLabel
     Left = 224
     Top = 176
-    Width = 17
-    Height = 13
+    Width = 18
+    Height = 14
     Caption = 'Org'
   end
   object Label5: TLabel
     Left = 456
     Top = 176
     Width = 24
-    Height = 13
+    Height = 14
     Caption = 'Logo'
   end
   object Label6: TLabel
     Left = 224
     Top = 208
     Width = 28
-    Height = 13
+    Height = 14
     Caption = 'Conta'
   end
   object Label29: TLabel
     Left = 224
     Top = 232
-    Width = 28
-    Height = 13
+    Width = 27
+    Height = 14
     Caption = 'Nome'
   end
   object Image2: TImage
@@ -173,7 +172,7 @@ object RangeForm: TRangeForm
     Top = 88
     Width = 121
     Height = 353
-    ItemHeight = 13
+    ItemHeight = 14
     MultiSelect = True
     TabOrder = 2
   end

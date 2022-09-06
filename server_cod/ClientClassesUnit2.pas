@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 09/08/2022 18:28:12
+// 01/09/2022 17:42:36
 //
 
 unit ClientClassesUnit2;
@@ -21,6 +21,7 @@ type
     FReverseStringCommand: TDSRestCommand;
     FRetornarParametrosConnCommand: TDSRestCommand;
     FRetornarParametroADCommand: TDSRestCommand;
+    FValidarADNewCommand: TDSRestCommand;
     FGravarLOGADCommand: TDSRestCommand;
     FRetornarDadosBancoCommand: TDSRestCommand;
     FPersistirBancoCommand: TDSRestCommand;
@@ -50,6 +51,7 @@ type
     function ReverseString(Value: string; const ARequestFilter: string = ''): string;
     function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
     function RetornarParametroAD(const ARequestFilter: string = ''): string;
+    function ValidarADNew(pUsuario: string; pSenha: string; const ARequestFilter: string = ''): string;
     procedure GravarLOGAD(usuario: string; status: string);
     function RetornarDadosBanco(SQL: string; bd: Integer; const ARequestFilter: string = ''): string;
     procedure PersistirBanco(SQL: string; bd: Integer);
@@ -114,6 +116,13 @@ const
 
   TServerMethods1_RetornarParametroAD: array [0..0] of TDSRestParameterMetaData =
   (
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
+  );
+
+  TServerMethods1_ValidarADNew: array [0..2] of TDSRestParameterMetaData =
+  (
+    (Name: 'pUsuario'; Direction: 1; DBXType: 26; TypeName: 'string'),
+    (Name: 'pSenha'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
@@ -404,6 +413,21 @@ begin
   end;
   FRetornarParametroADCommand.Execute(ARequestFilter);
   Result := FRetornarParametroADCommand.Parameters[0].Value.GetWideString;
+end;
+
+function TServerMethods1Client.ValidarADNew(pUsuario: string; pSenha: string; const ARequestFilter: string): string;
+begin
+  if FValidarADNewCommand = nil then
+  begin
+    FValidarADNewCommand := FConnection.CreateCommand;
+    FValidarADNewCommand.RequestType := 'GET';
+    FValidarADNewCommand.Text := 'TServerMethods1.ValidarADNew';
+    FValidarADNewCommand.Prepare(TServerMethods1_ValidarADNew);
+  end;
+  FValidarADNewCommand.Parameters[0].Value.SetWideString(pUsuario);
+  FValidarADNewCommand.Parameters[1].Value.SetWideString(pSenha);
+  FValidarADNewCommand.Execute(ARequestFilter);
+  Result := FValidarADNewCommand.Parameters[2].Value.GetWideString;
 end;
 
 procedure TServerMethods1Client.GravarLOGAD(usuario: string; status: string);
@@ -787,6 +811,7 @@ begin
   FReverseStringCommand.DisposeOf;
   FRetornarParametrosConnCommand.DisposeOf;
   FRetornarParametroADCommand.DisposeOf;
+  FValidarADNewCommand.DisposeOf;
   FGravarLOGADCommand.DisposeOf;
   FRetornarDadosBancoCommand.DisposeOf;
   FPersistirBancoCommand.DisposeOf;

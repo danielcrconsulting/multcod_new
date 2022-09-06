@@ -168,6 +168,7 @@ type
     Function RetornarContaNome(arquivo, NArqCart, nome, sobrenome : String) : String;
     Function RetornarContaAux(arquivo, contaaux : String) : String;
     function RetornarContaEmpresa(arquivo : String; conta : Int64): String;
+    function RetornarTamanhoArq(arquivo : String) : Integer;
   end;
 
 implementation
@@ -671,6 +672,14 @@ begin
   senha          := arqIni.ReadString('configuracoes', 'password',    '');
   NomeEstacao    := arqIni.ReadString('configuracoes', 'WorkStation', '');
   result := True;
+end;
+
+function TServerMethods1.RetornarTamanhoArq(arquivo: String): Integer;
+begin
+  AssignFile(ArqIndiceContaCartao,arquivo);
+  Reset(ArqIndiceContaCartao);
+  result := FileSize(ArqIndiceContaCartao);
+  CloseFile(ArqIndiceContaCartao);
 end;
 
 function TServerMethods1.RetornarParametroAD : String;

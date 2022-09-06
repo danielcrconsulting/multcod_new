@@ -11,6 +11,7 @@ type
     DSServer1: TDSServer;
     DSAuthenticationManager1: TDSAuthenticationManager;
     DSServerClass1: TDSServerClass;
+    DSServerClass2: TDSServerClass;
     procedure DSServerClass1GetClass(DSServerClass: TDSServerClass;
       var PersistentClass: TPersistentClass);
     procedure DSAuthenticationManager1UserAuthorize(Sender: TObject;

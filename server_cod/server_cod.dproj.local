@@ -11,13 +11,13 @@
     <Transaction>2021/07/05 08:14:20.000.492,=C:\delphi\server_cod\js\callbackframework-min.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.293,=C:\delphi\server_cod\js\callbackframework.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.332,=C:\delphi\server_cod\js\serverfunctions.js</Transaction>
-    <Transaction>2021/07/05 08:14:20.000.233,=C:\delphi\server_cod\js\serverfunctionexecutor.js</Transaction>
-    <Transaction>2021/07/05 08:14:20.000.540,=C:\delphi\server_cod\js\connection.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.206,=C:\delphi\server_cod\js\base64.js</Transaction>
+    <Transaction>2021/07/05 08:14:20.000.540,=C:\delphi\server_cod\js\connection.js</Transaction>
+    <Transaction>2021/07/05 08:14:20.000.233,=C:\delphi\server_cod\js\serverfunctionexecutor.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.261,=C:\delphi\server_cod\js\json2.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.702,=C:\delphi\server_cod\css\serverfunctioninvoker.css</Transaction>
-    <Transaction>2021/07/05 08:14:20.000.365,=C:\delphi\server_cod\js\base64-min.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.587,=C:\delphi\server_cod\js\serverfunctioninvoker.js</Transaction>
+    <Transaction>2021/07/05 08:14:20.000.365,=C:\delphi\server_cod\js\base64-min.js</Transaction>
     <Transaction>2021/07/05 08:14:20.000.835,=C:\delphi\server_cod\templates\serverfunctioninvoker.html</Transaction>
     <Transaction>2021/07/05 08:14:20.000.644,=C:\delphi\server_cod\css\main.css</Transaction>
     <Transaction>2021/07/05 08:14:20.000.769,=C:\delphi\server_cod\templates\reversestring.html</Transaction>

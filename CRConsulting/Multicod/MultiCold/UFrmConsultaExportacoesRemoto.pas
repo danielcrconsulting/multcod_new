@@ -248,6 +248,10 @@ begin
     DimensionarGrid(DBGridConsultaExportacao);
   end;
 
+  if ComboBoxStatus.Text = 'Sucesso' then
+    btnexcluir.Visible := True
+  else
+    btnexcluir.Visible := False;
 end;
 
 

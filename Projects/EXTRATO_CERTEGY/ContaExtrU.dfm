@@ -10,9 +10,8 @@ object ContaExtrForm: TContaExtrForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Memo1: TMemo
     Left = 16
     Top = 8
