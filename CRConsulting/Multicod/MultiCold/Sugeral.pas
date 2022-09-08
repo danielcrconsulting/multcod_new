@@ -895,13 +895,13 @@ Begin
         if (not ValidarADNew(vfad.adusuario,vfad.adsenha)) or (Trim(vfad.adusuario) = '') or (Trim(vfad.adsenha) = '') then
         begin
           ShowMessage('Usuário da rede não autorizado');
-          OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'FALHA');
+          OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(vfad.adusuario,'FALHA');
           Application.Terminate;
           FreeAndNil(fad);
           Close;
           exit;
         end;
-        OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(usuarioLogado,'SUCESSO');
+        OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(vfad.adusuario,'SUCESSO');
         FreeAndNil(fad);
       end;
     end;

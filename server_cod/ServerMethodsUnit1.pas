@@ -3008,7 +3008,7 @@ begin
     strarq.Add(AnsiToUtf8('SistRot   |UsuarioAlvo                                       |' +
                           'UsuarioResponsável                                |OrigemAcesso        |' +
                           'Data      |Resultado                                                   ' +
-                          '                                                                                                                                                                                                                                                |TipoDeEvento'));
+                          '                                                                                                                                                                                                                                                |T'));
 
 
     //strarq.Add(AnsiToUtf8('SistemaRotina|UsuarioAlvo|UsuarioResponsável|OrigemAcesso|Data|Resultado|TipoDeEvento'));
