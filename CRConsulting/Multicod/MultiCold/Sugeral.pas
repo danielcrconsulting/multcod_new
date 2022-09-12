@@ -882,7 +882,7 @@ Begin
     Application.Terminate;
     Close;
   end;
-  if ExtractFileName(LowerCase(application.ExeName)) = 'multicold.exe' then
+  if ExtractFileName(LowerCase(application.ExeName)) <> 'multicoldadm.exe' then
   begin
     if (not SemServidor) and (not ModoOff) then
     begin

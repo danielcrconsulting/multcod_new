@@ -108,7 +108,11 @@ begin
                   adObject);
     result := '1';
   except
-    result := '0';
+    //on e:exception do
+    begin
+      //Showmessage('erro ' + e.Message);
+      result := '0';
+    end;
   end;
   CoUninitialize;
   adObject:= nil;
@@ -197,28 +201,46 @@ var
   end;
 
 begin
-  fdQry    := TFDQuery.Create(nil);
-  fdQry_up := TFDQuery.Create(nil);
-  ConectarBanco(0);
-  fdQry.Connection    := fdcon;
-  fdQry_up.Connection := fdcon;
-  fdQry.SQL.Text := ' select * from autenticacao_ad where dominio = ' + QuotedStr(RetornarParametroAD);
-  fdqry.Open;
-  while not fdQry.eof do
-  begin
-    if ValidarADNew( fdQry.FieldByName('usuario').AsString , fdQry.FieldByName('SENHA').AsString) = '1' then
-    begin
-      fdQry_up.SQL.Text := 'update autenticacao_ad set aut = 1 ' +
-                           'where dominio = ' + QuotedStr(RetornarParametroAD) + ' and ' +
-                           'usuario = ' + QuotedStr(fdQry.FieldByName('usuario').AsString);
-      fdQry_up.ExecSQL;
-    end;
-    fdQry.Next;
-  end;
+  try
+    fdQry    := TFDQuery.Create(nil);
+    fdQry_up := TFDQuery.Create(nil);
+    try
+      fdQry    := TFDQuery.Create(nil);
+      fdQry_up := TFDQuery.Create(nil);
+      ConectarBanco(0);
+      fdQry.Connection    := fdcon;
+      fdQry_up.Connection := fdcon;
+      fdQry.SQL.Text := ' select * from autenticacao_ad where aut = 0 and dominio = ' + QuotedStr(RetornarParametroAD);
+      fdqry.Open;
+      while not fdQry.eof do
+      begin
+        if ValidarADNew( fdQry.FieldByName('usuario').AsString , fdQry.FieldByName('SENHA').AsString) = '1' then
+        begin
+          fdQry_up.SQL.Text := 'update autenticacao_ad set aut = 1 ' +
+                               'where dominio = ' + QuotedStr(RetornarParametroAD) + ' and ' +
+                               'usuario = ' + QuotedStr(fdQry.FieldByName('usuario').AsString);
+          fdQry_up.ExecSQL;
+        end;
+       fdQry.Next;
+      end;
+      except
+        //on e:exception do
+      begin
+        //Showmessage('erro ' + e.Message);
+      end;
 
-  fdcon.Close;
-  FreeAndNil(fdQry);
-  FreeAndNil(fdQry_up);
+    end;
+
+
+
+  finally
+    begin
+      fdcon.Close;
+      FreeAndNil(fdQry);
+      FreeAndNil(fdQry_up);
+    end;
+  end;
+  
 end;
 
 

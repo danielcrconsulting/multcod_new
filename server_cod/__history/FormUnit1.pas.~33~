@@ -99,10 +99,6 @@ begin
   Result := '0';
   CoInitialize(nil);
   try
-    //ADsOpenObject('LDAP://' + host, LowerCase(pUsuario), pSenha, ADS_SECURE_AUTHENTICATION, IADs, adObject);
-    //ADsOpenObject('LDAP://' + host, LowerCase(pUsuario), pSenha, ADS_PROMPT_CREDENTIALS , IADs, adObject);
-    //ADsOpenObject('LDAP://' + host, LowerCase(pUsuario), pSenha, ADS_NO_AUTHENTICATION , IADs, adObject);
-    //OleCheck(ADsOpenObject(('://' + host, LowerCase(pUsuario), pSenha, ADS_READONLY_SERVER, IADs, adObject));
 
     aut :=  ADsOpenObject('LDAP://' + host ,
                   LowerCase(pUsuario),
@@ -111,16 +107,15 @@ begin
                   IADs,
                   adObject);
     result := '1';
-    //retorno := EhUsuarioValido(host, pUsuario, pSenha );
   except
-    on e: EOleException do
+    on e:exception do
     begin
+      Showmessage('erro ' + e.Message);
       result := '0';
     end;
   end;
   CoUninitialize;
   adObject:= nil;
-  //AdsFreeAdsValues(adObject,1);
 end;
 
 procedure TForm1.ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
@@ -195,7 +190,7 @@ end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
 var
-  fdQry : TFDQuery;
+  fdQry, fdQry_up : TFDQuery;
   function RetornarParametroAD : String;
   var arqIni : TiniFile;
       host : String;
@@ -206,18 +201,45 @@ var
   end;
 
 begin
-  fdQry := TFDQuery.Create(nil);
+  try
+    fdQry    := TFDQuery.Create(nil);
+    fdQry_up := TFDQuery.Create(nil);
+    try
+
+    except
+      on e:exception do
+      begin
+        Showmessage('erro ' + e.Message);
+        result := '0';
+      end;
+
+
+    finally
+
+    end;
+  end;
+  fdQry    := TFDQuery.Create(nil);
+  fdQry_up := TFDQuery.Create(nil);
   ConectarBanco(0);
-  fdQry.Connection := fdcon;
-  fdQry.SQL.Text := ' select * from autenticacao_ad where dominio = ' + QuotedStr(RetornarParametroAD);
+  fdQry.Connection    := fdcon;
+  fdQry_up.Connection := fdcon;
+  fdQry.SQL.Text := ' select * from autenticacao_ad where aut = 0 and dominio = ' + QuotedStr(RetornarParametroAD);
   fdqry.Open;
   while not fdQry.eof do
   begin
-    ValidarADNew( fdQry.FieldByName('usuario').AsString , 'maranho@12345');
+    if ValidarADNew( fdQry.FieldByName('usuario').AsString , fdQry.FieldByName('SENHA').AsString) = '1' then
+    begin
+      fdQry_up.SQL.Text := 'update autenticacao_ad set aut = 1 ' +
+                           'where dominio = ' + QuotedStr(RetornarParametroAD) + ' and ' +
+                           'usuario = ' + QuotedStr(fdQry.FieldByName('usuario').AsString);
+      fdQry_up.ExecSQL;
+    end;
     fdQry.Next;
   end;
 
-  ValidarADNew('daniel.client', 'maranho@12345');
+  fdcon.Close;
+  FreeAndNil(fdQry);
+  FreeAndNil(fdQry_up);
 end;
 
 
