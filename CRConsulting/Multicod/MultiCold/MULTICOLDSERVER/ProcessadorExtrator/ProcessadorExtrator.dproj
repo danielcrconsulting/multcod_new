@@ -186,8 +186,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <DCC_ExeOutput>c:\workspace\CrConsulting\Multicod\Output\</DCC_ExeOutput>
-        <DCC_DcpOutput>c:\workspace\CrConsulting\Multicod\Output\dcp\</DCC_DcpOutput>
+        <DCC_ExeOutput>C:\ROM\MULTICOLD\Destino\</DCC_ExeOutput>
+        <DCC_DcpOutput>C:\ROM\MULTICOLD\Destino\dcp\</DCC_DcpOutput>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>(None)</Manifest_File>
     </PropertyGroup>
@@ -217,6 +217,7 @@
         <DCCReference Include="..\SOAP\UExtratorDados.pas"/>
         <DCCReference Include="..\..\..\..\..\server_cod\ClientClassesUnit2.pas"/>
         <DCCReference Include="..\..\..\..\..\server_cod\UMetodosServer.pas"/>
+        <DCCReference Include="..\..\..\..\..\server_cod\UclsAux.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -243,7 +244,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="D:\workspace\CrConsulting\Multicod\Output\ProcessadorExtrator.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="c:\workspace\CrConsulting\Multicod\Output\ProcessadorExtrator.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ProcessadorExtrator.exe</RemoteName>
                         <Overwrite>true</Overwrite>

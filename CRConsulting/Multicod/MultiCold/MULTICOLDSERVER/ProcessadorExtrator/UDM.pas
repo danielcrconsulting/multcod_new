@@ -29,6 +29,8 @@ type
     { Public declarations }
     procedure ImportarDados( StrSql : String; strPar : TFDParams; MTB: String);
     procedure Persistir( StrSql : String; StgParam : TFDParams);
+    function RetornarArqTemplate(id: Integer) : String;
+    function BaixarArquivo( arq : String) : TJSONArray;
   end;
 
 var
@@ -39,6 +41,11 @@ implementation
 {%CLASSGROUP 'FMX.Controls.TControl'}
 
 {$R *.dfm}
+
+function TDMMain.BaixarArquivo(arq: String): TJSONArray;
+begin
+
+end;
 
 procedure TDMMain.DataModuleCreate(Sender: TObject);
 begin
@@ -76,7 +83,7 @@ begin
   if MTB = 'P' then
   begin
     MemPen.Close;
-    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql);
+    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql,0);
     json := StringReplace(json,'\','/',[rfIgnoreCase, rfReplaceAll]);
     if json = ']' then
       json := '[]';
@@ -88,7 +95,7 @@ begin
   if MTB = 'D' then
   begin
     MemDes.Close;
-    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql);
+    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql,0);
     if json = ']' then
       json := '[]';
     JsonToDataset(MemDes, json);
@@ -99,7 +106,7 @@ begin
   if MTB = 'PQ' then
   begin
     MemPesq.Close;
-    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql);
+    json := OMetodosServer.ServerMethodsPrincipalClient.RetornarDadosBanco(StrSql,0);
     if json = ']' then
       json := '[]';
     JsonToDataset(MemPesq, json);
@@ -111,7 +118,12 @@ end;
 
 procedure TDMMain.Persistir( StrSql : String; StgParam : TFDParams);
 begin
-  OMetodosServer.ServerMethodsPrincipalClient.PersistirBanco(StrSql);
+  OMetodosServer.ServerMethodsPrincipalClient.PersistirBanco(StrSql,0);
+end;
+
+function TDMMain.RetornarArqTemplate(id: Integer): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarArqTemplate(id);
 end;
 
 end.

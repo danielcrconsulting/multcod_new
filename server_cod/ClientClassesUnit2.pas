@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 01/09/2022 17:42:36
+// 16/09/2022 14:50:27
 //
 
 unit ClientClassesUnit2;
@@ -41,6 +41,7 @@ type
     FBuscaSequencialCommand: TDSRestCommand;
     FBuscaSequencialCommand_Cache: TDSRestCommand;
     FExcluirArquivosCommand: TDSRestCommand;
+    FRetornarArqTemplateCommand: TDSRestCommand;
   public
     constructor Create(ARestConnection: TDSRestConnection); overload;
     constructor Create(ARestConnection: TDSRestConnection; AInstanceOwner: Boolean); overload;
@@ -71,6 +72,7 @@ type
     function BuscaSequencial(Usuario: string; Senha: string; ConnectionID: Integer; Relatorio: string; buscaSequencial: TBuscaSequencialDTO_M; const ARequestFilter: string = ''): TResultadoBuscaSequencialDTO;
     function BuscaSequencial_Cache(Usuario: string; Senha: string; ConnectionID: Integer; Relatorio: string; buscaSequencial: TBuscaSequencialDTO_M; const ARequestFilter: string = ''): IDSRestCachedTResultadoBuscaSequencialDTO;
     function ExcluirArquivos(strid: string; const ARequestFilter: string = ''): Boolean;
+    function RetornarArqTemplate(id: Integer; const ARequestFilter: string = ''): string;
   end;
 
   IDSRestCachedTResultadoBuscaSequencialDTO = interface(IDSRestCachedObject<TResultadoBuscaSequencialDTO>)
@@ -293,6 +295,12 @@ const
   (
     (Name: 'strid'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
+  );
+
+  TServerMethods1_RetornarArqTemplate: array [0..1] of TDSRestParameterMetaData =
+  (
+    (Name: 'id'; Direction: 1; DBXType: 6; TypeName: 'Integer'),
+    (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
 implementation
@@ -793,6 +801,20 @@ begin
   Result := FExcluirArquivosCommand.Parameters[1].Value.GetBoolean;
 end;
 
+function TServerMethods1Client.RetornarArqTemplate(id: Integer; const ARequestFilter: string): string;
+begin
+  if FRetornarArqTemplateCommand = nil then
+  begin
+    FRetornarArqTemplateCommand := FConnection.CreateCommand;
+    FRetornarArqTemplateCommand.RequestType := 'GET';
+    FRetornarArqTemplateCommand.Text := 'TServerMethods1.RetornarArqTemplate';
+    FRetornarArqTemplateCommand.Prepare(TServerMethods1_RetornarArqTemplate);
+  end;
+  FRetornarArqTemplateCommand.Parameters[0].Value.SetInt32(id);
+  FRetornarArqTemplateCommand.Execute(ARequestFilter);
+  Result := FRetornarArqTemplateCommand.Parameters[1].Value.GetWideString;
+end;
+
 constructor TServerMethods1Client.Create(ARestConnection: TDSRestConnection);
 begin
   inherited Create(ARestConnection);
@@ -831,6 +853,7 @@ begin
   FBuscaSequencialCommand.DisposeOf;
   FBuscaSequencialCommand_Cache.DisposeOf;
   FExcluirArquivosCommand.DisposeOf;
+  FRetornarArqTemplateCommand.DisposeOf;
   inherited;
 end;
 

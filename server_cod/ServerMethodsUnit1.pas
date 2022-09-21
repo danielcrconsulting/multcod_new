@@ -103,6 +103,8 @@ type
                              ConnectionID: Integer; Relatorio: String;
                              buscaSequencial: TBuscaSequencialDTO_M): TResultadoBuscaSequencialDTO;
     function ExcluirArquivos(strid : String) : Boolean;
+
+    function RetornarArqTemplate(id: Integer) : String;
   end;
 
 implementation
@@ -3017,6 +3019,25 @@ begin
                         FormatDateTime('YYYY-MM-DD', now)+'|'+ AjustarTamanho(status,300) + '|1'));
   strarq.SaveToFile(caminho + '_' + data + '.csv');
   FreeAndNil(strarq);
+end;
+
+function TServerMethods1.RetornarArqTemplate(id: Integer): String;
+var
+  fqry : TFDQuery;
+  arq : TStringList;
+begin
+  fqry := TFDQuery.Create(nil);
+  fqry.Connection := FDCon;
+  ConectarBanco(0);
+  fqry.SQL.Text := 'select ArquivoTemplateComp from TemplateExportacao where id = ' + IntToStr(id);
+  fqry.Open;
+  arq := TStringList.Create;
+  arq.Add(fqry.FieldByName('ArquivoTemplateComp').AsString);
+  result := arq.Text;
+
+  FDCon.Close;
+  FreeAndNil(fqry);
+  FreeAndNil(arq);
 end;
 
 function TServerMethods1.RetornarCaminhoArq : String;

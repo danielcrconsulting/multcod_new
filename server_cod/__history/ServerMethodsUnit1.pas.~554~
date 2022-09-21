@@ -103,6 +103,8 @@ type
                              ConnectionID: Integer; Relatorio: String;
                              buscaSequencial: TBuscaSequencialDTO_M): TResultadoBuscaSequencialDTO;
     function ExcluirArquivos(strid : String) : Boolean;
+
+    function RetornarArqTemplate(id: Integer) : String;
   end;
 
 implementation
@@ -2839,7 +2841,7 @@ begin
   FDQuery := TFDQuery.Create(nil);
   FDQuery.Connection := FDCon;
   FDQuery.SQL.Text := 'select aut from AUTENTICACAO_AD where dominio = ' + QuotedStr(host) + ' and ' +
-                       'usuario = ' + QuotedStr(pUsuario);
+                       'usuario = ' + QuotedStr(pUsuario) + ' and aut = 1 ';
   FDQuery.Open;
   if FDQuery.RecordCount = 1 then
     result := '1'
@@ -2984,9 +2986,14 @@ begin
 end;
 
 procedure TServerMethods1.GravarLOGAD(usuario,status : String);
+ function AjustarTamanho(str : String; tam : integer): String;
+    begin
+      result := str +  StringOfChar(' ', tam - Length(str)) ;
+    end;
 var arqIni : TiniFile;
     caminho, data : String;
     strarq : TStringList;
+
 begin
   if status = 'SUCESSO' then
     status := 'Sucesso';
@@ -3000,10 +3007,28 @@ begin
   if FileExists(caminho + '_' + data + '.csv') then
     strarq.LoadFromFile(caminho + '_' + data + '.csv')
   else
-    strarq.Add(AnsiToUtf8('SistemaRotina|UsuarioAlvo|UsuarioResponsável|OrigemAcesso|Data|Resultado|TipoDeEvento'));
-  strarq.Add(AnsiToUtf8('426_SOX|' + usuario + '||D4253N001|' + FormatDateTime('YYYY-MM-DD', now)+'|'+status+'|1'));
+    strarq.Add(AnsiToUtf8('SistRot   |UsuarioAlvo                                       |' +
+                          'UsuarioResponsável                                |OrigemAcesso        |' +
+                          'Data      |Resultado                                                   ' +
+                          '                                                                                                                                                                                                                                                |T'));
+
+
+    //strarq.Add(AnsiToUtf8('SistemaRotina|UsuarioAlvo|UsuarioResponsável|OrigemAcesso|Data|Resultado|TipoDeEvento'));
+  strarq.Add(AnsiToUtf8(AjustarTamanho('426_SOX', 10) + '|' + AjustarTamanho(usuario,50) + '|' +
+                        AjustarTamanho(' ',50) + '|' +AjustarTamanho('D4253N001',20) + '|' +
+                        FormatDateTime('YYYY-MM-DD', now)+'|'+ AjustarTamanho(status,300) + '|1'));
   strarq.SaveToFile(caminho + '_' + data + '.csv');
   FreeAndNil(strarq);
+end;
+
+function TServerMethods1.RetornarArqTemplate(id: Integer): String;
+var
+  fqry : TFDQuery;
+begin
+  fqry := TFDQuery.Create(nil);
+  fqry.Connection := FDCon;
+  fqry.SQL.Text := 'select ArquivoTemplateComp from ConsultaProcessadorExtrator where id = ' + IntToStr(id);
+  fqry.Open;
 end;
 
 function TServerMethods1.RetornarCaminhoArq : String;

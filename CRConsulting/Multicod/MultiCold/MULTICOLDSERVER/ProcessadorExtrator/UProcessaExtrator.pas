@@ -6,7 +6,7 @@ uses
   SysUtils, ADODB, UDM, ActiveX, System.Classes, ZLib, UMulticoldReport;
 
   type
-
+    TByteArr = array of byte;
     TProcessaddor = class (TObject)
     strict private
       FConfigPath: String;
@@ -181,9 +181,17 @@ end;
 
 function TProcessadorExtrator.Processar: Boolean;
 var
-  template, pathrel: String;
+  template, pathrel, arquivo: String;
   multicoldManager: TMulticoldmanager;
-
+  templ : TBytes;
+  template_ : AnsiString;
+  function bintoAscii(bin: array of byte): AnsiString;
+  var i: integer;
+  begin
+    SetLength(Result, Length(bin));
+    for i := 0 to Length(bin)-1 do
+      Result[1+i] := AnsiChar(bin[i]);
+  end;
 begin
     Result := false;
 
@@ -196,7 +204,12 @@ begin
             false);
 
       //template := DescompactarTemplate(FDMMain.MemPen.FieldByName('ArquivoTemplateComp').AsString);
+      //templ := FDMMain.MemPen.FieldByName('ArquivoTemplateComp').AsBytes;
       template := FDMMain.MemPen.FieldByName('ArquivoTemplateComp').AsString;
+
+      //template_ :=  bintoAscii(templ);
+
+      template := FDMMain.RetornarArqTemplate(FDMMain.MemPen.FieldByName('idreferencia').AsInteger);
 
       try
         multicoldManager.ExecutarExtracaoDados(template, FOutputPath);

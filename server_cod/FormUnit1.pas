@@ -41,6 +41,7 @@ type
     procedure StartServer;
     { Private declarations }
     function ValidarADNew(pUsuario, pSenha: String): String;
+    procedure LimpaMemoria;
     procedure ConectarBanco(bd : integer = 0);
     function RetornarParametrosConn(var servidor : String; var driverservidor: String;
                                                 var porta : String ; var banco : String;
@@ -60,6 +61,18 @@ implementation
 uses
   WinApi.Windows, Winapi.ShellApi, Datasnap.DSSession;
 
+
+procedure TForm1.LimpaMemoria;
+var
+   MainHandle : THandle;
+begin
+ try
+   MainHandle := OpenProcess(PROCESS_ALL_ACCESS, false, GetCurrentProcessID) ;
+   SetProcessWorkingSetSize(MainHandle, $FFFFFFFF, $FFFFFFFF) ;
+   CloseHandle(MainHandle);
+ except
+ end;
+end;
 
 function TForm1.RetornarParametrosConn(var servidor : String; var driverservidor: String;
                                                 var porta : String ; var banco : String;
@@ -238,6 +251,7 @@ begin
       fdcon.Close;
       FreeAndNil(fdQry);
       FreeAndNil(fdQry_up);
+      LimpaMemoria;
     end;
   end;
   

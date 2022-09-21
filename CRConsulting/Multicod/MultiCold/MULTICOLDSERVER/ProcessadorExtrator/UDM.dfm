@@ -2,7 +2,7 @@ object DMMain: TDMMain
   OnCreate = DataModuleCreate
   Height = 251
   Width = 486
-  PixelsPerInch = 120
+  PixelsPerInch = 96
   object ConnW: TADOConnection
     ConnectionString = 'FILE NAME=Multicold.udl'
     Provider = 'Multicold.udl'

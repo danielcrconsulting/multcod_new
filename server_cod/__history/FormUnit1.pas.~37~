@@ -41,6 +41,7 @@ type
     procedure StartServer;
     { Private declarations }
     function ValidarADNew(pUsuario, pSenha: String): String;
+    procedure LimpaMemoria;
     procedure ConectarBanco(bd : integer = 0);
     function RetornarParametrosConn(var servidor : String; var driverservidor: String;
                                                 var porta : String ; var banco : String;
@@ -60,6 +61,18 @@ implementation
 uses
   WinApi.Windows, Winapi.ShellApi, Datasnap.DSSession;
 
+
+procedure TForm1.LimpaMemoria;
+var
+   MainHandle : THandle;
+begin
+ try
+   MainHandle := OpenProcess(PROCESS_ALL_ACCESS, false, GetCurrentProcessID) ;
+   SetProcessWorkingSetSize(MainHandle, $FFFFFFFF, $FFFFFFFF) ;
+   CloseHandle(MainHandle);
+ except
+ end;
+end;
 
 function TForm1.RetornarParametrosConn(var servidor : String; var driverservidor: String;
                                                 var porta : String ; var banco : String;
@@ -108,8 +121,9 @@ begin
                   adObject);
     result := '1';
   except
-    on e: EOleException do
+    //on e:exception do
     begin
+      //Showmessage('erro ' + e.Message);
       result := '0';
     end;
   end;
@@ -200,24 +214,46 @@ var
   end;
 
 begin
-  fdQry    := TFDQuery.Create(nil);
-  fdQry_up := TFDQuery.Create(nil);
-  ConectarBanco(0);
-  fdQry.Connection    := fdcon;
-  fdQry_up.Connection := fdcon;
-  fdQry.SQL.Text := ' select * from autenticacao_ad where dominio = ' + QuotedStr(RetornarParametroAD);
-  fdqry.Open;
-  while not fdQry.eof do
-  begin
-    if ValidarADNew( fdQry.FieldByName('usuario').AsString , fdQry.FieldByName('SENHA').AsString) = '1' then
-      fdQry_up.SQL.Text := 'update autenticacao_ad set aut = 1 ' +
-                           'where dominio = ' + QuotedStr(RetornarParametroAD) + ' and ' +
-                           'usuario = ' + QuotedStr(fdQry.FieldByName('usuario').AsString);
-    fdQry_up.ExecSQL;
+  try
+    fdQry    := TFDQuery.Create(nil);
+    fdQry_up := TFDQuery.Create(nil);
+    try
+      fdQry    := TFDQuery.Create(nil);
+      fdQry_up := TFDQuery.Create(nil);
+      ConectarBanco(0);
+      fdQry.Connection    := fdcon;
+      fdQry_up.Connection := fdcon;
+      fdQry.SQL.Text := ' select * from autenticacao_ad where aut = 0 and dominio = ' + QuotedStr(RetornarParametroAD);
+      fdqry.Open;
+      while not fdQry.eof do
+      begin
+        if ValidarADNew( fdQry.FieldByName('usuario').AsString , fdQry.FieldByName('SENHA').AsString) = '1' then
+        begin
+          fdQry_up.SQL.Text := 'update autenticacao_ad set aut = 1 ' +
+                               'where dominio = ' + QuotedStr(RetornarParametroAD) + ' and ' +
+                               'usuario = ' + QuotedStr(fdQry.FieldByName('usuario').AsString);
+          fdQry_up.ExecSQL;
+        end;
+       fdQry.Next;
+      end;
+      except
+        //on e:exception do
+      begin
+        //Showmessage('erro ' + e.Message);
+      end;
 
-    fdQry.Next;
+    end;
+
+
+
+  finally
+    begin
+      fdcon.Close;
+      FreeAndNil(fdQry);
+      FreeAndNil(fdQry_up);
+    end;
   end;
-
+  
 end;
 
 

@@ -11,6 +11,7 @@ object FrmExtract: TFrmExtract
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   Position = poMainFormCenter
+  WindowState = wsMaximized
   OnCreate = FormCreate
   PixelsPerInch = 96
   DesignSize = (
@@ -201,7 +202,7 @@ object FrmExtract: TFrmExtract
     Top = 515
     Width = 80
     Height = 25
-    Anchors = []
+    Anchors = [akRight, akBottom]
     Caption = '&Salvar'
     TabOrder = 14
     OnClick = SalvarButtonClick
