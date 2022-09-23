@@ -122,6 +122,11 @@ begin
     MessageDlg('Só é possível abrir o template para processamento de Extrações.', TMsgDlgType.mtInformation, [mbOk], 0);
     exit;
   end;
+  if DSProcessadorTemplate.DataSet.RecordCount = 0 then
+  begin
+    MessageDlg('Só é possível abrir o template com arquivo aberto.', TMsgDlgType.mtInformation, [mbOk], 0);
+    exit;
+  end;
 
   //FormGeral.ADOQueryTemplate.Close;
   //FormGeral.ADOQueryTemplate.SQL.Clear;
@@ -246,7 +251,10 @@ begin
   begin
     DSProcessadorTemplate.DataSet.Open;
     DimensionarGrid(DBGridConsultaExportacao);
-  end;
+    BtnAbrirTemplate.Enabled := True;
+  end
+  else
+    BtnAbrirTemplate.Enabled := False;
 
   if ComboBoxStatus.Text = 'Sucesso' then
     btnexcluir.Visible := True

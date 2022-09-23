@@ -4035,7 +4035,7 @@ AssisAbreRemotoForm.Close;
 AbriuArqDsc := False;
 Primeiro := True;
 Especial.FechaEspecial;
-FrmExtract.Show;
+FrmExtract.ShowModal;
 End;
 
 Procedure TFrameForm.FormActivate(Sender: TObject);

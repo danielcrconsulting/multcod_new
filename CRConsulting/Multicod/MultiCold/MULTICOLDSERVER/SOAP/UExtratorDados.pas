@@ -487,7 +487,7 @@ var
     Begin
       For J := 1 To 99 Do
         With FChrIncFil[J] Do
-          If ICampo = 0 Then
+          If (ICampo = 0) Then
             Break
           Else
             If ICampo = I Then
@@ -505,7 +505,7 @@ var
       Testou := False;
       For J := 1 To 99 Do
         With FStrIncFil[J] Do
-          If ICampo = 0 Then
+          If (ICampo = 0) AND (Filtro.FilStr = '') Then
             Break
           Else
             If ICampo = I Then
