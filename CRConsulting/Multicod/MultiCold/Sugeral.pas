@@ -137,6 +137,7 @@ Type
                               ConnectionID: Integer; Relatorio: String;
                               buscaSequencial: TBuscaSequencialDTO_M) : TResultadoBuscaSequencialDTO;
     function ExcluirArquivos(strid: String): Boolean;
+    function RetornarArqTemplate(id: Integer): String;
   End;
 
 
@@ -801,6 +802,11 @@ end;
 function TFormGeral.ExcluirArquivos(strid: String): Boolean;
 begin
   result := OMetodosServer.ServerMethodsPrincipalClient.ExcluirArquivos(strid);
+end;
+
+function TFormGeral.RetornarArqTemplate(id: Integer): String;
+begin
+  result := OMetodosServer.ServerMethodsPrincipalClient.RetornarArqTemplate(id);
 end;
 
 function TFormGeral.ExecutaNovaQueryFacil(gridXML, fileName, usuario, mensagem,

@@ -142,8 +142,10 @@ begin
   //FormGeral.ADOQueryTemplate.Open;
   //templateCompactado := FormGeral.ADOQueryTemplate.FieldByName('ArquivoTemplateComp').AsString;
   //FormGeral.ADOQueryTemplate.Close;
-  FormGeral.ImportarDados(sql,nil);
-  templateCompactado := FormGeral.memtb.FieldByName('ArquivoTemplateComp').AsString;
+  //FormGeral.ImportarDados(sql,nil);
+  //templateCompactado := FormGeral.memtb.FieldByName('ArquivoTemplateComp').AsString;
+
+  templateCompactado := formgeral.RetornarArqTemplate(TClientDataSet(DSProcessadorTemplate.DataSet).FieldByName('IdReferencia').AsInteger);
 
   FrmExtract.AbrirTemplateCompactado(templateCompactado);
   FrmExtract.Show;
