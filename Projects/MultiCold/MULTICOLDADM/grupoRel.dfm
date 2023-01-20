@@ -3,35 +3,30 @@ object fGrupoRel: TfGrupoRel
   Top = 188
   BorderStyle = bsDialog
   Caption = 'Relacionamento de grupo de usu'#225'rios por relat'#243'rios'
-  ClientHeight = 415
-  ClientWidth = 779
+  ClientHeight = 332
+  ClientWidth = 623
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -14
+  Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnShow = FormShow
-  PixelsPerInch = 120
-  TextHeight = 16
+  PixelsPerInch = 96
+  TextHeight = 14
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 779
-    Height = 364
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
+    Width = 623
+    Height = 291
     Align = alClient
     TabOrder = 0
     object Label2: TLabel
       Left = 10
       Top = 10
-      Width = 49
-      Height = 16
+      Width = 38
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -41,8 +36,8 @@ object fGrupoRel: TfGrupoRel
     object Label1: TLabel
       Left = 414
       Top = 10
-      Width = 115
-      Height = 16
+      Width = 93
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -52,8 +47,8 @@ object fGrupoRel: TfGrupoRel
     object Label3: TLabel
       Left = 10
       Top = 69
-      Width = 144
-      Height = 16
+      Width = 116
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -63,8 +58,8 @@ object fGrupoRel: TfGrupoRel
     object Label4: TLabel
       Left = 414
       Top = 69
-      Width = 110
-      Height = 16
+      Width = 90
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -74,8 +69,8 @@ object fGrupoRel: TfGrupoRel
     object Label5: TLabel
       Left = 10
       Top = 128
-      Width = 147
-      Height = 16
+      Width = 115
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -133,8 +128,8 @@ object fGrupoRel: TfGrupoRel
     object Label6: TLabel
       Left = 414
       Top = 128
-      Width = 134
-      Height = 16
+      Width = 105
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -145,7 +140,7 @@ object fGrupoRel: TfGrupoRel
       Left = 10
       Top = 30
       Width = 357
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -157,7 +152,7 @@ object fGrupoRel: TfGrupoRel
       Left = 10
       Top = 89
       Width = 357
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -169,7 +164,7 @@ object fGrupoRel: TfGrupoRel
       Left = 414
       Top = 30
       Width = 356
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -181,7 +176,7 @@ object fGrupoRel: TfGrupoRel
       Left = 414
       Top = 89
       Width = 356
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -198,6 +193,7 @@ object fGrupoRel: TfGrupoRel
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
+      ItemHeight = 14
       MultiSelect = True
       TabOrder = 4
     end
@@ -210,6 +206,7 @@ object fGrupoRel: TfGrupoRel
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
+      ItemHeight = 14
       MultiSelect = True
       Sorted = True
       TabOrder = 5
@@ -217,13 +214,9 @@ object fGrupoRel: TfGrupoRel
   end
   object Panel2: TPanel
     Left = 0
-    Top = 364
-    Width = 779
-    Height = 51
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
+    Top = 291
+    Width = 623
+    Height = 41
     Align = alBottom
     TabOrder = 1
     object SpeedButton2: TSpeedButton
@@ -255,8 +248,8 @@ object fGrupoRel: TfGrupoRel
       OnClick = SpeedButton2Click
     end
     object BitBtn1: TBitBtn
-      Left = 10
-      Top = 10
+      Left = 8
+      Top = 7
       Width = 92
       Height = 31
       Margins.Left = 4

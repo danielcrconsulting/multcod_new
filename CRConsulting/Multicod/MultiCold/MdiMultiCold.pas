@@ -4081,6 +4081,8 @@ Begin
     end;
 
   JaAbriu := True;
+  EditPes.Height := 16;
+  EditPag.Height := 16;
 End;
 
 Procedure TFrameForm.mScreenWidthClick(Sender: TObject);

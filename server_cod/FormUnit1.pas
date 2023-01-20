@@ -213,8 +213,31 @@ var
     result := host;
   end;
 
+  procedure CriarArqVazio;
+  var
+    strarq : TStringList;
+    caminho, data : String;
+    arqIni : TiniFile;
+  begin
+    arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
+    caminho        := arqIni.ReadString('AD', 'log',    '');
+    data := FormatDateTime('YYYYMMDD', now);
+    strarq := TStringList.Create;
+    if not FileExists(caminho + '_' + data + '.csv') then
+    begin
+      strarq.Add(AnsiToUtf8('SistRot   |UsuarioAlvo                                       |' +
+                          'UsuarioResponsável                                |OrigemAcesso        |' +
+                          'Data      |Resultado                                                   ' +
+                          '                                                                                                                                                                                                                                                |T'));
+      strarq.SaveToFile(caminho + '_' + data + '.csv');
+    end;
+    FreeAndNil(strarq);
+    FreeAndNil(arqIni);
+  end;
+
 begin
   try
+    CriarArqVazio;
     fdQry    := TFDQuery.Create(nil);
     fdQry_up := TFDQuery.Create(nil);
     try

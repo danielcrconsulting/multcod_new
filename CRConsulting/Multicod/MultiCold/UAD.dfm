@@ -1,9 +1,10 @@
 object FAd: TFAd
   Left = 0
   Top = 0
+  BorderStyle = bsNone
   Caption = 'Autenticador AD'
-  ClientHeight = 190
-  ClientWidth = 386
+  ClientHeight = 229
+  ClientWidth = 402
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -102,6 +103,7 @@ object FAd: TFAd
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
+      OnClick = BitBtn2Click
     end
   end
 end

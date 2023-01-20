@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2016/02/17 08:56:52.000.815,=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Unit1.pas</Transaction>
+    <Transaction>2016/02/17 09:07:22.000.071,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\UnitRelUsuRel.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Unit1.dfm</Transaction>
+    <Transaction>2016/02/17 09:07:22.000.071,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\UnitRelUsuRel.pas=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

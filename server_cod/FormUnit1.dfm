@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 271
   Top = 114
-  Caption = 'Configurar Server V1.0.4 08/09/2022'
+  Caption = 'Configurar Server V1.0.7 20/01/2023'
   ClientHeight = 235
   ClientWidth = 443
   Color = clBtnFace

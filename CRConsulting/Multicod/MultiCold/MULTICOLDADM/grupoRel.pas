@@ -30,6 +30,7 @@ type
     BitBtn2: TBitBtn;
     SpeedButton2: TSpeedButton;
     BitBtn3: TBitBtn;
+    Edit1: TEdit;
     procedure SpeedButton2Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ComboBox1Change(Sender: TObject);
@@ -375,9 +376,12 @@ var
   pCount,
   codSis,
   codGrupo,
-  codSubGrupo:Integer;
+  codSubGrupo,
+  I,
+  xCount : Integer;
   codUsu: String;
 begin
+Edit1.Text := '';
 codSis := strToInt(repositorioDeDados.extraiCodigo(ComboBox1.Text));
 codGrupo := strToInt(repositorioDeDados.extraiCodigo(ComboBox2.Text));
 codSubGrupo := strToInt(repositorioDeDados.extraiCodigo(ComboBox3.Text));
@@ -395,7 +399,8 @@ with repositorioDeDados do
 
     (* -- Grupo não deve sobrepor as permissões individuais de cada usuário
     Query01.SQL.Clear;
-    Query01.SQL.Add('DELETE FROM USUREL WHERE CODUSUARIO IN (SELECT CODUSUARIO FROM GRUPOREL WHERE NOMEGRUPOUSUARIO=:A01) ');
+    Query01.SQL.Add('DELETE FROM USUREL WHERE CODUSUARIO IN ' +
+                    '(SELECT CODUSUARIO FROM GRUPOREL WHERE NOMEGRUPOUSUARIO=:A01) ');
     Query01.Parameters[pCount].Value := codUsu;
     if codSis<>-999 then
       begin
@@ -418,15 +423,26 @@ with repositorioDeDados do
     Query01.ExecSQL;
     *)
 
+    Edit1.Text := 'Preparando Limpeza ';
+    Application.ProcessMessages;
+
     Query01.SQL.Clear;
-    Query01.SQL.Add(' SELECT A.CODUSUARIO, B.CODSIS, B.CODGRUPO, B.CODSUBGRUPO, B.CODREL, B.TIPO ');
+//    Query01.SQL.Add(' SELECT A.CODUSUARIO, B.CODSIS, B.CODGRUPO, B.CODSUBGRUPO, B.CODREL, B.TIPO ');
+    Query01.SQL.Add(' SELECT DISTINCT A.CODUSUARIO, B.CODSIS, B.CODGRUPO, B.CODSUBGRUPO, B.TIPO ');
     Query01.SQL.Add(' FROM USUARIOSEGRUPOS A, GRUPOREL B ');
     Query01.SQL.Add(' WHERE A.NOMEGRUPOUSUARIO = B.NOMEGRUPOUSUARIO ');
     Query01.SQL.Add(' AND A.NOMEGRUPOUSUARIO = :A ');
     Query01.Parameters[0].Value := codUsu;
     Query01.Open;
+    xCount := Query01.RecordCount;
+
+    Edit1.Text := 'Iniciando Limpeza ';
+    Application.ProcessMessages;
+
     Query02.SQL.Clear;
-    Query02.SQL.Add(' DELETE FROM USUREL WHERE CODUSUARIO = :A AND CODSIS = :B AND CODGRUPO = :C AND CODSUBGRUPO = :D AND CODREL = :E ');
+    Query02.SQL.Add(' DELETE FROM USUREL WHERE CODUSUARIO = :A AND CODSIS = :B AND CODGRUPO = :C' +
+//                    ' AND CODSUBGRUPO = :D AND CODREL = :E ');
+                    ' AND CODSUBGRUPO = :D ');
     Query02.Prepared := true;
     while not Query01.Eof do
       begin
@@ -434,13 +450,25 @@ with repositorioDeDados do
       Query02.Parameters[1].Value := Query01.Fields[1].Value;
       Query02.Parameters[2].Value := Query01.Fields[2].Value;
       Query02.Parameters[3].Value := Query01.Fields[3].Value;
-      Query02.Parameters[4].Value := Query01.Fields[4].Value;
+//      Query02.Parameters[4].Value := Query01.Fields[4].Value;
       Query02.ExecSQL;
+      If (xCount Mod 10) = 0 Then
+        begin
+        Edit1.Text := 'Limpando USUREL ' + IntToStr(xCount) + ' ' + Query01.Fields[0].AsString;
+        Application.ProcessMessages;
+        end;
+      Dec(xCount);
       Query01.Next;
       end;
     Query01.Close;
     Query02.Prepared := false;
 
+    if dbMulticold.InTransaction then
+      dbMulticold.CommitTrans;
+    dbMulticold.BeginTrans;
+
+    Edit1.Text := 'Limpando GrupoRel ';
+    Application.ProcessMessages;
     pCount:=0;
     Query02.Sql.Clear;
     Query02.Sql.Add('DELETE FROM GRUPOREL WHERE NOMEGRUPOUSUARIO=:A01');
@@ -465,9 +493,15 @@ with repositorioDeDados do
       end;
     Query02.ExecSQL;
 
+    if dbMulticold.InTransaction then
+      dbMulticold.CommitTrans;
+    dbMulticold.BeginTrans;
+
     Query01.SQL.Clear;
     Query01.SQL.Add('INSERT INTO GRUPOREL (CODSIS,CODGRUPO,CODSUBGRUPO,CODREL,NOMEGRUPOUSUARIO,TIPO) VALUES (:A01,:A02,:A03,:A04,:A05,:A06)');
     Query01.Prepared := true;
+    xCount := ListBox1.Items.Count;
+
     for pCount:=0 to ListBox1.Items.Count-1 do
       begin
       Query01.Parameters[0].Value := codSis;
@@ -479,20 +513,33 @@ with repositorioDeDados do
       try
         Query01.ExecSQL;
       except
+
+      Edit1.Text := 'Repopulando GRUPOREL ' + IntToStr(xCount);
+      Dec(xCount);
+      Application.ProcessMessages;
+
       end; // try
+
       end;
     Query01.Prepared := false;
 
+    if dbMulticold.InTransaction then
+      dbMulticold.CommitTrans;
+    dbMulticold.BeginTrans;
+
     // Limpa usurel para evitar duplicidades
-    Query01.SQL.Clear;
+  {  Query01.SQL.Clear;
     Query01.SQL.Add(' SELECT A.CODUSUARIO, B.CODSIS, B.CODGRUPO, B.CODSUBGRUPO, B.CODREL, B.TIPO ');
     Query01.SQL.Add(' FROM USUARIOSEGRUPOS A, GRUPOREL B ');
     Query01.SQL.Add(' WHERE A.NOMEGRUPOUSUARIO = B.NOMEGRUPOUSUARIO ');
     Query01.SQL.Add(' AND B.NOMEGRUPOUSUARIO = :A ');
     Query01.Parameters[0].Value := codUsu;
     Query01.Open;
+    xCount := Query01.RecordCount;
+
     Query02.SQL.Clear;
-    Query02.SQL.Add('DELETE FROM USUREL WHERE CODUSUARIO=:A AND CODSIS=:B AND CODGRUPO=:C AND CODSUBGRUPO=:D AND CODREL=:E');
+    Query02.SQL.Add('DELETE FROM USUREL WHERE CODUSUARIO=:A AND CODSIS=:B AND CODGRUPO=:C AND ' +
+                    'CODSUBGRUPO=:D AND CODREL=:E');
     Query02.Prepared := true;
     while not Query01.Eof do
       begin
@@ -503,11 +550,26 @@ with repositorioDeDados do
       Query02.Parameters[4].Value := Query01.Fields[4].Value;
       Query02.ExecSQL;
       Query01.Next;
+
+      If (xCount Mod 1000) = 0 Then
+        begin
+        Edit1.Text := 'Limpando USUREL ' + IntToStr(xCount) + ' ' + Query01.Fields[0].AsString;
+        Application.ProcessMessages;
+        end;
+      Dec(xCount);
       end;
     Query02.Prepared := false;
     Query01.Close;
 
+    if dbMulticold.InTransaction then
+      dbMulticold.CommitTrans;
+    dbMulticold.BeginTrans; }
+
     // Aplica as permissões em USUREL pq o sistema de autenticação só verifica uma tabela
+
+    Edit1.Text := 'Repopulando USUREL, aguarde... ';
+    Application.ProcessMessages;
+
     Query01.SQL.Clear;
     Query01.SQL.Add(' INSERT INTO USUREL (CODUSUARIO, CODSIS, CODGRUPO, CODSUBGRUPO, CODREL, TIPO) ');
     Query01.SQL.Add(' SELECT A.CODUSUARIO, B.CODSIS, B.CODGRUPO, B.CODSUBGRUPO, B.CODREL, B.TIPO ');
@@ -524,9 +586,11 @@ with repositorioDeDados do
       end;
     end;
   if dbMulticold.InTransaction then
-    begin
     dbMulticold.CommitTrans;
-    end;
+
+  Edit1.Text := 'Fim ';
+  Application.ProcessMessages;
+
   end;
 //Self.Close;
 FormShow(Sender);

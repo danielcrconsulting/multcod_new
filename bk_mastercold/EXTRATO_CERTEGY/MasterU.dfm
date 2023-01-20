@@ -1,7 +1,7 @@
 object MasterColdForm: TMasterColdForm
   Left = 178
   Top = 150
-  Caption = 'MasterCold V3.2.0.3 27/07/2021'
+  Caption = 'MasterCold V3.3.0.1 21/10/2022'
   ClientHeight = 155
   ClientWidth = 418
   Color = clBtnFace
@@ -11,17 +11,16 @@ object MasterColdForm: TMasterColdForm
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   Menu = MainMenu1
-  OldCreateOrder = False
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Label4: TLabel
     Left = 344
     Top = 8
     Width = 3
-    Height = 13
+    Height = 14
   end
   object MainMenu1: TMainMenu
     Left = 64

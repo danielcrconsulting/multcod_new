@@ -19,6 +19,7 @@ type
     procedure DSAuthenticationManager1UserAuthenticate(Sender: TObject;
       const Protocol, Context, User, Password: string; var valid: Boolean;
       UserRoles: TStrings);
+    procedure DSServer1Error(DSErrorEventObject: TDSErrorEventObject);
   private
     { Private declarations }
   public
@@ -65,6 +66,13 @@ begin
   inherited;
   FDSServer := nil;
   FDSAuthenticationManager := nil;
+end;
+
+procedure TServerContainer1.DSServer1Error(
+  DSErrorEventObject: TDSErrorEventObject);
+begin
+  dsServer1.Stop;
+  dsServer1.Start;
 end;
 
 procedure TServerContainer1.DSServerClass1GetClass(

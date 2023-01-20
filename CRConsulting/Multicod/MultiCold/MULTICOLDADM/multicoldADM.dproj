@@ -92,7 +92,7 @@
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=CR Consulting Serviços de Informática e Participações Ltda.;FileDescription=Módulo administrativo do Multicold;FileVersion=3.1.0.13;InternalName=;LegalCopyright=Copyright 2005 by CR Consulting - All rights reserved.;LegalTrademarks=;OriginalFilename=MulticoldAdm.exe;ProductName=Multicold;ProductVersion=3.0.0.0;Comments=30/06/2014;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=CR Consulting Serviços de Informática e Participações Ltda.;FileDescription=Módulo administrativo do Multicold;FileVersion=3.1.0.15;InternalName=;LegalCopyright=Copyright 2005 by CR Consulting - All rights reserved.;LegalTrademarks=;OriginalFilename=MulticoldAdm.exe;ProductName=Multicold;ProductVersion=3.0.0.0;Comments=30/06/2014;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
         <DCC_ImageBase>00400000</DCC_ImageBase>
         <DCC_S>false</DCC_S>
@@ -102,6 +102,7 @@
         <DCC_ExeOutput>c:\Rom\MultiCold\Origem</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_Build>15</VerInfo_Build>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>

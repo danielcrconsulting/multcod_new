@@ -35,13 +35,13 @@ Type
 
   TSortBal = Class
              Procedure InPutSort;
-             Procedure InPutSortNumGer(Const NomeDoIndice : AnsiString);
+//             Procedure InPutSortNumGer(Const NomeDoIndice : AnsiString);
              Procedure InPutSortNome(Const NomeDoIndice : AnsiString);
-             Procedure InPutSortCnt(Ano, Mes : Integer);
+//             Procedure InPutSortCnt(Ano, Mes : Integer);
              Procedure OutPutSort;
-             Procedure OutPutSortNumGer(Const NomeDoIndice : AnsiString);
+//             Procedure OutPutSortNumGer(Const NomeDoIndice : AnsiString);
              Procedure OutPutSortNome(Const NomeDoIndice : AnsiString);
-             Procedure OutPutSortCnt(Ano, Mes : Integer);
+//             Procedure OutPutSortCnt(Ano, Mes : Integer);
              End;
 
   TFormIndex = Class(TForm)
@@ -112,7 +112,8 @@ Type
     ArqIndiceNomeCartao,
     ArqIndiceNomeCartaoAntigo : File Of TgIndiceNomeCartao;
     AuxConta : Int64;
-    ArqDatAntigo : File;
+//    ArqDatAntigo : File;
+    ArqDatAntigo : TFileStream;
 
     NBytesOut,
     Resultado,
@@ -130,7 +131,8 @@ Type
 
     ArqIn  : System.Text;
 
-    ArqOut : File;
+//    ArqOut : File;
+    ArqOut : TFileStream;
 
 //    ReportStr,
     Reports1Str,
@@ -147,19 +149,19 @@ Type
     BufDatAntigo,
     BufOutAntigo : Pointer;
 
-    UnsrExtr,
+//    UnsrExtr,
     UnsrExtrBmg,
-    UnsrExtrRQ,
+//    UnsrExtrRQ,
     UnsDetex,
     UnsDetexBmg,
-    UnsDetexRQ,
+//    UnsDetexRQ,
     UnsrCont,
     UnsrContVP,
     UnsrContBmg,
     UnsrCart,
     UnsrCartVP,
     UnsrCartBmg,
-    ExtrCeAv0001,
+//    ExtrCeAv0001,
     Fusao    : Boolean;
 
     CodNum,
@@ -192,7 +194,7 @@ Type
     RegIndiceNome : TgIndiceNome;
 
 {    ArqIndiceNumCnt : File Of TgIndiceNumCnt; }
-    RegIndiceNumCnt : TgIndiceNumCnt;
+{    RegIndiceNumCnt : TgIndiceNumCnt;
 
     ArqIndiceNumGer : File Of TgIndiceNumGer;
     RegIndiceNumGer : TgIndiceNumGer;
@@ -202,7 +204,7 @@ Type
                                              ArqInd : File Of TgIndiceNumCnt;
                                              NomeDoIndice : AnsiString;
                                              Processou : Boolean;
-                                             End;
+                                             End;   }
 
 //    Function IndiceDesbalanceadoCeA(Ano, Mes : Integer) : Boolean;
 
@@ -211,12 +213,9 @@ Type
     Function  PreparaInicioDeProcessamento : Boolean;
     Procedure PreparaFusao;
     Function  ProcessaUnsrExtr : Boolean;
-    Function  ProcessaUnsrCart : Boolean;
-    Function  ProcessaUnsrCont : Boolean;
     Function  ProcessaUnsDetex : Boolean;
-
-    Function ProcessaUnsrContVP : Boolean;
-    Function ProcessaUnsrCartVP : Boolean;
+    Function  ProcessaUnsrContVP : Boolean;   // Esta função foi atualizada para +2GB files
+    Function  ProcessaUnsrCartVP : Boolean;   // Esta função foi atualizada para +2GB files
 
     Procedure AtuEst;
     Procedure DetSeq;
@@ -358,14 +357,16 @@ With FormIndex Do
   RichEdit1.Lines.Add('Descarregados: '+IntToStr(J));
   RichEdit1.Lines.Add('');
   PosicionaRichEdit;
-  DeleteFile(PChar(NomeArqDat));
-  DeleteFile(PChar(NomeArqIndice));
+//  DeleteFile(PChar(NomeArqDat));        Windows functions are no longer working
+//  DeleteFile(PChar(NomeArqIndice));     Ansi to Wide strings convertion problem?
+  System.SysUtils.DeleteFile(NomeArqDat);
+  System.SysUtils.DeleteFile(NomeArqIndice);
   RenameFile(NomeArqDat+'_', NomeArqDat);
   RenameFile(NomeArqIndice+'_', NomeArqIndice);
   End;
 End;
 
-Procedure TsortBal.InPutSortNumGer;
+{Procedure TsortBal.InPutSortNumGer;
 Var
   I : Integer;
 Begin
@@ -417,7 +418,7 @@ With FormIndex Do
   Application.ProcessMessages;
   CloseFile(ArqIndiceNumGer);
   End;
-End;
+End;               }
 
 Procedure TsortBal.InPutSortNome;
 Var
@@ -473,7 +474,7 @@ With FormIndex Do
   End;
 End;
 
-Procedure TsortBal.InPutSortCnt;
+{Procedure TsortBal.InPutSortCnt;
 Var
   I : Integer;
 Begin
@@ -523,7 +524,7 @@ With FormIndex Do
   RichEdit1.Lines[RichEdit1.Lines.Count-1] := 'Processados: '+IntToStr(Length(SortMem.ArIndNumCnt));
   Application.ProcessMessages;
   End;
-End;
+End;          }
 
 Procedure TSort.InputSort;
 Var
@@ -736,11 +737,18 @@ Arquivos.Cells[2,2] := IntToStr(TotOut);
 Application.ProcessMessages;
 End;
 
-Procedure MoveDelete(Origem, Destino : AnsiString);
+//Procedure MoveDelete(Origem, Destino : AnsiString);
+Procedure MoveDelete(Origem, Destino : String);
+Var
+  Erro : Integer;
 Begin
 DeleteFile(PChar(Destino));
+
 If Not MoveFile(PChar(Origem), PChar(Destino)) Then
-  FormGeral.InsereLog(Origem,'Erro na Função MoveFile, arquivo não movido, verifique.',FormIndex.SeqLog,FormIndex.Agora);
+  begin
+  Erro := GetLastError;
+  FormGeral.InsereLog(Origem,'Erro '+ IntToStr(Erro) + ' na Função MoveFile, arquivo não movido, verifique.',FormIndex.SeqLog,FormIndex.Agora);
+  end;
 End;
 
 Function TFormIndex.PreparaInicioDeProcessamento;
@@ -791,7 +799,7 @@ With Arquivos Do
     End;
   CloseFile(ArqIn);
 
-  Arq := TFileStream.Create(Cells[1,1],fmOpenRead Or fmShareDenyNone);
+  Arq := TFileStream.Create(Cells[1,1], fmOpenRead Or fmShareDenyNone);
 
 //  Divisor := TxtRec.Size;
   Divisor := Arq.Size;
@@ -823,9 +831,11 @@ If FileExists(IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Desti
   AssignFile(ArqIndiceContaAntigo, IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) + CodAlfa +
              FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'CONTA.IND');
   Reset(ArqIndiceContaAntigo);
-  AssignFile(ArqDatAntigo,IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) + CodAlfa +
-             FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + '.DAT');
-  Reset(arqDatAntigo,1);
+//  AssignFile(ArqDatAntigo,IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) + CodAlfa +
+//             FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + '.DAT');
+//  Reset(arqDatAntigo,1);
+  ArqDatAntigo := TFileStream.Create(IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) + CodAlfa +
+             FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + '.DAT', fmOpenRead Or fmShareDenyNone);
   End
 Else
   Fusao := False;
@@ -936,7 +946,8 @@ Begin
 PreparaInicioDeProcessamento;
 
 Try
-  CloseFile(ArqOut);
+//  CloseFile(ArqOut);
+  ArqOut.Free;
 Except
   End;
 
@@ -1019,8 +1030,10 @@ While Not Eof(ArqUnsrExtr) Do
     IndiceConta.PosIni := FilePos(ArrExtrDetexArq[Ano,Mes].ArqOut);
   Except
     Try
+
       Reset(ArrExtrDetexArq[Ano,Mes].ArqOut,1);
       Seek(ArrExtrDetexArq[Ano,Mes].ArqOut, FileSize(ArrExtrDetexArq[Ano,Mes].ArqOut));
+
       IndiceConta.PosIni := FilePos(ArrExtrDetexArq[Ano,Mes].ArqOut);
     Except
       Try
@@ -1100,518 +1113,7 @@ AtuEst;
 Result := True;
 End;
 
-Function TFormIndex.ProcessaUnsrCart;
-Var
-  ArqUnsrCart : File Of TgUnsrCart;
-  RegUnsrCart,
-  RegAuxUnsrCart : TgUnsrCart;
-  I,
-  ICart : Integer;
-  JaTem,
-  SalvarDados : Boolean;
-  CartConta : AnsiString;
-  Retorno : Byte;
-
-  Procedure LeAntigo;
-
-    Procedure MoveDadosCartaoAntigo;
-    Begin
-      Seek(ArqDatAntigo,IndiceContaAntigo.PosIni);
-      ReallocMem(BufDatAntigo,IndiceContaAntigo.Tam);
-      BlockRead(ArqDatAntigo,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
-      IndiceConta.Valor := IndiceContaAntigo.Valor;
-      IndiceConta.PosIni := FilePos(ArqOut);
-      IndiceConta.Tam := IndiceContaAntigo.Tam;
-      IndiceConta.TipoConta := IndiceContaAntigo.TipoConta;
-      IndiceCartao.PosIni := IndiceConta.PosIni;
-      IndiceCartao.Tam := IndiceConta.Tam;
-      IndiceCartao.TipoConta := IndiceConta.TipoConta;
-      IndiceNomeCartao.PosIni := IndiceConta.PosIni;
-      IndiceNomeCartao.Tam := IndiceConta.Tam;
-      IndiceNomeCartao.TipoConta := IndiceConta.TipoConta;
-      While (IndiceCartaoAntigo.PosIni < IndiceContaAntigo.PosIni) And
-            (Not Eof(ArqIndiceCartaoAntigo)) Do
-        Read(ArqIndiceCartaoAntigo, IndiceCartaoAntigo);
-      If IndiceCartaoAntigo.PosIni <> IndiceContaAntigo.PosIni Then
-        Begin
-        FormGeral.InsereLog(Arquivos.Cells[1,1],'Assincronia no índice cartao.ori',SeqLog, Agora);
-        Application.Terminate;
-        End;
-      While (IndiceNomeCartaoAntigo.PosIni < IndiceContaAntigo.PosIni) And
-            (Not Eof(ArqIndiceNomeCartaoAntigo)) Do
-        Read(ArqIndiceNomeCartaoAntigo, IndiceNomeCartaoAntigo);
-      If IndiceNomeCartaoAntigo.PosIni <> IndiceContaAntigo.PosIni Then
-        Begin
-        FormGeral.InsereLog(Arquivos.Cells[1,1],'Assincronia no índice nomecartao.ori',SeqLog, Agora);
-        Application.Terminate;
-        End;
-      While (IndiceCartaoAntigo.PosIni = IndiceContaAntigo.PosIni) And
-            (Not Eof(ArqIndiceCartaoAntigo)) Do
-        Begin
-        IndiceCartao.Valor := IndiceCartaoAntigo.Valor;
-        Write(ArqIndiceCartao, IndiceCartao);
-        Read(ArqIndiceCartaoAntigo, IndiceCartaoAntigo);
-        End;
-      If (Eof(ArqIndiceCartaoAntigo)) And (IndiceCartaoAntigo.PosIni = IndiceContaAntigo.PosIni) Then
-        Begin
-        IndiceCartao.Valor := IndiceCartaoAntigo.Valor; // Trata último registro do arquivo antigo
-        Write(ArqIndiceCartao, IndiceCartao);
-        End;
-      While (IndiceNomeCartaoAntigo.PosIni = IndiceContaAntigo.PosIni) And
-            (Not Eof(ArqIndiceNomeCartaoAntigo)) Do
-        Begin
-        IndiceNomeCartao.Valor := IndiceNomeCartaoAntigo.Valor;
-        Write(ArqIndiceNomeCartao, IndiceNomeCartao);
-        Read(ArqIndiceNomeCartaoAntigo, IndiceNomeCartaoAntigo);
-        End;
-      If (Eof(ArqIndiceNomeCartaoAntigo)) And (IndiceNomeCartaoAntigo.PosIni = IndiceContaAntigo.PosIni) Then
-        Begin                            // Trata último registro do arquivo antigo
-        IndiceNomeCartao.Valor := IndiceNomeCartaoAntigo.Valor;
-        Write(ArqIndiceNomeCartao, IndiceNomeCartao);
-        End;
-      Inc(TotOut,IndiceContaAntigo.Tam);
-      BlockWrite(ArqOut,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
-      Write(ArqIndiceConta, IndiceConta);
-    End;
-
-  Begin
-  Repeat
-    Posic := FilePos(ArqIndiceContaAntigo);
-    Read(ArqIndiceContaAntigo,IndiceContaAntigo);
-    AuxConta := StrToInt64(Trim(RegUnsrCart.Conta)); // Salva para evitar de converter duas vezes...
-    If IndiceContaAntigo.Valor = AuxConta Then       // Carrega os valores antigos e continua...
-      Begin
-      If UpperCase(FormGeral.TableDFN.FieldByName('Atualiza').AsString) <> 'S' Then // Não atualiza os dados
-        Begin
-        MoveDadosCartaoAntigo;
-        SalvarDados := False;
-        End
-      Else
-        Begin      // Caso contrário lê o registro antigo para os novos dados atualizar.
-        Seek(ArqDatAntigo,IndiceContaAntigo.PosIni);
-        ReallocMem(BufDatAntigo,IndiceContaAntigo.Tam);
-        BlockRead(ArqDatAntigo,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
-        ReallocMem(BufOutAntigo,0);
-//        DecompressBuf(BufDatAntigo,IndiceContaAntigo.Tam,0,BufOutAntigo,NBytesOut);
-        ZDecompress(BufDatAntigo,IndiceContaAntigo.Tam,BufOutAntigo,NBytesOut,0);
-
-        Move(BufOutAntigo^,CartConta[1],NBytesOut);
-        Inc(ICart,(NBytesOut Div SizeOf(RegUnsrCart)));
-        Inc(TamBufOut,NBytesOut);
-        End;
-      End
-    Else
-    If IndiceContaAntigo.Valor < AuxConta Then // Salva os dados da conta antiga
-      Begin
-      MoveDadosCartaoAntigo;
-      End
-    Else
-      Begin
-      Seek(ArqIndiceContaAntigo,Posic);  // Salva a posição para comparação futura...
-      Break;
-      End;
-  Until Eof(ArqIndiceContaAntigo);
-  End;
-
-  Procedure Descarrega;
-  Var
-    IAux : Integer;
-  Begin       // Procedimentos de descarga...
-  If Not SalvarDados Then
-    Begin
-    SalvarDados := True;
-    Exit;
-    End;
-  BufSaida := @CartConta[1];
-//  CompressBuf(BufSaida,TamBufOut,BufCmp,NBytesOut);
-  ZCompress(BufSaida,TamBufOut,BufCmp,NBytesOut);
-
-  IndiceConta.Valor := StrToInt64(Trim(ContaAnt));
-  IndiceConta.PosIni := FilePos(ArqOut);
-  IndiceConta.TipoConta := RegAuxUnsrCart.TipoConta;
-  IndiceConta.Tam := NBytesOut;
-  IndiceCartao.PosIni := IndiceConta.PosIni;
-  IndiceCartao.TipoConta := RegAuxUnsrCart.TipoConta;
-  IndiceCartao.Tam := IndiceConta.Tam;
-  IndiceNomeCartao.PosIni := IndiceConta.PosIni;
-  IndiceNomeCartao.TipoConta := RegAuxUnsrCart.TipoConta;
-  IndiceNomeCartao.Tam := IndiceConta.Tam;
-  For IAux := 1 To TamBufOut div SizeOf(RegAuxUnsrCart) Do
-    Begin                      // Todos os cartões são de uma única conta...
-    Move(CartConta[(IAux-1)*SizeOf(RegAuxUnsrCart)+1],RegAuxUnsrCart,SizeOf(RegAuxUnsrCart));
-    IndiceCartao.Valor := StrToInt64(RegAuxUnsrCart.Cartao);
-    Write(ArqIndiceCartao, IndiceCartao);
-    IndiceNomeCartao.Valor := RegAuxUnsrCart.NomeCartao;
-    Write(ArqIndiceNomeCartao, IndiceNomeCartao);
-    End;
-  Inc(TotOut,NBytesOut);
-  BlockWrite(ArqOut,BufCmp^,IndiceConta.Tam,Resultado);
-  Write(ArqIndiceConta, IndiceConta);
-  ReallocMem(BufCmp,0);
-
-  TamBufOut := 0;
-  ContaAnt := RegUnsrCart.Conta;
-  ICart := 0;
-  End;
-
-Begin
-PreparaInicioDeProcessamento;
-PreparaFusao;
-
-Try
-  CloseFile(ArqOut);
-Except
-  End;
-  
-AssignFile(ArqOut,Arquivos.Cells[1,2]);
-ReWrite(ArqOut,1);
-AssignFile(ArqUnsrCart,Arquivos.Cells[1,1]);
-Reset(ArqUnsrCart);
-
-AssignFile(ArqIndiceCartao, viDirTrabApl + 'Temp\' + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString +
-           'CARTAO.ORI');
-ReWrite(ArqIndiceCartao);
-AssignFile(ArqIndiceNomeCartao, viDirTrabApl + 'Temp\' + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString +
-           'NOMECARTAO.ORI');
-ReWrite(ArqIndiceNomeCartao);
-
-If Fusao Then
-  Begin
-  AssignFile(ArqIndiceCartaoAntigo, IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) +
-             CodAlfa + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'CARTAO.ORI');
-  Reset(ArqIndiceCartaoAntigo);
-  AssignFile(ArqIndiceNomeCartaoAntigo, IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) +
-             CodAlfa + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'NOMECARTAO.ORI');
-  Reset(ArqIndiceNomeCartaoAntigo);
-  IndiceCartaoAntigo.PosIni := -1; // Initialize to force the seek reading of the index
-  IndiceNomeCartaoAntigo.PosIni := -1;
-  End;
-
-Read(ArqUnsrCart,RegUnsrCart);
-ContaAnt := RegUnsrCart.Conta;
-CloseFile(ArqUnsrCart);
-Reset(ArqUnsrCart);
-ICart := 0;
-SalvarDados := True;
-
-SetLength(CartConta,10000*SizeOf(TgUnsrCart));
-If Fusao And (Not Eof(ArqIndiceContaAntigo)) Then
-  LeAntigo;
-
-While Not Eof(ArqUnsrCart) Do
-  Begin
-  Read(ArqUnsrCart,RegUnsrCart);
-
-  If RegUnsrCart.Conta < ContaAnt Then
-    Begin
-    FormGeral.InsereLog(Arquivos.Cells[1,1],'Assincronia: '+RegUnsrCart.Conta+' '+ContaAnt,SeqLog, Agora);
-    RichEdit1.Lines.Add('Assincronia: '+RegUnsrCart.Conta+' '+ContaAnt);
-    Application.Terminate;
-    End;
-
-  If RegUnsrCart.Conta <> ContaAnt Then
-    Begin
-    Descarrega;
-    If Fusao And (Not Eof(ArqIndiceContaAntigo)) Then
-      LeAntigo;
-    End;
-
-  JaTem := False;
-  For I := 1 To ICart Do
-    Begin
-    Move(CartConta[(I-1)*SizeOf(RegAuxUnsrCart)+1],RegAuxUnsrCart,SizeOf(RegAuxUnsrCart));
-    If (RegUnsrCart.Org = RegAuxUnsrCart.Org) And
-       (RegUnsrCart.Logo = RegAuxUnsrCart.Logo) And
-       (RegUnsrCart.Cartao = RegAuxUnsrCart.Cartao) Then
-      Begin
-      Move(RegUnsrCart,CartConta[(I-1)*SizeOf(RegAuxUnsrCart)+1],SizeOf(RegAuxUnsrCart));
-      JaTem := True;
-      Break;
-      End;
-    End;
-  If Not JaTem Then
-    Begin
-    Inc(ICart);
-    Move(RegUnsrCart,CartConta[(ICart-1)*SizeOf(RegAuxUnsrCart)+1],SizeOf(RegAuxUnsrCart));
-    Inc(TamBufOut,SizeOf(RegUnsrCart));
-    End;
-
-  Inc(PosArq,SizeOf(RegUnsrCart));
-  Inc(TotReg);
-
-  If (TotReg Mod QueBraMod) = 0 Then
-    Begin
-    AtuEst;
-    If TotReg > 9000 Then
-      QuebraMod := 10000
-    Else
-    If TotReg > 900 Then
-      QuebraMod := 1000
-    Else
-    If TotReg > 90 Then
-      QuebraMod := 100;
-    End;
-
-  End;
-
-Descarrega; // Grava o último
-RegUnsrCart.Conta := '9999999999999999'; // Forçar a descarga de eventuais registros antigos que ainda sobraram
-
-If Fusao Then
-  Begin
-  If (Not Eof(ArqIndiceContaAntigo)) Then
-    LeAntigo; // Descarrega eventuais registros antigos ainda restantes...
-  CloseFile(ArqIndiceContaAntigo);
-  CloseFile(ArqDatAntigo);
-  CloseFile(ArqIndiceCartaoAntigo);
-  CloseFile(ArqIndiceNomeCartaoAntigo);
-  If BufDatAntigo <> Nil Then
-    ReallocMem(BufDatAntigo,0);
-  If BufOutAntigo <> Nil Then
-    ReallocMem(BufOutAntigo,0);
-  End;
-
-CloseFile(ArqIndiceConta);
-CloseFile(ArqIndiceCartao);
-CloseFile(ArqIndiceNomeCartao);
-CloseFile(ArqUnsrCart);
-CloseFile(ArqOut);
-SetLength(CartConta,0);  // Alivia a memória alocada para o processamento...
-
-AvisoP.Label1.Caption := 'Indexando Cartao';
-AvisoP.Show;
-AvisoP.RePaint;
-NomeArqIndice := viDirTrabApl + 'Temp\' + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'CARTAO.ORI';
-TsSort := TSort.Create;
-Retorno := TsSort.TurboSort(SizeOf(IndiceCartao),StrToInt(viNBufIO));
-If Retorno <> 0 Then
-  FormGeral.InsereLog('Cartao','Erro no sort do índice...',SeqLog, Agora);
-TsSort.Free;
-
-AvisoP.Label1.Caption := 'Indexando NomeCartao';
-AvisoP.Show;
-AvisoP.RePaint;
-NomeArqIndice := viDirTrabApl + 'Temp\' + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'NOMECARTAO.ORI';
-TsSort := TSortNomeCartao.Create;
-Retorno := TsSort.TurboSort(SizeOf(IndiceNomeCartao),StrToInt(viNBufIO));
-If Retorno <> 0 Then
-  FormGeral.InsereLog('NomeCartao','Erro no sort do índice...',SeqLog, Agora);
-TsSort.Free;
-
-Arquivos.Cells[3,2] := Arquivos.Cells[3,2] + ' 100.00%';
-Arquivos.Repaint;
-
-AvisoP.Close;
-AtuEst;
-Result := True;
-End;
-
-Function TFormIndex.ProcessaUnsrCont;
-
-Var
-  ArqUnsrCont : File Of TgUnsrCont;
-  RegUnsrCont : TgUnsrCont;
-//  RegUnsrContEmpresaDoPortador,
-//  RegUnsrContAux : TgUnsrCont;
-  Retorno : Byte;
-  IndAnt : Int64;
-  SalvarDados : Boolean;
-
-  Procedure MoveRegistroContaAntigo;
-  Begin
-  Seek(ArqDatAntigo,IndiceContaAntigo.PosIni);
-  ReallocMem(BufDatAntigo,IndiceContaAntigo.Tam);
-  BlockRead(ArqDatAntigo,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
-    // Update new dat position and fire the bomb
-  IndiceContaAntigo.PosIni := FilePos(ArqOut);
-  Inc(TotOut,IndiceContaAntigo.Tam);
-  BlockWrite(ArqOut,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
-  Write(ArqIndiceConta, IndiceContaAntigo);
-
-  IndiceContaEmpresaAntigo.PosIni := IndiceContaAntigo.PosIni;
-  Write(ArqIndiceContaEmpresa, IndiceContaEmpresaAntigo);
-
-  IndiceCpfCgcAntigo.PosIni := IndiceContaAntigo.PosIni;
-  Write(ArqIndiceCpfCgc, IndiceCpfCgcAntigo);
-  End;
-
-  Procedure LeAntigo;
-  Begin
-  Repeat
-    Posic := FilePos(ArqIndiceContaAntigo);
-    Read(ArqIndiceContaAntigo,IndiceContaAntigo);
-    Read(ArqIndiceContaEmpresaAntigo,IndiceContaEmpresaAntigo);
-    Read(ArqIndiceCpfCgcAntigo,IndiceCpfCgcAntigo);
-    AuxConta := StrToInt64(Trim(RegUnsrCont.Conta)); // Salva para evitar de converter duas vezes...
-    If IndiceContaAntigo.Valor = AuxConta Then  // Neste caso só há um registro por conta, então o novo vai substituir este...
-      Begin
-      If UpperCase(FormGeral.TableDFN.FieldByName('Atualiza').AsString) <> 'S' Then // Não atualiza os dados
-        Begin
-        SalvarDados := False;
-        Break;
-        End;
-      End
-    Else
-    If IndiceContaAntigo.Valor < AuxConta Then // Salva os dados da conta antiga
-      Begin
-      MoveRegistroContaAntigo;
-      End
-    Else
-      Begin
-      Seek(ArqIndiceContaAntigo,Posic);  // Salva a posição para comparação futura...
-      Seek(ArqIndiceContaEmpresaAntigo,Posic);  // Salva a posição para comparação futura...
-      Seek(ArqIndiceCpfCgcAntigo,Posic);  // Salva a posição para comparação futura...
-      Break;
-      End;
-  Until Eof(ArqIndiceContaAntigo);
-  End;
-
-Begin
-PreparaInicioDeProcessamento;
-PreparaFusao;
-
-Try
-  CloseFile(ArqOut);
-Except
-  End;
-
-AssignFile(ArqIndiceContaEmpresa, viDirTrabApl + 'Temp\' + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString +
-           'CONTAEMPRESA.ORI');
-ReWrite(ArqIndiceContaEmpresa);
-AssignFile(ArqIndiceCpfCgc, viDirTrabApl + 'Temp\' + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString +
-           'CPFCGC.ORI');
-ReWrite(ArqIndiceCpfCgc);
-
-If Fusao Then
-  Begin
-  AssignFile(ArqIndiceContaEmpresaAntigo, IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) +
-             CodAlfa + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'CONTAEMPRESA.ORI');
-  Reset(ArqIndiceContaEmpresaAntigo);
-  AssignFile(ArqIndiceCpfCgcAntigo, IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) +
-             CodAlfa + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'CPFCGC.ORI');
-  Reset(ArqIndiceCpfCgcAntigo);
-  End;
-
-AssignFile(ArqOut,Arquivos.Cells[1,2]);
-ReWrite(ArqOut,1);
-AssignFile(ArqUnsrCont,Arquivos.Cells[1,1]);
-Reset(ArqUnsrCont);
-IndAnt := 0;
-SalvarDados := True;
-
-While Not Eof(ArqUnsrCont) Do
-  Begin
-  Read(ArqUnsrCont,RegUnsrCont);
-
-  BufSaida := @RegUnsrCont;
-//  CompressBuf(BufSaida,SizeOf(RegUnsrCont)-2,BufCmp,NBytesOut);
-  ZCompress(BufSaida,SizeOf(RegUnsrCont)-2,BufCmp,NBytesOut);
-
-  IndiceConta.Valor := StrToInt64(Trim(RegUnsrCont.Conta));
-  If IndiceConta.Valor < IndAnt Then
-    Begin
-    FormGeral.InsereLog(Arquivos.Cells[1,1],'Assincronia: '+IntToStr(IndiceConta.Valor)+' '+IntToStr(IndAnt),SeqLog, Agora);
-    RichEdit1.Lines.Add('Assincronia: '+IntToStr(IndiceConta.Valor)+' '+IntToStr(IndAnt));
-    Application.Terminate;
-    End;
-  IndAnt := IndiceConta.Valor;
-
-  If Fusao And (Not Eof(ArqIndiceContaAntigo)) Then
-    LeAntigo;
-
-  IndiceConta.PosIni := FilePos(ArqOut);
-  IndiceConta.TipoConta := RegUnsrCont.TipoConta;
-  IndiceConta.Tam := NBytesOut;
-  Inc(TotOut,NBytesOut);
-
-  IndiceContaEmpresa.Valor := StrToInt64(Trim(RegUnsrCont.ContaEmpres));
-  IndiceContaEmpresa.PosIni := IndiceConta.PosIni;
-  IndiceContaEmpresa.TipoConta := RegUnsrCont.TipoConta;
-  IndiceContaEmpresa.Tam := IndiceConta.Tam;
-
-  IndiceCpfCgc.Valor := StrToInt64(Trim(RegUnsrCont.CpfCgc));
-  IndiceCpfCgc.PosIni := IndiceConta.PosIni;
-  IndiceCpfCgc.TipoConta := RegUnsrCont.TipoConta;
-  IndiceCpfCgc.Tam := IndiceConta.Tam;
-
-  If SalvarDados Then
-    Begin
-    BlockWrite(ArqOut,BufCmp^,IndiceConta.Tam,Resultado);
-    Write(ArqIndiceConta, IndiceConta);
-    Write(ArqIndiceContaEmpresa, IndiceContaEmpresa);
-    Write(ArqIndiceCpfCgc, IndiceCpfCgc);
-    End;
-
-  SalvarDados := True;
-
-  ReallocMem(BufCmp,0);
-
-  Inc(PosArq,SizeOf(RegUnsrCont));
-  Inc(TotReg);
-  If (TotReg Mod QueBraMod) = 0 Then
-    Begin
-    AtuEst;
-    If TotReg > 9000 Then
-      QuebraMod := 10000
-    Else
-    If TotReg > 900 Then
-      QuebraMod := 1000
-    Else
-    If TotReg > 90 Then
-      QuebraMod := 100;
-    End;
-  End;
-
-RegUnsrCont.Conta := '9999999999999999'; // Forçar a descarga de eventuais registros antigos que ainda sobraram
-
-If Fusao Then
-  Begin
-  If (Not Eof(ArqIndiceContaAntigo)) Then
-    LeAntigo; // Descarrega eventuais registros antigos ainda restantes...
-  CloseFile(ArqIndiceContaAntigo);
-  CloseFile(ArqDatAntigo);
-  CloseFile(ArqIndiceContaEmpresaAntigo);
-  CloseFile(ArqIndiceCpfCgcAntigo);
-  If BufDatAntigo <> Nil Then
-    ReallocMem(BufDatAntigo,0);
-  If BufOutAntigo <> Nil Then
-    ReallocMem(BufOutAntigo,0);
-  End;
-CloseFile(ArqIndiceConta);
-CloseFile(ArqUnsrCont);
-CloseFile(ArqOut);
-CloseFile(ArqIndiceContaEmpresa);
-CloseFile(ArqIndiceCpfCgc);
-
-AvisoP.Label1.Caption := 'Indexando ContaEmpresa';
-AvisoP.Show;
-AvisoP.RePaint;
-NomeArqIndice := viDirTrabApl + 'Temp\' + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'CONTAEMPRESA.ORI';
-TsSort := TSort.Create;
-Retorno := TsSort.TurboSort(SizeOf(IndiceContaEmpresa),StrToInt(viNBufIO));
-If Retorno <> 0 Then
-  FormGeral.InsereLog('ContaEmpresa','Erro no sort do índice...',SeqLog, Agora);
-TsSort.Free;
-
-AvisoP.Label1.Caption := 'Indexando CpfCgc';
-AvisoP.Show;
-AvisoP.RePaint;
-NomeArqIndice := viDirTrabApl + 'Temp\' + FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'CPFCGC.ORI';
-TsSort := TSort.Create;
-Retorno := TsSort.TurboSort(SizeOf(IndiceCpfCgc),StrToInt(viNBufIO));
-If Retorno <> 0 Then
-  FormGeral.InsereLog('CgcCpf','Erro no sort do índice...',SeqLog, Agora);
-TsSort.Free;
-
-Arquivos.Cells[3,2] := Arquivos.Cells[3,2] + ' 100.00%';
-Arquivos.Repaint;
-
-AvisoP.Close;
-AtuEst;
-Result := True;
-End;
-
-Function TFormIndex.ProcessaUnsrContVP;
+Function TFormIndex.ProcessaUnsrContVP;     // +2gb dat files     20/10/2022 By Romero
 Var
   ArqUnsrCont : File Of TgUnsrContVP;
   RegUnsrCont : TgUnsrContVP;
@@ -1624,13 +1126,19 @@ Var
 
   Procedure MoveRegistroContaAntigo;
   Begin
-  Seek(ArqDatAntigo,IndiceContaAntigo.PosIni);
+//  Seek(ArqDatAntigo,IndiceContaAntigo.PosIni);
+  ArqDatAntigo.Seek(IndiceContaAntigo.PosIni, soFromBeginning);
+
   ReallocMem(BufDatAntigo,IndiceContaAntigo.Tam);
-  BlockRead(ArqDatAntigo,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+//  BlockRead(ArqDatAntigo,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+  ArqDatAntigo.Read(BufDatAntigo^,IndiceContaAntigo.Tam);
+
     // Update new dat position and fire the bomb
-  IndiceContaAntigo.PosIni := FilePos(ArqOut);
+//  IndiceContaAntigo.PosIni := FilePos(ArqOut);
+  IndiceContaAntigo.PosIni := ArqOut.Position;
   Inc(TotOut,IndiceContaAntigo.Tam);
-  BlockWrite(ArqOut,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+//  BlockWrite(ArqOut,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+  ArqOut.Write(BufDatAntigo^,IndiceContaAntigo.Tam);
   Write(ArqIndiceConta, IndiceContaAntigo);
 
   IndiceContaEmpresaAntigo.PosIni := IndiceContaAntigo.PosIni;
@@ -1676,7 +1184,8 @@ PreparaInicioDeProcessamento;
 PreparaFusao;
 
 Try
-  CloseFile(ArqOut);
+//  CloseFile(ArqOut);
+  ArqOut.Free;
 Except
   End;
 
@@ -1697,56 +1206,42 @@ If Fusao Then
   Reset(ArqIndiceCpfCgcAntigo);
   End;
 
-AssignFile(ArqOut,Arquivos.Cells[1,2]);
-ReWrite(ArqOut,1);
-If UnsrContBmg Then
-  Begin
-  AssignFile(ArqUnsrContBmg,Arquivos.Cells[1,1]);
-  Reset(ArqUnsrContBmg);
-  End
-Else
-  Begin
-  AssignFile(ArqUnsrCont,Arquivos.Cells[1,1]);
-  Reset(ArqUnsrCont);
-  End;
+//AssignFile(ArqOut,Arquivos.Cells[1,2]);
+//ReWrite(ArqOut,1);
+ArqOut := TFileStream.Create(Arquivos.Cells[1,2], fmCreate);
+
+AssignFile(ArqUnsrContBmg,Arquivos.Cells[1,1]);
+Reset(ArqUnsrContBmg);
+
 IndAnt := 0;
 SalvarDados := True;
 
-If UnsrContBmg Then
-  FimDeArquivo := Eof(ArqUnsrContBmg)
-Else
-  FimDeArquivo := Eof(ArqUnsrCont);
+FimDeArquivo := Eof(ArqUnsrContBmg);
 
 While Not FimDeArquivo Do
   Begin
-  If UnsrContBmg Then
+  Begin
+  Read(ArqUnsrContBmg,RegUnsrContBmg);
+  FimDeArquivo := Eof(ArqUnsrContBmg);
+
+  If RegUnsrContBmg.Corp <> '001' Then
     Begin
-    Read(ArqUnsrContBmg,RegUnsrContBmg);
-    FimDeArquivo := Eof(ArqUnsrContBmg);
-
-    If RegUnsrContBmg.Corp <> '001' Then
-      Begin
-      RegUnsrCont.Org := '103';
-      RegUnsrCont.Logo := '000';
-      End
-    else
-      Begin
-      RegUnsrCont.Org := RegUnsrContBmg.Corp;
-      RegUnsrCont.Logo := RegUnsrContBmg.Produto;
-      End;
-
-    Move(RegUnsrContBmg.Conta, RegUnsrCont.Conta, 314);
-
-    RegUnsrCont.CodBloqueioUm[1] := RegUnsrContBmg.CodBloqueioUm[1];
-    RegUnsrCont.DtBloqueioUm := RegUnsrContBmg.DtBloqueioUm;
-    RegUnsrCont.CodBloqueioDois := RegUnsrContBmg.CodBloqueioDois;
-    RegUnsrCont.DtBloqueioDois := RegUnsrContBmg.DtBloqueioDois;
+    RegUnsrCont.Org := '103';
+    RegUnsrCont.Logo := '000';
     End
-  Else
+  else
     Begin
-    Read(ArqUnsrCont,RegUnsrCont);
-    FimDeArquivo := Eof(ArqUnsrCont);
+    RegUnsrCont.Org := RegUnsrContBmg.Corp;
+    RegUnsrCont.Logo := RegUnsrContBmg.Produto;
     End;
+
+  Move(RegUnsrContBmg.Conta, RegUnsrCont.Conta, 314);
+
+  RegUnsrCont.CodBloqueioUm[1] := RegUnsrContBmg.CodBloqueioUm[1];
+  RegUnsrCont.DtBloqueioUm := RegUnsrContBmg.DtBloqueioUm;
+  RegUnsrCont.CodBloqueioDois := RegUnsrContBmg.CodBloqueioDois;
+  RegUnsrCont.DtBloqueioDois := RegUnsrContBmg.DtBloqueioDois;
+  End;
 
   BufSaida := @RegUnsrCont;
 //  CompressBuf(BufSaida,SizeOf(RegUnsrCont)-2,BufCmp,NBytesOut);
@@ -1764,7 +1259,7 @@ While Not FimDeArquivo Do
   If Fusao And (Not Eof(ArqIndiceContaAntigo)) Then
     LeAntigo;
 
-  IndiceConta.PosIni := FilePos(ArqOut);
+  IndiceConta.PosIni := ArqOut.Position;
   IndiceConta.TipoConta := RegUnsrCont.TipoConta;
   IndiceConta.Tam := NBytesOut;
   Inc(TotOut,NBytesOut);
@@ -1781,7 +1276,8 @@ While Not FimDeArquivo Do
 
   If SalvarDados Then
     Begin
-    BlockWrite(ArqOut,BufCmp^,IndiceConta.Tam,Resultado);
+//    BlockWrite(ArqOut,BufCmp^,IndiceConta.Tam,Resultado);
+    ArqOut.Write(BufCmp^,IndiceConta.Tam);
     Write(ArqIndiceConta, IndiceConta);
     Write(ArqIndiceContaEmpresa, IndiceContaEmpresa);
     Write(ArqIndiceCpfCgc, IndiceCpfCgc);
@@ -1814,7 +1310,9 @@ If Fusao Then
   If (Not Eof(ArqIndiceContaAntigo)) Then
     LeAntigo; // Descarrega eventuais registros antigos ainda restantes...
   CloseFile(ArqIndiceContaAntigo);
-  CloseFile(ArqDatAntigo);
+//  CloseFile(ArqDatAntigo);
+  ArqDatAntigo.Free;
+
   CloseFile(ArqIndiceContaEmpresaAntigo);
   CloseFile(ArqIndiceCpfCgcAntigo);
   If BufDatAntigo <> Nil Then
@@ -1823,11 +1321,9 @@ If Fusao Then
     ReallocMem(BufOutAntigo,0);
   End;
 CloseFile(ArqIndiceConta);
-If UnsrContBmg Then
-  CloseFile(ArqUnsrContBmg)
-Else
-  CloseFile(ArqUnsrCont);
-CloseFile(ArqOut);
+CloseFile(ArqUnsrContBmg);
+//CloseFile(ArqOut);
+ArqOut.Free;
 CloseFile(ArqIndiceContaEmpresa);
 CloseFile(ArqIndiceCpfCgc);
 
@@ -1877,11 +1373,17 @@ Var
 
     Procedure MoveDadosCartaoAntigo;
     Begin
-      Seek(ArqDatAntigo,IndiceContaAntigo.PosIni);
+//      Seek(ArqDatAntigo,IndiceContaAntigo.PosIni);
+      ArqDatAntigo.Seek(IndiceContaAntigo.PosIni, soFromBeginning);
+
       ReallocMem(BufDatAntigo,IndiceContaAntigo.Tam);
-      BlockRead(ArqDatAntigo,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+//      BlockRead(ArqDatAntigo,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+      ArqDatAntigo.Read(BufDatAntigo^,IndiceContaAntigo.Tam);
+
       IndiceConta.Valor := IndiceContaAntigo.Valor;
-      IndiceConta.PosIni := FilePos(ArqOut);
+//      IndiceConta.PosIni := FilePos(ArqOut);
+      IndiceConta.PosIni := ArqOut.Position;
+
       IndiceConta.Tam := IndiceContaAntigo.Tam;
       IndiceConta.TipoConta := IndiceContaAntigo.TipoConta;
       IndiceCartao.PosIni := IndiceConta.PosIni;
@@ -1931,7 +1433,9 @@ Var
         Write(ArqIndiceNomeCartao, IndiceNomeCartao);
         End;
       Inc(TotOut,IndiceContaAntigo.Tam);
-      BlockWrite(ArqOut,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+//      BlockWrite(ArqOut,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+      ArqOut.Write(BufDatAntigo^,IndiceContaAntigo.Tam);
+
       Write(ArqIndiceConta, IndiceConta);
     End;
 
@@ -1949,9 +1453,13 @@ Var
         End
       Else
         Begin      // Caso contrário lê o registro antigo para os novos dados atualizar.
-        Seek(ArqDatAntigo,IndiceContaAntigo.PosIni);
+//        Seek(ArqDatAntigo,IndiceContaAntigo.PosIni);
+        ArqDatAntigo.Seek(IndiceContaAntigo.PosIni, soFromBeginning);
+
         ReallocMem(BufDatAntigo,IndiceContaAntigo.Tam);
-        BlockRead(ArqDatAntigo,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+//        BlockRead(ArqDatAntigo,BufDatAntigo^,IndiceContaAntigo.Tam,Resultado);
+        ArqDatAntigo.Read(BufDatAntigo^,IndiceContaAntigo.Tam);
+
         ReallocMem(BufOutAntigo,0);
 //        DecompressBuf(BufDatAntigo,IndiceContaAntigo.Tam,0,BufOutAntigo,NBytesOut);
         ZDecompress(BufDatAntigo,IndiceContaAntigo.Tam,BufOutAntigo,NBytesOut,0);
@@ -1987,7 +1495,9 @@ Var
   ZCompress(BufSaida,TamBufOut,BufCmp,NBytesOut);
 
   IndiceConta.Valor := StrToInt64(Trim(ContaAnt));
-  IndiceConta.PosIni := FilePos(ArqOut);
+//  IndiceConta.PosIni := FilePos(ArqOut);
+  IndiceConta.PosIni := ArqOut.Position;
+
   IndiceConta.TipoConta := RegAuxUnsrCart.TipoConta;
   IndiceConta.Tam := NBytesOut;
   IndiceCartao.PosIni := IndiceConta.PosIni;
@@ -2005,7 +1515,9 @@ Var
     Write(ArqIndiceNomeCartao, IndiceNomeCartao);
     End;
   Inc(TotOut,NBytesOut);
-  BlockWrite(ArqOut,BufCmp^,IndiceConta.Tam,Resultado);
+//  BlockWrite(ArqOut,BufCmp^,IndiceConta.Tam,Resultado);
+  ArqOut.Write(BufCmp^,IndiceConta.Tam);
+
   Write(ArqIndiceConta, IndiceConta);
   ReallocMem(BufCmp,0);
 
@@ -2019,11 +1531,15 @@ PreparaInicioDeProcessamento;
 PreparaFusao;
 
 Try
-  CloseFile(ArqOut);
+//  CloseFile(ArqOut);
+  ArqOut.Free;
 Except
   End;
-AssignFile(ArqOut,Arquivos.Cells[1,2]);
-ReWrite(ArqOut,1);
+
+//AssignFile(ArqOut,Arquivos.Cells[1,2]);
+//ReWrite(ArqOut,1);
+ArqOut := TFileStream.Create(Arquivos.Cells[1,2], fmCreate);
+
 AssignFile(ArqUnsrCart,Arquivos.Cells[1,1]);
 Reset(ArqUnsrCart);
 
@@ -2173,7 +1689,9 @@ If Fusao Then
   If (Not Eof(ArqIndiceContaAntigo)) Then
     LeAntigo; // Descarrega eventuais registros antigos ainda restantes...
   CloseFile(ArqIndiceContaAntigo);
-  CloseFile(ArqDatAntigo);
+//  CloseFile(ArqDatAntigo);
+  ArqDatAntigo.Free;
+
   CloseFile(ArqIndiceCartaoAntigo);
   CloseFile(ArqIndiceNomeCartaoAntigo);
   If BufDatAntigo <> Nil Then
@@ -2186,7 +1704,9 @@ CloseFile(ArqIndiceConta);
 CloseFile(ArqIndiceCartao);
 CloseFile(ArqIndiceNomeCartao);
 CloseFile(ArqUnsrCart);
-CloseFile(ArqOut);
+//CloseFile(ArqOut);
+ArqOut.Free;
+
 SetLength(CartConta,0);  // Alivia a memória alocada para o processamento...
 
 AvisoP.Label1.Caption := 'Indexando Cartao';
@@ -2295,7 +1815,8 @@ Begin
 PreparaInicioDeProcessamento;
 
 try
-  closeFile(ArqOut);
+//  closeFile(ArqOut);
+  ArqOut.Free;
 except
 end; // try
 
@@ -2565,7 +2086,8 @@ Var
   SysUtils.FindClose(SearchRecDistribui);
   If UpperCase(FormGeral.TableDFN.FieldByName('Seguranca').AsString) = 'N' Then
     Begin
-    If UnsrCont Or UnsrContVP Or UnsrContBmg Or UnsrCart Or UnsrCartVP Or UnsrCartBmg Or UnsrExtr Or UnsrExtrBmg Or UnsDetex Or UnsDetexBmg Then
+//    If UnsrCont Or UnsrContVP Or UnsrContBmg Or UnsrCart Or UnsrCartVP Or UnsrCartBmg Or UnsrExtr Or UnsrExtrBmg Or UnsDetex Or UnsDetexBmg Then
+    If UnsrContBmg Or UnsrCartBmg Or UnsrExtrBmg Or UnsDetexBmg Then
       Begin
       AssignFile(ArqDir, IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) + NomeGrupo + '.dat');
       If FileExists(IncludeTrailingPathDelimiter(FormGeral.TableDFN.FieldByName('Destino').AsString) + NomeGrupo + '.dat') Then
@@ -2641,7 +2163,7 @@ Var
           RegDir[2][I] := DatFile[I-499];
         End
       Else
-      If UnsrExtr Or UnsrExtrBmg Then
+      If UnsrExtrBmg Then
         Begin
         FillChar(RegDir[3],1000,#255);
         For I := 1 To Length(NomeGrupo) Do
@@ -2884,28 +2406,28 @@ While Not FormGeral.TableDFN.Eof Do
 
             //CeA
 
-            AssignFile(ArrArqMovs[Ano,Mes].ArqOut, DirDest+FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + '.DAT');
+{            AssignFile(ArrArqMovs[Ano,Mes].ArqOut, DirDest+FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + '.DAT');
             ArrArqMovs[Ano,Mes].NomeDoIndice := DirDest+FormGeral.TableDFN.FieldByName('NomeArqSaida').AsString + 'CONTA.IND';
             AssignFile(ArrArqMovs[Ano,Mes].ArqInd, ArrArqMovs[Ano,Mes].NomeDoIndice);
 //            AssignFile(ArrArqMovs[Ano,Mes].ArqOut, DirDest + 'EMPROC.DAT');
 //            ArrArqMovs[Ano,Mes].NomeDoIndice := DirDest + 'EMPROCCONTA.IND';
 //            AssignFile(ArrArqMovs[Ano,Mes].ArqInd, ArrArqMovs[Ano,Mes].NomeDoIndice);
-            ArrArqMovs[Ano,Mes].Processou := False;
+            ArrArqMovs[Ano,Mes].Processou := False;         }
             End;
 
-      UnsrExtr := False;
+    //  UnsrExtr := False;
       UnsrExtrBmg := False;
-      UnsrExtrRQ := False;
-      UnsDetex := False;
+    //  UnsrExtrRQ := False;
+    //  UnsDetex := False;
       UnsDetexBmg := False;
-      UnsDetexRQ := False;
-      UnsrCont := False;
-      UnsrContVP := False;
+//      UnsDetexRQ := False;
+    //  UnsrCont := False;
+   //   UnsrContVP := False;
       UnsrContBmg := False;
-      UnsrCart := False;
-      UnsrCartVP := False;
+//      UnsrCart := False;
+//      UnsrCartVP := False;
       UnsrCartBmg := False;
-      ExtrCeAv0001 := False;
+//      ExtrCeAv0001 := False;
 
       If (Copy(UpperCase(FormGeral.TableDFN.FieldByName('CODREL').AsString),1,11) = 'UNSREXTRBMG') or
          (Copy(UpperCase(FormGeral.TableDFN.FieldByName('CODREL').AsString),1,13) = 'UNSREXTRCIFRA') Then
@@ -2923,7 +2445,7 @@ While Not FormGeral.TableDFN.Eof Do
          (Copy(UpperCase(FormGeral.TableDFN.FieldByName('CODREL').AsString),1,13) = 'UNSRCARTCIFRA') Then
         UnsrCartBmg := True;
 
-      If UnsrExtr Or UnsrExtrBmg Then     // Processamento do arquivo de cadastro de extratos
+      If UnsrExtrBmg Then     // Processamento do arquivo de cadastro de extratos
         Begin
         If Not ProcessaUnsrExtr Then
           Begin
@@ -2932,7 +2454,7 @@ While Not FormGeral.TableDFN.Eof Do
           End;
         End
       Else
-      If UnsrCartVP Or UnsrCartBmg Then     // Processamento do arquivo de cadastro de cartões VP
+      If UnsrCartBmg Then     // Processamento do arquivo de cadastro de cartões VP
         Begin
         If Not ProcessaUnsrCartVP Then
           Begin
@@ -2964,7 +2486,13 @@ While Not FormGeral.TableDFN.Eof Do
         Continue;
         End;
 
-      MoveDelete(Arquivos.Cells[1,1],ChangeFileExt(Arquivos.Cells[1,1], '.PRC'));
+//      MoveDelete(Arquivos.Cells[1,1],ChangeFileExt(Arquivos.Cells[1,1], '.PRC'));
+      If not RenameFile(Arquivos.Cells[1,1],ChangeFileExt(Arquivos.Cells[1,1], '.PRC')) then
+        begin
+        ShowMessage('Arquivo de Entrada não pode ser marcado como processado');
+//        Unit1.Form1.Edit1.Text := 'Arquivo de Entrada não pode ser marcado como processado';
+//        Unit1.Form1.ShowModal;
+        end;
 
       If Config.BackAutoEdit.Text = 'S' Then
         Begin
@@ -3014,14 +2542,14 @@ While Not FormGeral.TableDFN.Eof Do
   OkParaReprocessarGeral := False;
 
   If UpperCase(viOtimGer) = 'S' Then
-    If ExtrCeAv0001 Then
+{    If ExtrCeAv0001 Then
       Begin
       For Ano := 1990 to 2050 Do
         For Mes := 1 to 12 Do
           If (ArrArqMovs[Ano,Mes].Processou) Then
             OkParaReprocessarGeral := True
-      End      
-    Else
+      End
+    Else    }
       For Ano := 1990 to 2050 Do
         For Mes := 1 to 12 Do
           If (ArrExtrDetexArq[Ano,Mes].Processou) Then
@@ -3058,7 +2586,7 @@ While Not FormGeral.TableDFN.Eof Do
       End;
 
   SetLength(SortMem.ArInd,0);
-  SetLength(SortMem.ArIndNumCnt,0);
+//  SetLength(SortMem.ArIndNumCnt,0);
 
   SysUtils.FindClose(SearchRecTxt);
 
@@ -3088,6 +2616,8 @@ If Config.ExecAutoEdit.Text = 'S' Then
 Else
   Begin
   ShowMessage('Fim de Indexação');
+//  Unit1.Form1.Edit1.Text := 'Fim de Indexação';
+//  Unit1.Form1.ShowModal;
   LimpaMensagens;
   End;
 End;

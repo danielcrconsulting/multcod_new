@@ -1,240 +1,158 @@
 ﻿[Modules]
-Module0=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\principal.pas
-Module1=default.htm
-Module2=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\multicoldADM.dproj
-Module3=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\programa.pas
-Module4=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuRel.pas
-Module5=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\sistema.pas
-Module6=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\DfnComProbU.pas
-Module7=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\relUsuario.pas
-Module8=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\sisAuto.pas
-Module9=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\subGruposDfn.pas
-Module10=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\Subrug.pas
-Module11=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\SuTypGer.pas
-Module12=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuarios.pas
-Module13=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuariosEGrupos.pas
-Module14=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuRelAdv.pas
-Module15=C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\Pilha.pas
-Module16=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\movtoCD.pas
-Module17=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mascaraUsuarios.pas
-Module18=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mascaraCampos.pas
-Module19=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mapaDeNomes.pas
-Module20=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\login.pas
-Module21=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\limpeza.pas
-Module22=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\indicesDfn.pas
-Module23=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\heranca.pas
-Module24=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoUsuarios.pas
-Module25=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposDfn.pas
-Module26=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposAuxNumDfn.pas
-Module27=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposAuxAlfaDfn.pas
-Module28=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoRelNovo.pas
-Module29=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\dataModule.pas
-Module30=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoRel.pas
-Module31=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\fProtocolo.pas
-Module32=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\formGrade.pas
-Module33=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\fEvento_Visu.pas
-Module34=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\extrator.pas
-Module35=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\editor.pas
-Module36=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\dfn.pas
-Module37=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\destinosDfn.pas
-Module38=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\about.pas
-Count=39
+Module0=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoRel.pas
+Module1=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\principal.pas
+Module2=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\programa.pas
+Module3=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuariosEGrupos.pas
+Module4=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuRelAdv.pas
+Module5=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuRel.pas
+Module6=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuarios.pas
+Module7=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\SuTypGer.pas
+Module8=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\Subrug.pas
+Module9=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\subGruposDfn.pas
+Module10=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\sistema.pas
+Module11=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\sisAuto.pas
+Module12=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\relUsuario.pas
+Module13=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\CR CONSULTING\Pilha.pas
+Module14=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\movtoCD.pas
+Module15=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mascaraUsuarios.pas
+Module16=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mascaraCampos.pas
+Module17=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mapaDeNomes.pas
+Module18=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\login.pas
+Module19=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\limpeza.pas
+Module20=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\indicesDfn.pas
+Module21=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\heranca.pas
+Module22=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoUsuarios.pas
+Module23=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposDfn.pas
+Module24=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposAuxNumDfn.pas
+Module25=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposAuxAlfaDfn.pas
+Module26=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoRelNovo.pas
+Module27=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\fProtocolo.pas
+Module28=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\formGrade.pas
+Module29=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\fEvento_Visu.pas
+Module30=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\extrator.pas
+Module31=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\editor.pas
+Module32=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\DfnComProbU.pas
+Module33=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\dfn.pas
+Module34=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\destinosDfn.pas
+Module35=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\dataModule.pas
+Module36=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\about.pas
+Count=37
 EditWindowCount=1
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\principal.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoRel.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=1
 
-[default.htm]
-ModuleType=TURLModule
-
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\multicoldADM.dproj]
-ModuleType=TBaseProject
-
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\programa.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\principal.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuRel.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\programa.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\sistema.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuariosEGrupos.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\DfnComProbU.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuRelAdv.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\relUsuario.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuRel.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\sisAuto.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuarios.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\subGruposDfn.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\SuTypGer.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\Subrug.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\Subrug.pas]
 ModuleType=TSourceModule
-FormState=0
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\SuTypGer.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\subGruposDfn.pas]
 ModuleType=TSourceModule
-FormState=0
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuarios.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\sistema.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuariosEGrupos.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\sisAuto.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuRelAdv.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\relUsuario.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\Pilha.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\CR CONSULTING\Pilha.pas]
 ModuleType=TSourceModule
-FormState=0
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\movtoCD.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\movtoCD.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mascaraUsuarios.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mascaraUsuarios.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mascaraCampos.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mascaraCampos.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mapaDeNomes.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mapaDeNomes.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\login.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\login.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\limpeza.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\limpeza.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\indicesDfn.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\indicesDfn.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\heranca.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\heranca.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoUsuarios.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoUsuarios.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposDfn.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposDfn.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposAuxNumDfn.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposAuxNumDfn.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposAuxAlfaDfn.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposAuxAlfaDfn.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoRelNovo.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoRelNovo.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\dataModule.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\fProtocolo.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoRel.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\formGrade.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\fProtocolo.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\fEvento_Visu.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\formGrade.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\extrator.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\fEvento_Visu.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\editor.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\extrator.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\DfnComProbU.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\editor.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\dfn.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\dfn.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\destinosDfn.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\destinosDfn.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\dataModule.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
-[C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\about.pas]
+[C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\about.pas]
 ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
 
 [EditWindow0]
-ViewCount=39
-CurrentEditView=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\principal.pas
+ViewCount=37
+CurrentEditView=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoRel.pas
 View0=0
 View1=1
 View2=2
@@ -272,8 +190,6 @@ View33=33
 View34=34
 View35=35
 View36=36
-View37=37
-View38=38
 PercentageSizes=1
 Create=1
 Visible=1
@@ -281,313 +197,320 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=10000
-Height=9260
+Width=9883
+Height=8571
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=10000
-ClientHeight=9260
+ClientWidth=9883
+ClientHeight=8571
 DockedToMainForm=1
 BorlandEditorCodeExplorer=BorlandEditorCodeExplorer@EditWindow0
 TopPanelSize=0
 LeftPanelSize=1896
 LeftPanelClients=PropertyInspector,DockSite3
-LeftPanelData=00000800010100000000321000000000000001680700000000000001000000005C0E000009000000446F636B53697465330100000000CA1C00001100000050726F7065727479496E73706563746F72FFFFFFFF
-RightPanelSize=2000
+LeftPanelData=00000800010100000000D8110000000000000168070000000000000100000000580E000009000000446F636B53697465330100000000BD1F00001100000050726F7065727479496E73706563746F72FFFFFFFF
+RightPanelSize=1999
 RightPanelClients=DockSite2,DockSite4
-RightPanelData=00000800010100000000321000000000000001D00700000000000001000000004412000009000000446F636B53697465320100000000CA1C000009000000446F636B5369746534FFFFFFFF
-BottomPanelSize=1519
-BottomPanelClients=DockSite1,MessageView
-BottomPanelData=0000080001020100000009000000446F636B5369746531724500000000000002EF050000000000000100000000724500000F0000004D65737361676556696577466F726DFFFFFFFF
+RightPanelData=00000800010100000000D81100000000000001CF0700000000000001000000004212000009000000446F636B53697465320100000000BD1F000009000000446F636B5369746534FFFFFFFF
+BottomPanelSize=0
+BottomPanelClients=MessageView,DockSite1
+BottomPanelData=000008000102020000000F0000004D65737361676556696577466F726D09000000446F636B53697465311534000000000000022806000000000000FFFFFFFF
 BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
-BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E6756696577961D00000000000002F206000000000000FFFFFFFF
+BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E67566965779A1D00000000000002F806000000000000FFFFFFFF
 
 [View0]
-CustomEditViewType=TWelcomePageView
-WelcomePageURL=bds:/default.htm
+CustomEditViewType=TEditView
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\about.pas
+CursorX=1
+CursorY=1
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\about.pas
 
 [View1]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\about.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\dataModule.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\about.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\dataModule.pas
 
 [View2]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\dataModule.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\destinosDfn.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\dataModule.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\destinosDfn.pas
 
 [View3]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\destinosDfn.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\dfn.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\destinosDfn.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\dfn.pas
 
 [View4]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\dfn.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\DfnComProbU.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\dfn.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\DfnComProbU.pas
 
 [View5]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\DfnComProbU.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\editor.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\DfnComProbU.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\editor.pas
 
 [View6]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\editor.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\extrator.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\editor.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\extrator.pas
 
 [View7]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\extrator.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\fEvento_Visu.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\extrator.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\fEvento_Visu.pas
 
 [View8]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\fEvento_Visu.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\formGrade.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\fEvento_Visu.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\formGrade.pas
 
 [View9]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\formGrade.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\fProtocolo.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\formGrade.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\fProtocolo.pas
 
 [View10]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\fProtocolo.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoRel.pas
 CursorX=1
-CursorY=1
-TopLine=1
+CursorY=381
+TopLine=501
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\fProtocolo.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoRel.pas
 
 [View11]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoRel.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoRelNovo.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoRel.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoRelNovo.pas
 
 [View12]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoRelNovo.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposAuxAlfaDfn.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoRelNovo.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposAuxAlfaDfn.pas
 
 [View13]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposAuxAlfaDfn.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposAuxNumDfn.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposAuxAlfaDfn.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposAuxNumDfn.pas
 
 [View14]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposAuxNumDfn.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposDfn.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposAuxNumDfn.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\gruposDfn.pas
 
 [View15]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposDfn.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoUsuarios.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\gruposDfn.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\grupoUsuarios.pas
 
 [View16]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoUsuarios.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\heranca.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\grupoUsuarios.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\heranca.pas
 
 [View17]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\heranca.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\indicesDfn.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\heranca.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\indicesDfn.pas
 
 [View18]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\indicesDfn.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\limpeza.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\indicesDfn.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\limpeza.pas
 
 [View19]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\limpeza.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\login.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\limpeza.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\login.pas
 
 [View20]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\login.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mapaDeNomes.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\login.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mapaDeNomes.pas
 
 [View21]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mapaDeNomes.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mascaraCampos.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mapaDeNomes.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mascaraCampos.pas
 
 [View22]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mascaraCampos.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mascaraUsuarios.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mascaraCampos.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\mascaraUsuarios.pas
 
 [View23]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mascaraUsuarios.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\movtoCD.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\mascaraUsuarios.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\movtoCD.pas
 
 [View24]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\movtoCD.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\CR CONSULTING\Pilha.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\movtoCD.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\CR CONSULTING\Pilha.pas
 
 [View25]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\Pilha.pas
-CursorX=1
-CursorY=1
-TopLine=1
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\principal.pas
+CursorX=6
+CursorY=574
+TopLine=566
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\CR CONSULTING\Pilha.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\principal.pas
 
 [View26]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\principal.pas
-CursorX=74
-CursorY=152
-TopLine=139
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\programa.pas
+CursorX=1
+CursorY=1
+TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -595,135 +518,113 @@ EditViewName=Borland.FormDesignerView
 
 [View27]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\programa.pas
-CursorX=66
-CursorY=829
-TopLine=794
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\relUsuario.pas
+CursorX=1
+CursorY=1
+TopLine=1
 LeftCol=1
 Elisions=
-Bookmarks={1,740,1}
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\programa.pas
+Bookmarks=
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\relUsuario.pas
 
 [View28]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\relUsuario.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\sisAuto.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\relUsuario.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\sisAuto.pas
 
 [View29]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\sisAuto.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\sistema.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\sisAuto.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\sistema.pas
 
 [View30]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\sistema.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\subGruposDfn.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\sistema.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\subGruposDfn.pas
 
 [View31]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\subGruposDfn.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\Subrug.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\subGruposDfn.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\Subrug.pas
 
 [View32]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\Subrug.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\SuTypGer.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\Subrug.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\SuTypGer.pas
 
 [View33]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\SuTypGer.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuarios.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\SuTypGer.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuarios.pas
 
 [View34]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuarios.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuariosEGrupos.pas
 CursorX=1
-CursorY=1
-TopLine=1
+CursorY=200
+TopLine=216
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuarios.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuariosEGrupos.pas
 
 [View35]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuariosEGrupos.pas
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuRel.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuariosEGrupos.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuRel.pas
 
 [View36]
 CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuRel.pas
-CursorX=55
-CursorY=329
-TopLine=308
-LeftCol=1
-Elisions=
-Bookmarks={1,329,55}
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuRel.pas
-
-[View37]
-CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\multicoldADM.dpr
+Module=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuRelAdv.pas
 CursorX=1
 CursorY=1
 TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\multicoldADM.dpr
-
-[View38]
-CustomEditViewType=TEditView
-Module=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuRelAdv.pas
-CursorX=1
-CursorY=1
-TopLine=1
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=C:\Users\Romero\Documents\RAD Studio\Projects\MultiCold\MULTICOLDADM\usuRelAdv.pas
+EditViewName=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\MultiCold\MULTICOLDADM\usuRelAdv.pas
 
 [Watches]
 Count=0
@@ -738,14 +639,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=3823
-Height=1183
+Width=3821
+Height=1030
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=3823
-ClientHeight=1183
-TBDockHeight=212
-LRDockWidth=13599
+ClientWidth=3821
+ClientHeight=1030
+TBDockHeight=220
+LRDockWidth=13602
 Dockable=1
 StayOnTop=0
 
@@ -764,10 +665,22 @@ Count=0
 [EmbarcaderoWin64Debugger_AddressBreakpoints]
 Count=0
 
-[EmbarcaderoOSXDebugger_AddressBreakpoints]
+[EmbarcaderoLinux64Debugger_AddressBreakpoints]
 Count=0
 
-[EmbarcaderoIOSDeviceDebugger_AddressBreakpoints]
+[EmbarcaderoOSXArm64Debugger_AddressBreakpoints]
+Count=0
+
+[EmbarcaderoOSX64Debugger_AddressBreakpoints]
+Count=0
+
+[EmbarcaderoIOS64DeviceDebugger_AddressBreakpoints]
+Count=0
+
+[EmbarcaderoAndroid32Debugger_AddressBreakpoints]
+Count=0
+
+[EmbarcaderoAndroid64Debugger_AddressBreakpoints]
 Count=0
 
 [Main Window]
@@ -777,16 +690,16 @@ Visible=1
 Docked=0
 State=2
 Left=146
-Top=269
-Width=8932
-Height=8519
-MaxLeft=-5
-MaxTop=-10
-MaxWidth=8932
-MaxHeight=8519
+Top=275
+Width=8931
+Height=8516
+MaxLeft=-7
+MaxTop=-14
+MaxWidth=8931
+MaxHeight=8516
 ClientWidth=10000
-ClientHeight=9779
-BottomPanelSize=8917
+ClientHeight=10110
+BottomPanelSize=8125
 BottomPanelClients=EditWindow0
 BottomPanelData=0000080000000000000000000000000000000000000000000000000100000000000000000C0000004564697457696E646F775F30FFFFFFFF
 
@@ -798,33 +711,33 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2000
-Height=4356
+Width=1999
+Height=4052
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2000
-ClientHeight=4356
-TBDockHeight=5894
-LRDockWidth=2349
+ClientWidth=1999
+ClientHeight=4052
+TBDockHeight=5907
+LRDockWidth=2350
 Dockable=1
 StayOnTop=0
 
 [MessageView]
 PercentageSizes=1
 Create=1
-Visible=1
+Visible=0
 Docked=1
 State=0
 Left=0
-Top=23
-Width=10000
-Height=1356
+Top=28
+Width=2767
+Height=1415
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=10000
-ClientHeight=1356
-TBDockHeight=1356
-LRDockWidth=2771
+ClientWidth=2767
+ClientHeight=1415
+TBDockHeight=1415
+LRDockWidth=2767
 Dockable=1
 StayOnTop=0
 
@@ -836,14 +749,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2000
-Height=2577
+Width=1999
+Height=3255
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2000
-ClientHeight=2577
-TBDockHeight=7154
-LRDockWidth=2000
+ClientWidth=1999
+ClientHeight=3255
+TBDockHeight=7157
+LRDockWidth=1999
 Dockable=1
 StayOnTop=0
 
@@ -854,14 +767,14 @@ Visible=1
 Docked=1
 State=0
 Left=0
-Top=420
+Top=310
 Width=1896
-Height=3615
+Height=4313
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
-ClientHeight=3615
-TBDockHeight=9019
+ClientHeight=4313
+TBDockHeight=8187
 LRDockWidth=1896
 Dockable=1
 StayOnTop=0
@@ -869,25 +782,25 @@ SplitPos=111
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=,
-ExpandedItems=Anchors=0,BorderIcons=0,Constraints=0,Font=0,GlassFrame=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Menu=0
+SelectedItem=Action,
+ExpandedItems="LiveBindings Designer=0",Anchors=0,Constraints=0
 
-[TFileExplorerForm]
+[frmDesignPreview]
 PercentageSizes=1
 Create=1
-Visible=0
+Visible=1
 Docked=1
 State=0
-Left=-1536
-Top=-102
-Width=2844
-Height=6202
+Left=0
+Top=0
+Width=1999
+Height=7802
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2844
-ClientHeight=6202
-TBDockHeight=6202
-LRDockWidth=2844
+ClientWidth=1999
+ClientHeight=7802
+TBDockHeight=5962
+LRDockWidth=2511
 Dockable=1
 StayOnTop=0
 
@@ -897,16 +810,16 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-1728
-Top=-102
-Width=276
-Height=356
+Left=0
+Top=0
+Width=278
+Height=357
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=276
-ClientHeight=356
-TBDockHeight=356
-LRDockWidth=276
+ClientWidth=278
+ClientHeight=357
+TBDockHeight=357
+LRDockWidth=278
 Dockable=1
 StayOnTop=0
 Name=120
@@ -921,14 +834,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=3823
-Height=1183
+Width=3821
+Height=1030
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=3823
-ClientHeight=1183
-TBDockHeight=413
-LRDockWidth=4948
+ClientWidth=3821
+ClientHeight=1030
+TBDockHeight=412
+LRDockWidth=4949
 Dockable=1
 StayOnTop=0
 
@@ -940,20 +853,20 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=3823
-Height=1183
+Width=3821
+Height=1030
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=3823
-ClientHeight=1183
-TBDockHeight=212
-LRDockWidth=7406
+ClientWidth=3821
+ClientHeight=1030
+TBDockHeight=220
+LRDockWidth=7408
 Dockable=1
 StayOnTop=0
 Column0Width=145
 Column1Width=100
 Column2Width=115
-Column3Width=250
+Column3Width=162
 
 [LocalVarsWindow]
 PercentageSizes=1
@@ -963,14 +876,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=3823
-Height=1183
+Width=3821
+Height=1030
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=3823
-ClientHeight=1183
+ClientWidth=3821
+ClientHeight=1030
 TBDockHeight=1538
-LRDockWidth=3479
+LRDockWidth=3485
 Dockable=1
 StayOnTop=0
 
@@ -982,14 +895,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=3823
-Height=1183
+Width=3821
+Height=1030
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=3823
-ClientHeight=1183
-TBDockHeight=2058
-LRDockWidth=3479
+ClientWidth=3821
+ClientHeight=1030
+TBDockHeight=2060
+LRDockWidth=3485
 Dockable=1
 StayOnTop=0
 
@@ -1001,14 +914,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2339
-Height=1240
+Width=2335
+Height=1099
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
-TBDockHeight=2317
-LRDockWidth=2823
+ClientWidth=2335
+ClientHeight=1099
+TBDockHeight=2321
+LRDockWidth=2826
 Dockable=1
 StayOnTop=0
 
@@ -1020,14 +933,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2339
-Height=1240
+Width=2335
+Height=1099
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
-TBDockHeight=3202
-LRDockWidth=2823
+ClientWidth=2335
+ClientHeight=1099
+TBDockHeight=3214
+LRDockWidth=2826
 Dockable=1
 StayOnTop=0
 
@@ -1039,14 +952,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2339
-Height=1240
+Width=2335
+Height=824
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
+ClientWidth=2335
+ClientHeight=824
 TBDockHeight=1154
-LRDockWidth=3677
+LRDockWidth=3675
 Dockable=1
 StayOnTop=0
 Column0Width=314
@@ -1066,90 +979,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2000
-Height=8779
+Width=1999
+Height=7802
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2000
-ClientHeight=8779
-TBDockHeight=4885
-LRDockWidth=7151
-Dockable=1
-StayOnTop=0
-
-[ModelViewTool]
-PercentageSizes=1
-Create=1
-Visible=1
-Docked=1
-State=0
-Left=0
-Top=0
-Width=2000
-Height=8779
-MaxLeft=-1
-MaxTop=-1
-ClientWidth=2000
-ClientHeight=8779
-TBDockHeight=4885
-LRDockWidth=5307
-Dockable=1
-StayOnTop=0
-
-[ClassBrowserTool]
-PercentageSizes=1
-Create=1
-Visible=0
-Docked=1
-State=0
-Left=-182
-Top=-102
-Width=1844
-Height=3144
-MaxLeft=-1
-MaxTop=-1
-ClientWidth=1844
-ClientHeight=3144
-TBDockHeight=3144
-LRDockWidth=1844
-Dockable=1
-StayOnTop=0
-
-[MetricsView]
-PercentageSizes=1
-Create=1
-Visible=1
-Docked=1
-State=0
-Left=0
-Top=0
-Width=2339
-Height=1240
-MaxLeft=-1
-MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
-TBDockHeight=4827
-LRDockWidth=3562
-Dockable=1
-StayOnTop=0
-
-[QAView]
-PercentageSizes=1
-Create=1
-Visible=1
-Docked=1
-State=0
-Left=0
-Top=0
-Width=2339
-Height=1240
-MaxLeft=-1
-MaxTop=-1
-ClientWidth=2339
-ClientHeight=1240
-TBDockHeight=4827
-LRDockWidth=3562
+ClientWidth=1999
+ClientHeight=7802
+TBDockHeight=4876
+LRDockWidth=7152
 Dockable=1
 StayOnTop=0
 
@@ -1161,14 +998,71 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2859
-Height=3212
+Width=2855
+Height=3214
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2859
-ClientHeight=3212
-TBDockHeight=3212
-LRDockWidth=2859
+ClientWidth=2855
+ClientHeight=3214
+TBDockHeight=3214
+LRDockWidth=2855
+Dockable=1
+StayOnTop=0
+
+[ClassBrowserTool]
+PercentageSizes=1
+Create=1
+Visible=0
+Docked=1
+State=0
+Left=0
+Top=0
+Width=1845
+Height=3146
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=1845
+ClientHeight=3146
+TBDockHeight=3146
+LRDockWidth=1845
+Dockable=1
+StayOnTop=0
+
+[MetricsView]
+PercentageSizes=1
+Create=1
+Visible=1
+Docked=1
+State=0
+Left=0
+Top=0
+Width=2335
+Height=1374
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=2335
+ClientHeight=1374
+TBDockHeight=4835
+LRDockWidth=3565
+Dockable=1
+StayOnTop=0
+
+[QAView]
+PercentageSizes=1
+Create=1
+Visible=1
+Docked=1
+State=0
+Left=0
+Top=0
+Width=2335
+Height=1374
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=2335
+ClientHeight=1374
+TBDockHeight=4835
+LRDockWidth=3565
 Dockable=1
 StayOnTop=0
 
@@ -1180,14 +1074,14 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=3823
-Height=1183
+Width=3821
+Height=1030
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=3823
-ClientHeight=1183
-TBDockHeight=1548
-LRDockWidth=8745
+ClientWidth=3821
+ClientHeight=1030
+TBDockHeight=1552
+LRDockWidth=8741
 Dockable=1
 StayOnTop=0
 Column0Width=200
@@ -1207,13 +1101,32 @@ State=0
 Left=0
 Top=0
 Width=1896
-Height=3558
+Height=3379
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
-ClientHeight=3558
-TBDockHeight=3673
+ClientHeight=3379
+TBDockHeight=3681
 LRDockWidth=1896
+Dockable=1
+StayOnTop=0
+
+[ModelViewTool]
+PercentageSizes=1
+Create=1
+Visible=1
+Docked=1
+State=0
+Left=0
+Top=0
+Width=1999
+Height=7802
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=1999
+ClientHeight=7802
+TBDockHeight=4876
+LRDockWidth=5307
 Dockable=1
 StayOnTop=0
 
@@ -1226,12 +1139,12 @@ State=0
 Left=0
 Top=0
 Width=1823
-Height=6183
-MaxLeft=-5
-MaxTop=-10
-ClientWidth=1740
-ClientHeight=5808
-TBDockHeight=6183
+Height=6168
+MaxLeft=-7
+MaxTop=-14
+ClientWidth=1706
+ClientHeight=5632
+TBDockHeight=6168
 LRDockWidth=1823
 Dockable=1
 StayOnTop=0
@@ -1247,16 +1160,16 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=0
-Width=2339
-Height=1481
+Left=8
+Top=8
+Width=2335
+Height=1484
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2339
-ClientHeight=1481
-TBDockHeight=1481
-LRDockWidth=2339
+ClientWidth=2335
+ClientHeight=1484
+TBDockHeight=1484
+LRDockWidth=2335
 Dockable=1
 StayOnTop=0
 TabPosition=1
@@ -1271,16 +1184,16 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=0
-Width=3823
-Height=1423
+Left=8
+Top=8
+Width=3821
+Height=1415
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=3823
-ClientHeight=1423
-TBDockHeight=1423
-LRDockWidth=3823
+ClientWidth=3821
+ClientHeight=1415
+TBDockHeight=1415
+LRDockWidth=3821
 Dockable=1
 StayOnTop=0
 TabPosition=1
@@ -1296,20 +1209,20 @@ Visible=1
 Docked=1
 State=0
 Left=0
-Top=23
-Width=2000
-Height=4596
+Top=28
+Width=1999
+Height=4437
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2000
-ClientHeight=4596
-TBDockHeight=9019
-LRDockWidth=2000
+ClientWidth=1999
+ClientHeight=4437
+TBDockHeight=8187
+LRDockWidth=1999
 Dockable=1
 StayOnTop=0
 TabPosition=1
 ActiveTabID=ProjectManager
-TabDockClients=ProjectManager,ModelViewTool,DataExplorerContainer,TFileExplorerForm
+TabDockClients=ProjectManager,ModelViewTool,DataExplorerContainer,frmDesignPreview
 
 [DockSite3]
 HostDockSite=DockLeftPanel
@@ -1320,14 +1233,14 @@ Visible=1
 Docked=1
 State=0
 Left=0
-Top=23
+Top=28
 Width=1896
-Height=3558
+Height=3379
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
-ClientHeight=3558
-TBDockHeight=9019
+ClientHeight=3379
+TBDockHeight=8187
 LRDockWidth=1896
 Dockable=1
 StayOnTop=0
@@ -1344,15 +1257,15 @@ Visible=1
 Docked=1
 State=0
 Left=0
-Top=528
-Width=2000
-Height=2577
+Top=387
+Width=1999
+Height=3255
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2000
-ClientHeight=2577
-TBDockHeight=9019
-LRDockWidth=2000
+ClientWidth=1999
+ClientHeight=3255
+TBDockHeight=8187
+LRDockWidth=1999
 Dockable=1
 StayOnTop=0
 TabPosition=1

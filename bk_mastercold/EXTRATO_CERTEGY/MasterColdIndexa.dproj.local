@@ -7,13 +7,20 @@
     <Transaction>2017/11/29 21:01:28.000.352,=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Asort.pas</Transaction>
     <Transaction>2017/11/30 00:01:03.000.204,C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\DelphiZLib\ZLIBEX.PAS=</Transaction>
     <Transaction>2017/11/30 07:30:18.000.805,=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Unit1.pas</Transaction>
-    <Transaction>2017/11/30 07:30:49.000.124,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\NovaIndex.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Unit1.dfm</Transaction>
-    <Transaction>2017/11/30 07:30:49.000.124,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\NovaIndex.pas=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Unit1.pas</Transaction>
+    <Transaction>2017/11/30 07:30:49.000.124,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Unit1.pas=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\NovaIndex.pas</Transaction>
+    <Transaction>2017/11/30 07:30:49.000.124,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Unit1.dfm=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\NovaIndex.dfm</Transaction>
     <Transaction>2017/12/01 05:57:29.000.233,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\NovaIndex.pas=</Transaction>
     <Transaction>2017/12/01 06:00:59.000.792,C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Asort.pas=</Transaction>
     <Transaction>2017/12/01 06:01:16.000.229,C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\SuTypeCeA.pas=</Transaction>
     <Transaction>2017/12/01 06:06:18.000.067,=C:\Users\Romero\Documents\RAD Studio\Projects\EXTRATO_CERTEGY\Asort.pas</Transaction>
     <Transaction>2017/12/01 06:06:39.000.872,=C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\SuTypeCeA.pas</Transaction>
     <Transaction>2017/12/01 06:07:44.000.591,C:\Users\Romero\Documents\RAD Studio\Projects\Subrug\SuTypeCeA.pas=</Transaction>
+    <Transaction>2022/10/20 02:11:45.000.924,=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\CR CONSULTING\Pilha.pas</Transaction>
+    <Transaction>2022/10/20 02:13:50.000.258,=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\SuTypGer.pas</Transaction>
+    <Transaction>2022/10/20 02:14:18.000.748,=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\Subrug.pas</Transaction>
+    <Transaction>2022/10/20 02:14:51.000.448,=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\Projects\Subrug\Ssort.pas</Transaction>
+    <Transaction>2022/10/21 12:49:32.000.141,=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\bk_mastercold\EXTRATO_CERTEGY\Unit1.pas</Transaction>
+    <Transaction>2022/10/21 13:29:27.000.087,C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\bk_mastercold\EXTRATO_CERTEGY\Unit1.dfm=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\bk_mastercold\EXTRATO_CERTEGY\UnitMessage.dfm</Transaction>
+    <Transaction>2022/10/21 13:29:27.000.087,C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\bk_mastercold\EXTRATO_CERTEGY\Unit1.pas=C:\Users\DBS.DANIEL\Documents\GitHub\multcod_new\bk_mastercold\EXTRATO_CERTEGY\UnitMessage.pas</Transaction>
   </Transactions>
 </BorlandProject>

@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Datasnap.DBClient, Vcl.Grids,
   Vcl.DBGrids, Datasnap.Provider, Vcl.StdCtrls, Vcl.Menus, Vcl.ExtCtrls, ADODB,
   Vcl.ComCtrls, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  IdSSLOpenSSL, System.Json, System.Zlib, System.Zip, System.Threading, System.IniFiles;
+  IdSSLOpenSSL, System.Json, System.Zlib, System.Zip, System.Threading, System.IniFiles,
+  IdAntiFreezeBase, IdAntiFreeze;
 
 type
   TFrmConsultaExportacoesRemoto = class(TForm)
@@ -34,9 +35,11 @@ type
     DateTimePickerFin: TDateTimePicker;
     CheckBoxData: TCheckBox;
     SaveDialog1: TSaveDialog;
-    LblStatus: TLabel;
     ProgressBar1: TProgressBar;
     btnexcluir: TButton;
+    IdHTTP1: TIdHTTP;
+    IdAntiFreeze1: TIdAntiFreeze;
+    LblStatus: TLabel;
     procedure BtnFecharClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BtnPesquisarClick(Sender: TObject);
@@ -45,6 +48,11 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnexcluirClick(Sender: TObject);
+    procedure IdHTTP1WorkBegin(ASender: TObject; AWorkMode: TWorkMode;
+      AWorkCountMax: Int64);
+    procedure IdHTTP1Work(ASender: TObject; AWorkMode: TWorkMode;
+      AWorkCount: Int64);
+    procedure IdHTTP1WorkEnd(ASender: TObject; AWorkMode: TWorkMode);
   strict private
     { Private declarations }
     FCodUsuario: String;
@@ -53,6 +61,8 @@ type
 
     wfilename, waFileName : String;
     procedure DownloadFile(aFileName: String);
+    function RetornaPorcentagem(ValorMaximo, ValorAtual: real): string;
+    function RetornaKiloBytes(ValorAtual: real): string;
     procedure BaixarArquivo;
   public
     { Public declarations }
@@ -417,26 +427,61 @@ begin
   DeleteFile(ExtractFileDir(SaveDialog1.FileName) + '\arq.zip');
 end;
 
+function TFrmConsultaExportacoesRemoto.RetornaPorcentagem(ValorMaximo, ValorAtual: real): string;
+var
+resultado: Real;
+begin
+resultado := ((ValorAtual * 100) / ValorMaximo);
+Result    := FormatFloat('0%', resultado);
+end;
+
+function TFrmConsultaExportacoesRemoto.RetornaKiloBytes(ValorAtual: real): string;
+var
+resultado : real;
+begin
+resultado := ((ValorAtual / 1024) / 1024);
+Result    := FormatFloat('0.000 KBs', resultado);
+end;
+
 procedure TFrmConsultaExportacoesRemoto.DownloadFile(aFileName: String);
 var
-  IdHTTP1: TIdHTTP;
+  //IdHTTP1: TIdHTTP;
   Stream: TMemoryStream;
-  Url, FileName: String;
-  i: Integer;
+  Url, FileName, arqsave: String;
+  i, resposta: Integer;
   Thread: TMyThread;
   download: TDownload;
   oArquivoJSON : TJSONArray;
   ZipFile: TZipFile;
   Tasks: array [0..0] of ITask;
   strArq : TStringList;
-  vArquivo: TFileStream;
+  vArquivo, vArquivo1: TFileStream;
+  vArquivostr, vArquivostr1: TStringList;
+  tempo : TDateTime;
+  forigem, fdestino :TextFile;
+  Linha:String;
+  function RetornarCaminhoArq : String;
+  var arqIni : TiniFile;
+  begin
+    arqIni         := TIniFile.Create(GetCurrentDir+'/conf.ini');
+    result         := arqIni.ReadString('configuracoes', 'caminho',    '');
+  end;
 begin
   //Url := FUrlBase + aFileName;
+  tempo := Now;
   ProgressBar1.Visible := True;
   ProgressBar1.Max := 3;
-  Url := 'C:\ROM\MULTICOLD\Destino\Extracoes\' + aFileName;
+  //Url := 'C:\ROM\MULTICOLD\Destino\Extracoes\' + aFileName;
+  Url := RetornarCaminhoArq + aFileName;
+
+  LblStatus.Caption := 'Compactando Arquivo..';
+  Application.ProcessMessages;
+  formgeral.CompactarArquivo(aFileName);
+  LblStatus.Caption := '';
+  SaveDialog1.FileName := aFileName;
+  aFileName := StringReplace(aFileName, '.txt', '.zip', [rfReplaceAll, rfIgnoreCase]);
+
   Filename := aFileName;
-  SaveDialog1.FileName := fileName;
   ProgressBar1.Position := 1;
 
   Application.ProcessMessages;
@@ -446,23 +491,67 @@ begin
     exit;
   end;
 
-  vArquivo := TFileStream.Create(SaveDialog1.FileName,fmCreate);
+  arqsave := StringReplace(SaveDialog1.FileName, '.txt', '.zip', [rfReplaceAll, rfIgnoreCase]);
+  if FileExists(SaveDialog1.FileName) then
+  begin
+    resposta := MessageDlg('Atenção este arquivo já existe, Yes para sobrepor, No para adicionar e Cancel para cancelar ',  mtConfirmation, [mbYes, mbNo, mbCancel], 0, mbNo);
+    if resposta = mrYes then
+      DeleteFile(SaveDialog1.FileName)
+    else if resposta = mrNo then
+      vArquivo := TFileStream.Create(arqsave,fmCreate)
+    else
+    begin
+      ProgressBar1.Visible := False;
+      exit;
+    end;
+  end
+  else
+    vArquivo := TFileStream.Create(arqsave,fmCreate);
 
   Try
-    IdHTTP1 := TIdHTTP.Create;
+    //IdHTTP1 := TIdHTTP.Create;
     Try
+      //aFileName := 'DE2582DB-1891-4013-848A-61A75CEB5E8B.zip';
       idHTTP1.Request.Username := 'multicoldserver';
       idHTTP1.Request.Password := 'server@#2021';
       ProgressBar1.Position := 2;
+      //idHttp1.ReadTimeout := 900000;
       idHTTP1.Get(urldow + '/' + aFileName ,vArquivo);
       ProgressBar1.Position := 3;
-      ShowMessage('Download OK !');
+      aFileName := StringReplace(aFileName, '.txt', '.zip', [rfReplaceAll, rfIgnoreCase]);
+
+      FreeAndNil(vArquivo);
+      IdHTTP1.Disconnect;
+
+      ZipFile := TZipFile.Create;
+      ZipFile.Open(arqsave, zmReadWrite);
+      ZipFile.ExtractAll(ExtractFileDir(SaveDialog1.FileName));
+      FreeAndNil(ZipFile);
+      System.SysUtils.DeleteFile(arqsave);
+      aFileName := StringReplace(aFileName, '.zip', '.txt', [rfReplaceAll, rfIgnoreCase]);
+      if resposta = mrNo then
+      begin
+        AssignFile(forigem, SaveDialog1.FileName);
+        Append(forigem);
+        AssignFile(fdestino, aFileName);
+        Reset(fdestino);
+        While not Eof(fdestino) do
+        begin
+          Readln(fdestino, Linha);
+          Writeln(forigem, linha);
+        end;
+        CloseFile(fdestino);
+        CloseFile(forigem);
+        DeleteFile(aFileName);
+      end
+      else
+        RenameFile(ExtractFileDir(SaveDialog1.FileName) + '\' + aFileName, SaveDialog1.FileName);
+
+      ShowMessage('Download OK !  Tempo gasto: ' + FormatDateTime('hh:mm:ss', now - tempo));
     Except
       ShowMessage('Não foi possivel baixar o arquivo !');
     End;
   Finally
-    FreeAndNil(vArquivo);
-    FreeAndNil(IdHTTP1);
     ProgressBar1.Visible := False;
   End;
   exit;
@@ -537,6 +626,8 @@ end;
 procedure TFrmConsultaExportacoesRemoto.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
+  LblStatus.Caption := '';
+  self.Caption := 'Formulário de Acompanhamento das Exportações Remotas';
   DSProcessadorTemplate.DataSet.Close;
 end;
 
@@ -547,6 +638,29 @@ begin
   ArquivoINI := TIniFile.Create(GetCurrentDir + '/conf.ini');
   urldow := 'http://' + ArquivoINI.ReadString('configuracoes', 'server',    '') + ':' +
                      ArquivoINI.ReadString('configuracoes', 'port',      '');
+end;
+
+procedure TFrmConsultaExportacoesRemoto.IdHTTP1Work(ASender: TObject;
+  AWorkMode: TWorkMode; AWorkCount: Int64);
+begin
+  ProgressBar1.Position := AWorkCount;
+  lblStatus.Caption    := 'Baixando ... ' + RetornaKiloBytes(AWorkCount);
+  FrmConsultaExportacoesRemoto.Caption := 'Download em ... ' + RetornaPorcentagem(ProgressBar1.Max, AWorkCount);
+end;
+
+procedure TFrmConsultaExportacoesRemoto.IdHTTP1WorkBegin(ASender: TObject;
+  AWorkMode: TWorkMode; AWorkCountMax: Int64);
+begin
+  ProgressBar1.Max := AWorkCountMax;
+end;
+
+procedure TFrmConsultaExportacoesRemoto.IdHTTP1WorkEnd(ASender: TObject;
+  AWorkMode: TWorkMode);
+begin
+  ProgressBar1.Position := 0;
+  FrmConsultaExportacoesRemoto.Caption := 'Finalizado ...';
+  lblStatus.Caption    := 'Download Finalizado ...';
+  ProgressBar1.Visible  := false;
 end;
 
 procedure TFrmConsultaExportacoesRemoto.SetParameters(codUsuario,

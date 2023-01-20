@@ -17,11 +17,13 @@ type
     BitBtn2: TBitBtn;
     procedure BitBtn1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
     adusuario, adsenha : String;
+    cancelou : Boolean;
   end;
 
 var
@@ -45,6 +47,15 @@ begin
   end;
   adusuario := edUsuario.Text;
   adsenha := EdSenha.Text;
+  cancelou := False;
+  Close;
+end;
+
+procedure TFAd.BitBtn2Click(Sender: TObject);
+begin
+  edUsuario.Text := '';
+  EdSenha.Text := '';
+  cancelou := True;
   Close;
 end;
 

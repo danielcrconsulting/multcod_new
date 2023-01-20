@@ -3,35 +3,32 @@ object fUsuariosEGrupos: TfUsuariosEGrupos
   Top = 252
   BorderStyle = bsDialog
   Caption = 'Relacionamento de usu'#225'rios por grupo'
-  ClientHeight = 330
-  ClientWidth = 543
+  ClientHeight = 325
+  ClientWidth = 565
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -14
+  Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnShow = FormShow
-  PixelsPerInch = 120
-  TextHeight = 16
+  PixelsPerInch = 96
+  TextHeight = 14
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 543
-    Height = 279
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
+    Width = 565
+    Height = 284
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 434
+    ExplicitHeight = 223
     object Label1: TLabel
       Left = 10
       Top = 10
-      Width = 54
-      Height = 16
+      Width = 43
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -41,8 +38,8 @@ object fUsuariosEGrupos: TfUsuariosEGrupos
     object Label3: TLabel
       Left = 10
       Top = 69
-      Width = 126
-      Height = 16
+      Width = 101
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -52,8 +49,8 @@ object fUsuariosEGrupos: TfUsuariosEGrupos
     object Label4: TLabel
       Left = 295
       Top = 69
-      Width = 116
-      Height = 16
+      Width = 93
+      Height = 14
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -112,7 +109,7 @@ object fUsuariosEGrupos: TfUsuariosEGrupos
       Left = 10
       Top = 30
       Width = 523
-      Height = 24
+      Height = 22
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -130,6 +127,7 @@ object fUsuariosEGrupos: TfUsuariosEGrupos
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
+      ItemHeight = 14
       MultiSelect = True
       TabOrder = 1
     end
@@ -142,6 +140,7 @@ object fUsuariosEGrupos: TfUsuariosEGrupos
       Margins.Top = 4
       Margins.Right = 4
       Margins.Bottom = 4
+      ItemHeight = 14
       MultiSelect = True
       Sorted = True
       TabOrder = 2
@@ -149,15 +148,13 @@ object fUsuariosEGrupos: TfUsuariosEGrupos
   end
   object Panel2: TPanel
     Left = 0
-    Top = 279
-    Width = 543
-    Height = 51
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
+    Top = 284
+    Width = 565
+    Height = 41
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 223
+    ExplicitWidth = 434
     object SpeedButton2: TSpeedButton
       Left = 502
       Top = 10

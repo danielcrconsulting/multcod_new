@@ -10,16 +10,16 @@ object FormGeral: TFormGeral
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object TableLogProc: TIBTable
     Database = IBLogRemotoDatabase
     Transaction = IBLogRemotoTransaction
     BufferChunks = 1000
     CachedUpdates = False
     TableName = 'LOGPROC'
+    PrecommittedReads = False
     UniDirectional = False
     Left = 752
     Top = 152
@@ -30,6 +30,7 @@ object FormGeral: TFormGeral
     BufferChunks = 1000
     CachedUpdates = False
     TableName = 'PROTOCOLO'
+    PrecommittedReads = False
     UniDirectional = False
     Left = 496
     Top = 56
@@ -40,6 +41,7 @@ object FormGeral: TFormGeral
     BufferChunks = 1000
     CachedUpdates = False
     TableName = 'USUREL'
+    PrecommittedReads = False
     UniDirectional = False
     Left = 56
     Top = 368
@@ -53,6 +55,7 @@ object FormGeral: TFormGeral
     BufferChunks = 1000
     CachedUpdates = False
     TableName = 'DFN'
+    PrecommittedReads = False
     UniDirectional = False
     Left = 56
     Top = 320
@@ -64,6 +67,7 @@ object FormGeral: TFormGeral
     BufferChunks = 1000
     CachedUpdates = False
     TableName = 'GRUPOUSUARIOS'
+    PrecommittedReads = False
     UniDirectional = False
     Left = 56
     Top = 272
@@ -74,6 +78,7 @@ object FormGeral: TFormGeral
     BufferChunks = 1000
     CachedUpdates = False
     TableName = 'USUARIOS'
+    PrecommittedReads = False
     UniDirectional = False
     Left = 56
     Top = 224
@@ -84,6 +89,7 @@ object FormGeral: TFormGeral
     BufferChunks = 1000
     CachedUpdates = False
     TableName = 'SUBGRUPOSDFN'
+    PrecommittedReads = False
     UniDirectional = False
     Left = 56
     Top = 176
@@ -95,6 +101,7 @@ object FormGeral: TFormGeral
     BufferChunks = 1000
     CachedUpdates = False
     TableName = 'GRUPOSDFN'
+    PrecommittedReads = False
     UniDirectional = False
     Left = 56
     Top = 128
@@ -106,6 +113,7 @@ object FormGeral: TFormGeral
     CachedUpdates = False
     StoreDefs = True
     TableName = 'TEMP'
+    PrecommittedReads = False
     UniDirectional = False
     Left = 160
     Top = 176
@@ -121,6 +129,7 @@ object FormGeral: TFormGeral
     Transaction = IBAdmRemotoTransaction
     BufferChunks = 1000
     CachedUpdates = False
+    PrecommittedReads = False
     UniDirectional = False
     Left = 232
     Top = 128
@@ -130,6 +139,7 @@ object FormGeral: TFormGeral
     Transaction = IBAdmRemotoTransaction
     BufferChunks = 1000
     CachedUpdates = False
+    PrecommittedReads = False
     UniDirectional = False
     Left = 160
     Top = 128
@@ -139,6 +149,7 @@ object FormGeral: TFormGeral
     Transaction = IBAdmRemotoTransaction
     BufferChunks = 1000
     CachedUpdates = False
+    PrecommittedReads = False
     UniDirectional = False
     Left = 160
     Top = 80
@@ -181,6 +192,7 @@ object FormGeral: TFormGeral
     CachedUpdates = False
     ParamCheck = True
     UniDirectional = True
+    PrecommittedReads = False
     Left = 160
     Top = 368
   end
@@ -191,6 +203,7 @@ object FormGeral: TFormGeral
     CachedUpdates = False
     ParamCheck = True
     UniDirectional = True
+    PrecommittedReads = False
     Left = 160
     Top = 320
   end
@@ -200,6 +213,7 @@ object FormGeral: TFormGeral
     BufferChunks = 1000
     CachedUpdates = False
     ParamCheck = True
+    PrecommittedReads = False
     Left = 224
     Top = 80
   end
@@ -210,6 +224,7 @@ object FormGeral: TFormGeral
     CachedUpdates = False
     ParamCheck = True
     UniDirectional = True
+    PrecommittedReads = False
     Left = 160
     Top = 272
   end
@@ -220,6 +235,7 @@ object FormGeral: TFormGeral
     CachedUpdates = False
     ParamCheck = True
     UniDirectional = True
+    PrecommittedReads = False
     Left = 160
     Top = 224
   end
@@ -229,6 +245,7 @@ object FormGeral: TFormGeral
     BufferChunks = 1000
     CachedUpdates = False
     ParamCheck = True
+    PrecommittedReads = False
     Left = 752
     Top = 104
   end
@@ -258,6 +275,7 @@ object FormGeral: TFormGeral
       ':O,'
       ':P'
       ')')
+    PrecommittedReads = False
     Left = 496
     Top = 104
     ParamData = <
@@ -359,6 +377,7 @@ object FormGeral: TFormGeral
       ':F,'
       ':G'
       ')')
+    PrecommittedReads = False
     Left = 752
     Top = 56
     ParamData = <

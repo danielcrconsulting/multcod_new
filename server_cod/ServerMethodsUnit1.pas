@@ -57,12 +57,17 @@ type
     function EhUsuarioValido(Servidor, Usuario, Senha: String): Boolean;
     function ValidarADNew_W(pUsuario, pSenha: String): Boolean;
     function ValidarADNew_WW(pUsuario, pSenha: String): String;
+    function GetPaginaL_local(Usuario, Senha: WideString; ConnectionID: Integer;
+       Relatorio: WideString; PagNum: Integer; var QtdBytes: Integer; Pagina : WideString;
+       strloc : String; rel133 : Byte; CmprBrncs : Byte; linini, linfim, coluna, pagini, pagfim : String; var retorno : WideString) : String;
+
   public
     { Public declarations }
     function EchoString(Value: string): string;
     function ReverseString(Value: string): string;
     function RetornarParametrosConn(var servidor : String; var driverservidor: String;
                                     var porta : String ; var banco : String;
+                                    var bancoE : String ; var bancoL : String;
                                     var usuario : String ; var senha : String;
                                     var NomeEstacao : String ) : Boolean;
     function RetornarParametroAD : String;
@@ -72,6 +77,7 @@ type
     function RetornarDadosBanco(SQL : String ; bd : Integer = 0) : String;
     procedure PersistirBanco(SQL : String; bd : Integer = 0);
     function BaixarArquivo( arq : String) : TJSONArray;
+    procedure CompactarArquivo(arq: String);
     function AbreRelatorio(Usuario: WideString; Senha: WideString;
                            ConnectionID: Integer; FullPath: WideString;
                            QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte;
@@ -91,6 +97,7 @@ type
     function GetPaginaL(Usuario, Senha: WideString; ConnectionID: Integer;
        Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina : WideString;
        strloc : String; rel133 : Byte; CmprBrncs : Byte; linini, linfim, coluna, pagini, pagfim : String) : String;
+
     function LogIn(Usuario, Senha: WideString;
       ConnectionID: Integer): String;
     function GetRelatorio(Usuario, Senha: WideString;
@@ -990,6 +997,27 @@ begin
   end;
 end;
 
+procedure TServerMethods1.CompactarArquivo(arq: String);
+  var oArquivoJSON : TJSONArray;
+      ListaArquivos: Array of TFileName;
+      ZipFile: TZipFile;
+      lNovoConteudo : String;
+begin
+  try
+    ZipFile := TZipFile.Create;
+
+    lNovoConteudo := StringReplace(RetornarCaminhoArq + arq, '.txt', '.zip', [rfReplaceAll, rfIgnoreCase]);
+    ZipFile.Open(lNovoConteudo, zmWrite);
+
+    // Compacta os arquivos
+    ZipFile.Add(RetornarCaminhoArq + arq);
+
+    FreeAndNil(ZipFile);
+    LimpaMemoria;
+  finally
+  end;
+end;
+
 procedure TServerMethods1.Comprimir(ArquivoCompacto: TFileName; Arquivos: array of TFileName);
 var
   FileInName: TFileName;
@@ -1028,10 +1056,10 @@ end;
 
 procedure TServerMethods1.ConectarBanco(bd : integer = 0);
 var
-  servidor, driverservidor, porta, banco, usuario,
+  servidor, driverservidor, porta, banco, bancoE, bancoL, usuario,
   senha, NomeEstacao : String;
 begin
-  RetornarParametrosConn(servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao);
+  RetornarParametrosConn(servidor, driverservidor, porta, banco, bancoE, bancoL, usuario, senha, NomeEstacao);
   {
   FdCon.ConnectionString := 'Provider='+DriverServidor+';'+
                                           'Persist Security Info=True;'+
@@ -1051,9 +1079,9 @@ begin
   if bd = 0 then
     FdCon.Params.Values['Database'] := banco
   else if bd = 1 then
-     FdCon.Params.Values['Database'] := banco + '_log'
+     FdCon.Params.Values['Database'] := bancoL
   else
-     FdCon.Params.Values['Database'] := banco + '_evento';
+     FdCon.Params.Values['Database'] := bancoE;
   FdCon.Params.Values['User_name'] := usuario;
   FdCon.Params.Values['Password'] := senha;
   FdCon.Open;
@@ -1061,14 +1089,14 @@ end;
 
 procedure TServerMethods1.ConectarBanco_eve;
 var
-  servidor, driverservidor, porta, banco, usuario,
+  servidor, driverservidor, porta, banco, bancoE, bancoL, usuario,
   senha, NomeEstacao : String;
 begin
-  RetornarParametrosConn(servidor, driverservidor, porta, banco, usuario, senha, NomeEstacao);
+  RetornarParametrosConn(servidor, driverservidor, porta, banco, bancoE, bancoL, usuario, senha, NomeEstacao);
   FdConE.Params.Clear;
   FdConE.Params.Values['DriverID']  := 'MSSQL';
   FdConE.Params.Values['Server'] := servidor;
-  FdConE.Params.Values['Database'] := banco + '_evento';
+  FdConE.Params.Values['Database'] := bancoE;
   FdConE.Params.Values['User_name'] := usuario;
   FdConE.Params.Values['Password'] := senha;
   FdConE.Open;
@@ -1237,6 +1265,8 @@ begin
       End;
   result := UsouLocalizar;
   FreeAndNil(MemoGidley);
+  Dispose(Buffer);
+  Dispose(BufI);
 end;
 
 
@@ -1469,6 +1499,87 @@ Dispose(ArrBuf);
 result := Retorno;
 End;
 
+function TServerMethods1.GetPaginaL_local(Usuario, Senha: WideString; ConnectionID: Integer;
+       Relatorio: WideString; PagNum: Integer; var QtdBytes: Integer; Pagina : WideString;
+       strloc : String; rel133 : Byte; CmprBrncs : Byte; linini, linfim, coluna, pagini,
+       pagfim : String; var retorno : WideString) : String;
+Var
+
+//  dtLog : TDateTime; // Tirei da raiz!!!!
+
+  Arq : File;
+  I,
+  ContBytes,
+  size : Integer;
+  Pag64,
+  NextPag64 : Int64;
+  ArqPag64 : File Of Int64;
+  ArrBuf : ^TgArr20000;
+  Pag : AnsiString;
+  //Retorno : WideString;
+Begin
+//dtLog := now;
+//logaLocal('GetPagina - N. '+IntToStr(PagNum)+', Usuario = '+Usuario);
+//logaLocal(Relatorio);
+fileMode := fmShareDenyNone;
+Result := '';
+AssignFile(Arq,Relatorio);
+Try
+  Reset(Arq,1);
+Except
+  on e:exception do
+    begin
+    logaLocal('Erro de abertura do relatório:  '+Relatorio+#13#10+e.Message);
+    Result := '1';
+    Exit;
+    end;
+End; // Try
+
+If FileExists(ChangeFileExt(Relatorio,'.IAPX')) Then // Novo formato
+  Begin
+  AssignFile(ArqPag64,ChangeFileExt(Relatorio,'.IAPX'));
+  Try
+    Reset(ArqPag64);
+  Except
+    on e:exception do
+      begin
+      logaLocal('Erro de abertura IAPX:  '+Relatorio+#13#10+e.Message);
+      Result := '2';
+      Exit;
+      end;
+  End; // Try
+  Seek(ArqPag64,PagNum - 1);
+  Read(ArqPag64,Pag64);
+  {$i-}
+  Read(ArqPag64,NextPag64);
+  {$i+}
+  If IoResult <> 0 Then
+    NextPag64 := FileSize(Arq);
+  CloseFile(ArqPag64);
+  Seek(Arq,Pag64 + 1); // 1 = OffSet do primeiro byte
+  End;
+
+New(ArrBuf);
+BlockRead(Arq,ArrBuf^,NextPag64-Pag64,ContBytes); { Read only the buffer To decompress }
+
+SetLength(Pag, ContBytes*2);
+binToHex(ArrBuf^, PAnsiChar(Pag), ContBytes);
+
+QtdBytes := ContBytes*2;
+
+Pagina := Pag;
+//logaLocal(Pagina);
+Retorno := '0' + '|' + Pagina;
+
+//Result := '0';
+Retorno := Retorno  + '|' + IntToStr(QtdBytes);
+
+Dispose(ArrBuf);
+//logaLocal('GetPagina concluida com sucesso');
+//LogaTempoExecucao('GetPagina',dtLog);
+result := Pagina;
+End;
+
 function TServerMethods1.GetPaginaL(Usuario, Senha: WideString; ConnectionID: Integer;
        Relatorio: WideString; PagNum: Integer; QtdBytes: Integer; Pagina : WideString;
        strloc : String; rel133 : Byte; CmprBrncs : Byte; linini, linfim, coluna, pagini,
@@ -1518,6 +1629,11 @@ If FileExists(ChangeFileExt(Relatorio,'.IAPX')) Then // Novo formato
       Exit;
       end;
   End; // Try
+  end;
+while True do
+begin
+  if (pagnum > StrToInt(pagfim)) then
+    break;
   Seek(ArqPag64,PagNum - 1);
   Read(ArqPag64,Pag64);
   {$i-}
@@ -1525,35 +1641,76 @@ If FileExists(ChangeFileExt(Relatorio,'.IAPX')) Then // Novo formato
   {$i+}
   If IoResult <> 0 Then
     NextPag64 := FileSize(Arq);
-  CloseFile(ArqPag64);
+  //CloseFile(ArqPag64);
   Seek(Arq,Pag64 + 1); // 1 = OffSet do primeiro byte
-  End;
 
-New(ArrBuf);
-BlockRead(Arq,ArrBuf^,NextPag64-Pag64,ContBytes); { Read only the buffer To decompress }
+  New(ArrBuf);
+  BlockRead(Arq,ArrBuf^,NextPag64-Pag64,ContBytes); { Read only the buffer To decompress }
 
-SetLength(Pag, ContBytes*2);
-binToHex(ArrBuf^, PAnsiChar(Pag), ContBytes);
+  SetLength(Pag, ContBytes*2);
+  binToHex(ArrBuf^, PAnsiChar(Pag), ContBytes);
 
+  QtdBytes := ContBytes*2;
 
-QtdBytes := ContBytes*2;
+  Pagina := Pag;
+  //logaLocal(Pagina);
+  Retorno := '0' + '|' + Pagina;
 
-Pagina := Pag;
-//logaLocal(Pagina);
-Retorno := '0' + '|' + Pagina;
+  //Result := '0';
+  Retorno := Retorno  + '|' + IntToStr(QtdBytes);
 
-//Result := '0';
-Retorno := Retorno  + '|' + IntToStr(QtdBytes);
+  Dispose(ArrBuf);
+  //logaLocal('GetPagina concl-uida com sucesso');
+  //LogaTempoExecucao('GetPagina',dtLog);
+  result := Retorno;
 
-Dispose(ArrBuf);
-//logaLocal('GetPagina concluida com sucesso');
-//LogaTempoExecucao('GetPagina',dtLog);
-result := Retorno;
-
-if not Localizar('0', QtdBytes, Pagina,strloc,rel133,CmprBrncs,linini, linfim, coluna, pagini,
+  result := '0';
+  if not Localizar('0', QtdBytes, Pagina,strloc,rel133,CmprBrncs,linini, linfim, coluna, pagini,
        pagfim) then
-  GetPaginaL(Usuario, Senha, ConnectionID,Relatorio,PagNum+1,QtdBytes,Pagina,
-             strloc,rel133,CmprBrncs,linini, linfim, coluna, pagini, pagfim);
+  begin
+    if {(Eof(ArqPag64)) or} (pagnum-1 > StrToInt(pagfim)) then
+      break;
+    inc(pagnum);
+    continue;
+  end
+  else
+  begin
+    result := IntToStr(pagnum);
+    break;
+  end;
+  if {(Eof(ArqPag64)) or} (pagnum-1 > StrToInt(pagfim)) then
+    break;
+  //GetPaginaL(Usuario, Senha, ConnectionID,Relatorio,PagNum+1,QtdBytes,Pagina,
+  //             strloc,rel133,CmprBrncs,linini, linfim, coluna, pagini, pagfim);
+end;
+CloseFile(ArqPag64);
+CloseFile(Arq);
+LimpaMemoria;
+
+{
+while True do
+  begin
+  if pagNum = 726 then
+    pagNum := pagnum;
+  if not Localizar('0', QtdBytes, Pagina,strloc,rel133,CmprBrncs,linini, linfim, coluna, pagini,
+       pagfim) then
+    pagina := GetPaginaL_local(Usuario, Senha, ConnectionID,Relatorio,PagNum,QtdBytes,Pagina,
+               strloc,rel133,CmprBrncs,linini, linfim, coluna, pagini, pagfim, retorno)
+  else
+  begin
+    Retorno := '0' + '|' + Pagina;
+    Retorno := Retorno  + '|' + IntToStr(QtdBytes);
+    result := retorno;
+    break;
+  end;
+  if pagnum >= StrToInt(pagfim) then
+    begin
+      result := '';
+      break;
+    end;
+    inc(pagnum);
+  end;
+}
 End;
 
 function TServerMethods1.GetRelatorio(Usuario, Senha: WideString;
@@ -2783,6 +2940,7 @@ end;
 
 function TServerMethods1.RetornarParametrosConn(var servidor : String; var driverservidor: String;
                                                 var porta : String ; var banco : String;
+                                                var bancoE : String ; var bancoL : String;
                                                 var usuario : String ; var senha : String;
                                                 var NomeEstacao : String ) : Boolean;
 var arqIni : TiniFile;
@@ -2792,6 +2950,8 @@ begin
   driverservidor := arqIni.ReadString('configuracoes', 'driver',      '');
   porta          := arqIni.ReadString('configuracoes', 'port',        '');
   banco          := arqIni.ReadString('configuracoes', 'database',    '');
+  bancoE         := arqIni.ReadString('configuracoes', 'databaseE',    '');
+  bancoL         := arqIni.ReadString('configuracoes', 'databaseL',    '');
   usuario        := arqIni.ReadString('configuracoes', 'user',        '');
   senha          := arqIni.ReadString('configuracoes', 'password',    '');
   NomeEstacao    := arqIni.ReadString('configuracoes', 'WorkStation', '');

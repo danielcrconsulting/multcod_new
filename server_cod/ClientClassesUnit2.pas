@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 16/09/2022 14:50:27
+// 17/10/2022 09:44:07
 //
 
 unit ClientClassesUnit2;
@@ -27,6 +27,7 @@ type
     FPersistirBancoCommand: TDSRestCommand;
     FBaixarArquivoCommand: TDSRestCommand;
     FBaixarArquivoCommand_Cache: TDSRestCommand;
+    FCompactarArquivoCommand: TDSRestCommand;
     FAbreRelatorioCommand: TDSRestCommand;
     FInsereEventosVisuCommand: TDSRestCommand;
     FfazerumtesteCommand: TDSRestCommand;
@@ -50,7 +51,7 @@ type
     procedure DSServerModuleCreate(Sender: TObject);
     function EchoString(Value: string; const ARequestFilter: string = ''): string;
     function ReverseString(Value: string; const ARequestFilter: string = ''): string;
-    function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
+    function RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var bancoE: string; var bancoL: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string = ''): Boolean;
     function RetornarParametroAD(const ARequestFilter: string = ''): string;
     function ValidarADNew(pUsuario: string; pSenha: string; const ARequestFilter: string = ''): string;
     procedure GravarLOGAD(usuario: string; status: string);
@@ -58,6 +59,7 @@ type
     procedure PersistirBanco(SQL: string; bd: Integer);
     function BaixarArquivo(arq: string; const ARequestFilter: string = ''): TJSONArray;
     function BaixarArquivo_Cache(arq: string; const ARequestFilter: string = ''): IDSRestCachedJSONArray;
+    procedure CompactarArquivo(arq: string);
     function AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; log: Boolean; const ARequestFilter: string = ''): string;
     procedure InsereEventosVisu(Arquivo: string; Diretorio: string; CodRel: string; CodUsuario: string; NomeGrupoUsuario: string; Grupo: Integer; SubGrupo: Integer; CodMens: Integer);
     procedure fazerumteste;
@@ -104,12 +106,14 @@ const
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'string')
   );
 
-  TServerMethods1_RetornarParametrosConn: array [0..7] of TDSRestParameterMetaData =
+  TServerMethods1_RetornarParametrosConn: array [0..9] of TDSRestParameterMetaData =
   (
     (Name: 'servidor'; Direction: 3; DBXType: 26; TypeName: 'string'),
     (Name: 'driverservidor'; Direction: 3; DBXType: 26; TypeName: 'string'),
     (Name: 'porta'; Direction: 3; DBXType: 26; TypeName: 'string'),
     (Name: 'banco'; Direction: 3; DBXType: 26; TypeName: 'string'),
+    (Name: 'bancoE'; Direction: 3; DBXType: 26; TypeName: 'string'),
+    (Name: 'bancoL'; Direction: 3; DBXType: 26; TypeName: 'string'),
     (Name: 'usuario'; Direction: 3; DBXType: 26; TypeName: 'string'),
     (Name: 'senha'; Direction: 3; DBXType: 26; TypeName: 'string'),
     (Name: 'NomeEstacao'; Direction: 3; DBXType: 26; TypeName: 'string'),
@@ -157,6 +161,11 @@ const
   (
     (Name: 'arq'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: ''; Direction: 4; DBXType: 26; TypeName: 'String')
+  );
+
+  TServerMethods1_CompactarArquivo: array [0..0] of TDSRestParameterMetaData =
+  (
+    (Name: 'arq'; Direction: 1; DBXType: 26; TypeName: 'string')
   );
 
   TServerMethods1_AbreRelatorio: array [0..11] of TDSRestParameterMetaData =
@@ -383,7 +392,7 @@ begin
   Result := FReverseStringCommand.Parameters[1].Value.GetWideString;
 end;
 
-function TServerMethods1Client.RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string): Boolean;
+function TServerMethods1Client.RetornarParametrosConn(var servidor: string; var driverservidor: string; var porta: string; var banco: string; var bancoE: string; var bancoL: string; var usuario: string; var senha: string; var NomeEstacao: string; const ARequestFilter: string): Boolean;
 begin
   if FRetornarParametrosConnCommand = nil then
   begin
@@ -396,18 +405,22 @@ begin
   FRetornarParametrosConnCommand.Parameters[1].Value.SetWideString(driverservidor);
   FRetornarParametrosConnCommand.Parameters[2].Value.SetWideString(porta);
   FRetornarParametrosConnCommand.Parameters[3].Value.SetWideString(banco);
-  FRetornarParametrosConnCommand.Parameters[4].Value.SetWideString(usuario);
-  FRetornarParametrosConnCommand.Parameters[5].Value.SetWideString(senha);
-  FRetornarParametrosConnCommand.Parameters[6].Value.SetWideString(NomeEstacao);
+  FRetornarParametrosConnCommand.Parameters[4].Value.SetWideString(bancoE);
+  FRetornarParametrosConnCommand.Parameters[5].Value.SetWideString(bancoL);
+  FRetornarParametrosConnCommand.Parameters[6].Value.SetWideString(usuario);
+  FRetornarParametrosConnCommand.Parameters[7].Value.SetWideString(senha);
+  FRetornarParametrosConnCommand.Parameters[8].Value.SetWideString(NomeEstacao);
   FRetornarParametrosConnCommand.Execute(ARequestFilter);
   servidor := FRetornarParametrosConnCommand.Parameters[0].Value.GetWideString;
   driverservidor := FRetornarParametrosConnCommand.Parameters[1].Value.GetWideString;
   porta := FRetornarParametrosConnCommand.Parameters[2].Value.GetWideString;
   banco := FRetornarParametrosConnCommand.Parameters[3].Value.GetWideString;
-  usuario := FRetornarParametrosConnCommand.Parameters[4].Value.GetWideString;
-  senha := FRetornarParametrosConnCommand.Parameters[5].Value.GetWideString;
-  NomeEstacao := FRetornarParametrosConnCommand.Parameters[6].Value.GetWideString;
-  Result := FRetornarParametrosConnCommand.Parameters[7].Value.GetBoolean;
+  bancoE := FRetornarParametrosConnCommand.Parameters[4].Value.GetWideString;
+  bancoL := FRetornarParametrosConnCommand.Parameters[5].Value.GetWideString;
+  usuario := FRetornarParametrosConnCommand.Parameters[6].Value.GetWideString;
+  senha := FRetornarParametrosConnCommand.Parameters[7].Value.GetWideString;
+  NomeEstacao := FRetornarParametrosConnCommand.Parameters[8].Value.GetWideString;
+  Result := FRetornarParametrosConnCommand.Parameters[9].Value.GetBoolean;
 end;
 
 function TServerMethods1Client.RetornarParametroAD(const ARequestFilter: string): string;
@@ -507,6 +520,19 @@ begin
   FBaixarArquivoCommand_Cache.Parameters[0].Value.SetWideString(arq);
   FBaixarArquivoCommand_Cache.ExecuteCache(ARequestFilter);
   Result := TDSRestCachedJSONArray.Create(FBaixarArquivoCommand_Cache.Parameters[1].Value.GetString);
+end;
+
+procedure TServerMethods1Client.CompactarArquivo(arq: string);
+begin
+  if FCompactarArquivoCommand = nil then
+  begin
+    FCompactarArquivoCommand := FConnection.CreateCommand;
+    FCompactarArquivoCommand.RequestType := 'GET';
+    FCompactarArquivoCommand.Text := 'TServerMethods1.CompactarArquivo';
+    FCompactarArquivoCommand.Prepare(TServerMethods1_CompactarArquivo);
+  end;
+  FCompactarArquivoCommand.Parameters[0].Value.SetWideString(arq);
+  FCompactarArquivoCommand.Execute;
 end;
 
 function TServerMethods1Client.AbreRelatorio(Usuario: WideString; Senha: WideString; ConnectionID: Integer; FullPath: WideString; QtdPaginas: Integer; StrCampos: WideString; Rel64: Byte; Rel133: Byte; CmprBrncs: Byte; tipo: Integer; log: Boolean; const ARequestFilter: string): string;
@@ -839,6 +865,7 @@ begin
   FPersistirBancoCommand.DisposeOf;
   FBaixarArquivoCommand.DisposeOf;
   FBaixarArquivoCommand_Cache.DisposeOf;
+  FCompactarArquivoCommand.DisposeOf;
   FAbreRelatorioCommand.DisposeOf;
   FInsereEventosVisuCommand.DisposeOf;
   FfazerumtesteCommand.DisposeOf;

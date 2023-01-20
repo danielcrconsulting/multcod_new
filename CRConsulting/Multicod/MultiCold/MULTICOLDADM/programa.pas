@@ -809,13 +809,14 @@ with repositorioDeDados do
     Query01.Prepared := true;
   try
     dbMulticold.BeginTrans;
-    for i := 1 to stringGrid1.RowCount-1 do
+//    for i := 1 to stringGrid1.RowCount-1 do
+    for i := 0 to stringGrid1.RowCount-2 do
       begin
       Query01.Parameters[0].Value := 'ADM';
-      Query01.Parameters[1].Value := trim(stringGrid1.Cells[1,i]);
-      Query01.Parameters[2].Value := trim(stringGrid1.Cells[2,i]);
-      Query01.Parameters[3].Value := trim(stringGrid1.Cells[3,i]);
-      Query01.Parameters[4].Value := trim(stringGrid1.Cells[4,i]);
+      Query01.Parameters[1].Value := StrToInt(trim(stringGrid1.Cells[1,i+1]));
+      Query01.Parameters[2].Value := StrToInt(trim(stringGrid1.Cells[2,i+1]));
+      Query01.Parameters[3].Value := trim(stringGrid1.Cells[3,i+1]);
+      Query01.Parameters[4].Value := trim(stringGrid1.Cells[4,i+1]);
       J := i;
       Query01.ExecSQL;
       end;

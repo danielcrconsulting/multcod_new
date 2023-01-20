@@ -10,11 +10,12 @@ uses
   MapaFilU in 'MapaFilU.pas' {MapaFil},
   ConfigProc in 'ConfigProc.pas' {Config},
   Sugeral in 'Sugeral.pas' {FormGeral},
-  SuTypGer in '..\Subrug\SuTypGer.pas',
-  Subrug in '..\Subrug\Subrug.pas',
-  Ssort in '..\Subrug\Ssort.pas',
-  Pilha in '..\CR CONSULTING\Pilha.pas',
-  Asort in 'Asort.pas' {SortMem};
+  Asort in 'Asort.pas' {SortMem},
+  Pilha in '..\..\Projects\CR CONSULTING\Pilha.pas',
+  SuTypGer in '..\..\Projects\Subrug\SuTypGer.pas',
+  Subrug in '..\..\Projects\Subrug\Subrug.pas',
+  Ssort in '..\..\Projects\Subrug\Ssort.pas',
+  UnitMessage in 'UnitMessage.pas' {Form1};
 
 {$R *.RES}
 {$M 16384, 268435456}
@@ -29,6 +30,7 @@ Begin
   Application.CreateForm(TConfig, Config);
   Application.CreateForm(TFormGeral, FormGeral);
   Application.CreateForm(TSortMem, SortMem);
+  Application.CreateForm(TForm1, Form1);
   FormIndex.Timer1.Enabled := False;
   If Config.ExecAutoEdit.Text = 'S' Then
     Begin

@@ -72,7 +72,7 @@ Const
 Type
 // Geral
 
-  TgIndiceNumGer = Record
+{  TgIndiceNumGer = Record
                    Valor,            // Cpf, Cgc, Cartão
                    Conta : Int64;
                    End;
@@ -82,15 +82,15 @@ Type
                    Ciclo : Byte;
                    PosIni : Int64;
                    Tam : Word;
-                   End;
+                   End;}
 
   TgIndiceNome = Record
                  Valor : TgArr040;
                  Conta : Int64;
                  End;
 
-  TgArqIndiceNumGer = File Of TgIndiceNumGer;
-  TgArqIndiceNumCnt = File Of TgIndiceNumCnt;
+//  TgArqIndiceNumGer = File Of TgIndiceNumGer;
+//  TgArqIndiceNumCnt = File Of TgIndiceNumCnt;
   TgArqIndiceNome = File Of TgIndiceNome;
 
 

@@ -19,7 +19,7 @@ object WebModule1: TWebModule1
     end>
   BeforeDispatch = WebModuleBeforeDispatch
   Height = 251
-  Width = 486
+  Width = 528
   PixelsPerInch = 96
   object DSHTTPWebDispatcher1: TDSHTTPWebDispatcher
     Filters = <>
@@ -79,6 +79,10 @@ object WebModule1: TWebModule1
       item
         MimeType = 'text/plain'
         Extensions = 'IAPX'
+      end
+      item
+        MimeType = 'application/x-zip-compressed'
+        Extensions = 'zip'
       end>
     BeforeDispatch = WebFileDispatcher1BeforeDispatch
     WebDirectories = <
@@ -92,6 +96,7 @@ object WebModule1: TWebModule1
       end>
     RootDirectory = '/extracoes'
     VirtualPath = '/'
+    DefaultFile = 'zip'
     Left = 56
     Top = 136
   end

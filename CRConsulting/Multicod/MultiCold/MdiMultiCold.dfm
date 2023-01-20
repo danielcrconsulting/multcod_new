@@ -1,7 +1,7 @@
 object FrameForm: TFrameForm
   Left = 246
   Top = 159
-  Caption = 'MultiCold - Viewer V10.0.4 - 08/09/2022'
+  Caption = 'MultiCold - Viewer V10.0.6 - 20/01/2023'
   ClientHeight = 161
   ClientWidth = 652
   Color = clWhite
@@ -433,19 +433,31 @@ object FrameForm: TFrameForm
     object Label2: TLabel
       Left = 384
       Top = 32
-      Width = 5
-      Height = 2
+      Width = 31
+      Height = 13
       Margins.Left = 2
       Margins.Top = 2
       Margins.Right = 2
       Margins.Bottom = 2
       Caption = 'Label2'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
     end
     object EditPes: TEdit
-      Left = 176
-      Top = 0
+      Left = 169
+      Top = 2
       Width = 49
-      Height = 10
+      Height = 21
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
       OnChange = EditPesChange
     end
@@ -462,10 +474,16 @@ object FrameForm: TFrameForm
       OnClick = VaiPesquisaClick
     end
     object EditPag: TEdit
-      Left = 336
-      Top = 0
+      Left = 330
+      Top = 3
       Width = 49
-      Height = 10
+      Height = 21
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 1
       OnChange = EditPagChange
     end
@@ -493,7 +511,7 @@ object FrameForm: TFrameForm
     end
     object ScrollBar1: TScrollBar
       Left = 224
-      Top = 16
+      Top = 3
       Width = 89
       Height = 16
       PageSize = 0
@@ -502,7 +520,7 @@ object FrameForm: TFrameForm
     end
     object ScrollBar2: TScrollBar
       Left = 384
-      Top = 16
+      Top = 3
       Width = 89
       Height = 16
       PageSize = 0

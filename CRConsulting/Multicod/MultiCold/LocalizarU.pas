@@ -104,6 +104,7 @@ function TLocalizar.convOperador(operador:AnsiString): Integer;
 Procedure TLocalizar.SairButClick(Sender: TObject);
 Begin
 Cancelar := True;
+FrameForm.SetFocus;
 Close;
 End;
 function TLocalizar.ValidarQtdePaginasSuportadasRemoto: Boolean;
@@ -179,11 +180,14 @@ end;
 Procedure TLocalizar.LocButClick(Sender: TObject);
 Var
   I,
-  J : Integer;
+  J, intLoc : Integer;
 //  Linha133,
 //  Linha : String;
   localizaNaPesquisa : boolean;
   //strlista : TStringList;
+  RetVal : String;
+  varPag : WideString;
+  horaini : TDateTime;
 
   Function SetaLinIni : Boolean;
   Begin
@@ -294,8 +298,10 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
   Else
     If Not SetaLinIni Then
       Exit;
+  I := PagIni;
+  //For I := PagIni To PagFin Do
+  while I <= PagFin  do
 
-  For I := PagIni To PagFin Do
     Begin
 
     If I <> PagIni Then // Mudou para outra página no loop do for, seta para pesquisar da linha inicial
@@ -306,6 +312,31 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
       End;
 
     PaginaAtuEdit.Text := IntToStr(I);
+    horaini := Now;
+    RetVal := formgeral.GetPaginaL(LogInRemotoForm.UsuEdit.Text,
+                                                 LogInRemotoForm.PassEdit.Text,
+                                                 ConnectionID,
+                                                 Filename,
+                                                 I,
+                                                 EEE,
+                                                 varPag,
+                                                 LocalizarEdit.Text,
+                                                 rel133,
+                                                 CmprBrncs,
+                                                 LinIniEdit.Text, LinFinEdit.Text, ColunaEdit.Text,
+                                                 PagIniEdit.Text,
+                                                 IntToStr(PagFin) {PagFinEdit.Text});
+
+    intLoc := StrToInt(RetVal);
+    If intLoc = 0 Then
+        Begin
+        messageDlg('Fim da pesquisa.',mtInformation,[mbOk],0);
+        Self.SetFocus;
+        Exit;
+        End;
+    i := intLoc;
+
+    //ShowMessage(formatDateTime('hh:mm:ss',now - horaini));
 
     if localizaNaPesquisa then
       begin
@@ -316,6 +347,7 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
       If IoResult <> 0 Then
         Begin
         messageDlg('Fim da pesquisa.',mtInformation,[mbOk],0);
+        Self.SetFocus;
         Exit;
         End;
       GetPaginaDoRel(TEditForm(FrameForm.ActiveMdiChild).RegPsq.Pagina, False,
@@ -363,6 +395,7 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
             If IoResult <> 0 Then
               Begin
               messageDlg('Fim da pesquisa.',mtInformation,[mbOk],0);
+              Self.SetFocus;
               Exit;
               End;
             FrameForm.ScrollBar1.Position := TEditForm(FrameForm.ActiveMdiChild).RegPsq.PosQuery;
@@ -374,7 +407,7 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
             FrameForm.Scrolla2;
             end;
           Localizar.Close;
-//          PagIni := I+1;
+          PagIni := I+1;
           Exit;
           End;
         End
@@ -395,6 +428,7 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
             If IoResult <> 0 Then
               Begin
               messageDlg('Fim da pesquisa.',mtInformation,[mbOk],0);
+              Self.SetFocus;
               exit;
               End;
             FrameForm.ScrollBar1.Position := TEditForm(FrameForm.ActiveMdiChild).RegPsq.PosQuery;
@@ -410,15 +444,17 @@ With TEditForm(FrameForm.ActiveMdiChild) Do
           End;
         End;
       End;
-    If Cancelar Then
-      Break;
+    //If Cancelar Then
+    //  Break;
     End;
     //end;
+    inc(I);
   End;
 PagIni := I+1;
 If PagIni > PagFin Then
   Begin
   ShowMessage('Fim da pesquisa...');
+  Self.SetFocus;
   AlterouValores := True;
   End;
 End;

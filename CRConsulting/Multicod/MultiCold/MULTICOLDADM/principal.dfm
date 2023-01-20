@@ -1,7 +1,7 @@
 object fPrincipal: TfPrincipal
   Left = 388
   Top = 184
-  Caption = 'Multicold ADM - Vers'#227'o 3.1.0.14 (15/04/2021)'
+  Caption = 'Multicold ADM - Vers'#227'o 3.1.0.15 (25/10/2022)'
   ClientHeight = 431
   ClientWidth = 632
   Color = clBtnFace
@@ -11,13 +11,12 @@ object fPrincipal: TfPrincipal
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poDesktopCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object StatusBar1: TStatusBar
     Left = 0
     Top = 412
@@ -27,7 +26,7 @@ object fPrincipal: TfPrincipal
   end
   object MainMenu1: TMainMenu
     Left = 80
-    Top = 368
+    Top = 336
     object Arquivo1: TMenuItem
       Caption = '&Arquivo'
       object Extrator1: TMenuItem

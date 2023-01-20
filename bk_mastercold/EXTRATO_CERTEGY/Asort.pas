@@ -18,20 +18,20 @@ Type
 
   TamArrCpfCgc,
   TamArrCartao : Integer;
-  ArIndNumGer : Array Of TgIndiceNumGer;
-  TNumGer : TgIndiceNumGer;
+//  ArIndNumGer : Array Of TgIndiceNumGer;
+//  TNumGer : TgIndiceNumGer;
 
-  ArIndNumCnt : Array Of TgIndiceNumCnt;
-  TamArrNumCnt : Integer;
-  TNumCnt : TgIndiceNumCnt;
+//  ArIndNumCnt : Array Of TgIndiceNumCnt;
+//  TamArrNumCnt : Integer;
+//  TNumCnt : TgIndiceNumCnt;
 
   ArIndNome : Array Of TgIndiceNome;
   TamArrNome : Integer;
   TNome : TgIndiceNome;
 
   Procedure SortEmMemoria;
-  Procedure SortEmMemoriaNumGer;
-  Procedure SortEmMemoriaNumCnt;
+//  Procedure SortEmMemoriaNumGer;
+//  Procedure SortEmMemoriaNumCnt;
   Procedure SortEmMemoriaNome;
 
 
@@ -118,7 +118,7 @@ FormIndex.RichEdit1.Lines[FormIndex.RichEdit1.Lines.Count-1] := 'Ordenando... '+
 Application.ProcessMessages;
 End;
 
-Procedure TSortMem.SortEmMemoriaNumGer;
+{Procedure TSortMem.SortEmMemoriaNumGer;
 Var
   CrL, A : Int64;
 
@@ -230,7 +230,7 @@ Randomize;
 QuickSort(Low(ArIndNumCnt), High(ArIndNumCnt));
 FormIndex.RichEdit1.Lines[FormIndex.RichEdit1.Lines.Count-1] := 'Ordenando... '+IntToStr(Crl)+ ' R '+IntToStr(A);
 Application.ProcessMessages;
-End;
+End;      }
 
 Procedure TSortMem.SortEmMemoriaNome;
 Var

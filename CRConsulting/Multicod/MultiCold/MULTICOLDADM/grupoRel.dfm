@@ -22,8 +22,6 @@ object fGrupoRel: TfGrupoRel
     Height = 432
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 623
-    ExplicitHeight = 291
     object Label2: TLabel
       Left = 10
       Top = 10
@@ -200,8 +198,8 @@ object fGrupoRel: TfGrupoRel
       TabOrder = 4
     end
     object ListBox2: TListBox
-      Left = 411
-      Top = 148
+      Left = 413
+      Top = 150
       Width = 357
       Height = 205
       Margins.Left = 4
@@ -213,6 +211,13 @@ object fGrupoRel: TfGrupoRel
       Sorted = True
       TabOrder = 5
     end
+    object Edit1: TEdit
+      Left = 10
+      Top = 384
+      Width = 760
+      Height = 22
+      TabOrder = 6
+    end
   end
   object Panel2: TPanel
     Left = 0
@@ -221,8 +226,6 @@ object fGrupoRel: TfGrupoRel
     Height = 41
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 291
-    ExplicitWidth = 623
     object SpeedButton2: TSpeedButton
       Left = 738
       Top = 10

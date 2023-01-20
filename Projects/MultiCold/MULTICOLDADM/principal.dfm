@@ -11,13 +11,12 @@ object fPrincipal: TfPrincipal
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poDesktopCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object StatusBar1: TStatusBar
     Left = 0
     Top = 412
@@ -27,7 +26,7 @@ object fPrincipal: TfPrincipal
   end
   object MainMenu1: TMainMenu
     Left = 80
-    Top = 368
+    Top = 304
     object Arquivo1: TMenuItem
       Caption = '&Arquivo'
       object Extrator1: TMenuItem

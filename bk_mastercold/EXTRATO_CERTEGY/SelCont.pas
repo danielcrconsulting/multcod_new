@@ -226,27 +226,34 @@ While L <= U Do
   If (IoResult = 0) Then
     If NConta = IndiceConta.Valor Then
       Begin
+//      ShowMessage('Achou, indo para o primeiro ' + IntToStr(NConta));
       Repeat
         Try
           Seek(ArqIndiceContaCartao,FilePos(ArqIndiceContaCartao)-2);
           Read(ArqIndiceContaCartao,IndiceConta);
+//          ShowMessage('Seek Pos ' + IntToStr(IndiceConta.Valor) + ' ' + IntToStr(IndiceConta.PosIni));
         Except
           Seek(ArqIndiceContaCartao,0);
           Break;
         End; // Try
       Until (NConta <> IndiceConta.Valor);
       Posic := FilePos(ArqIndiceContaCartao); // Aponta Para o Primeiro da lista
+//      ShowMessage('Deixar a lista lida ' + IntToStr(Posic));
       Repeat
         Try
           Read(ArqIndiceContaCartao,IndiceConta);
+//          ShowMessage('Leu ' + IntToStr(IndiceConta.Valor) + ' ' + IntToStr(IndiceConta.PosIni));
         Except
+//          ShowMessage('Pou');
           Break;
           End; // Try
         If NConta = IndiceConta.Valor Then
           Inc(Qtd);
       Until NConta <> IndiceConta.Valor;
+//      ShowMessage('Indo para o primeiro ' + IntToStr(Posic));
       Seek(ArqIndiceContaCartao,Posic);
       Read(ArqIndiceContaCartao,IndiceConta);
+//      ShowMessage('Deixou carregado ' + IntToStr(IndiceConta.Valor) + ' ' + IntToStr(IndiceConta.PosIni));
       Result := True;
       Exit
       End
@@ -262,10 +269,11 @@ While L <= U Do
     End;
   End;
 End;
-
+                          // Com TFileStream para passar dos 2gb 19/10/2022 Romero
 Function TSeleCons.PesquisaCarregaContaCartao(NConta : Int64; Narq : AnsiString) : AnsiString;
 Var
-  ArqContaCartao : File;
+//  ArqContaCartao : File;
+  ArqContaCartao : TFileStream;
   Qtd,
   Lidos : Integer;
   Teste,
@@ -276,15 +284,22 @@ Var
 
 Begin
 Result := '';
+//ShowMessage('Pesquisa Conta Cartao:' + IntToStr(NConta));
 If PesquisaContaCartao(NConta, ArqIndiceContaCartao, Qtd) Then
   Begin
-  AssignFile(ArqContaCartao,NArq);
-  Reset(ArqContaCartao,1);
+//  AssignFile(ArqContaCartao,NArq);
+//  Reset(ArqContaCartao,1);
+  ArqContaCartao := TFileStream.Create(NArq, fmOpenRead or fmShareDenyNone);
+  //ShowMessage('O Arquivo Conta Cartao eh: ' + NArq);
   Repeat
-    Seek(ArqContaCartao,IndiceConta.PosIni);
+  //  ShowMessage('Seek na posicao: ' + IntToStr(IndiceConta.PosIni));
+//    Seek(ArqContaCartao,IndiceConta.PosIni);
+    ArqContaCartao.Seek(IndiceConta.PosIni, soFromBeginning);
+  //  ShowMessage('Posicionou ');
 
     ReallocMem(BufCmp,IndiceConta.Tam);                   { Allocates only the space needed }
-    BlockRead(ArqContaCartao,BufCmp^,IndiceConta.Tam,Lidos);   { Read only the buffer To decompress }
+//    BlockRead(ArqContaCartao,BufCmp^,IndiceConta.Tam,Lidos);   { Read only the buffer To decompress }
+    ArqContaCartao.Read(BufCmp^,IndiceConta.Tam);   { Read only the buffer To decompress }
     ReallocMem(BufI,0);
     Try                         { DeAllocates }
       ZDecompress(BufCmp,IndiceConta.Tam,BufI,Lidos);
@@ -338,7 +353,8 @@ If PesquisaContaCartao(NConta, ArqIndiceContaCartao, Qtd) Then
   Until IndiceConta.Valor <> NConta;
   If Length(Result) <> 0 Then
     Result := Copy(Result,1,Length(Result)-2);
-  CloseFile(ArqContaCartao);
+//  CloseFile(ArqContaCartao);
+  ArqContaCartao.Free;
   End;
 TestarFlag := True;  
 End;
@@ -498,7 +514,9 @@ If EditCpf.Text <> '' Then
   DadosDeConta.Clear;
   Reset(ArqIndiceContaCartao);
   NumCpf := StrToInt64(EditCpf.Text);
+ // ShowMessage('Abriu arq, pesquisando: ' + EditCpf.Text);
   DadosDeConta.Text := PesquisaCarregaContaCartao(NumCpf, NArqCont);
+ // ShowMessage('Pesquisou');
   CloseFile(ArqIndiceContaCartao);
   If DadosDeConta.Count = 0 Then
     Begin

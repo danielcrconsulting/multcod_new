@@ -10,11 +10,10 @@ object fConfiguracao: TfConfiguracao
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 14
   object Panel2: TPanel
     Left = 0
     Top = 372
@@ -107,7 +106,7 @@ object fConfiguracao: TfConfiguracao
     Top = 0
     Width = 455
     Height = 372
-    ActivePage = TabSheet4
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 1
     object TabSheet1: TTabSheet
@@ -115,24 +114,24 @@ object fConfiguracao: TfConfiguracao
       object Label1: TLabel
         Left = 8
         Top = 16
-        Width = 94
-        Height = 13
+        Width = 97
+        Height = 14
         Caption = '&Programa indexador'
         FocusControl = Edit1
       end
       object Label2: TLabel
         Left = 8
         Top = 64
-        Width = 82
-        Height = 13
+        Width = 86
+        Height = 14
         Caption = 'P&rograma filtrador'
         FocusControl = Edit2
       end
       object Label3: TLabel
         Left = 8
         Top = 112
-        Width = 176
-        Height = 13
+        Width = 174
+        Height = 14
         Caption = '&Diret'#243'rio de trabalho (at'#233' ..\ORIGEM)'
         FocusControl = Edit3
       end
@@ -148,21 +147,21 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 32
         Width = 201
-        Height = 21
+        Height = 22
         TabOrder = 0
       end
       object Edit2: TEdit
         Left = 8
         Top = 80
         Width = 201
-        Height = 21
+        Height = 22
         TabOrder = 1
       end
       object Edit3: TEdit
         Left = 8
         Top = 128
         Width = 361
-        Height = 21
+        Height = 22
         TabOrder = 2
       end
     end
@@ -172,8 +171,8 @@ object fConfiguracao: TfConfiguracao
       object Label4: TLabel
         Left = 8
         Top = 16
-        Width = 93
-        Height = 13
+        Width = 95
+        Height = 14
         Caption = 'Diret'#243'rio de &entrada'
         FocusControl = Edit4
       end
@@ -189,7 +188,7 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 64
         Width = 84
-        Height = 13
+        Height = 14
         Caption = 'Diret'#243'rio de &sa'#237'da'
         FocusControl = Edit5
       end
@@ -205,14 +204,14 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 32
         Width = 361
-        Height = 21
+        Height = 22
         TabOrder = 0
       end
       object Edit5: TEdit
         Left = 8
         Top = 80
         Width = 361
-        Height = 21
+        Height = 22
         TabOrder = 1
       end
     end
@@ -223,7 +222,7 @@ object fConfiguracao: TfConfiguracao
         Left = 0
         Top = 0
         Width = 447
-        Height = 344
+        Height = 343
         Align = alClient
         DefaultColWidth = 125
         RowCount = 257
@@ -504,7 +503,7 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 32
         Width = 93
-        Height = 13
+        Height = 14
         Caption = 'Diret'#243'rio do b&ackup'
         Enabled = False
         FocusControl = Edit6
@@ -521,8 +520,8 @@ object fConfiguracao: TfConfiguracao
       object Label7: TLabel
         Left = 8
         Top = 128
-        Width = 192
-        Height = 13
+        Width = 200
+        Height = 14
         Caption = '&Intervalo entre as execu'#231#245'es (segundos)'
         Enabled = False
         FocusControl = Edit7
@@ -531,7 +530,7 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 200
         Width = 285
-        Height = 13
+        Height = 14
         Caption = '&Formato da extens'#227'o autom'#225'tica (ex.: YYMMDD_HHMMSS)'
         Enabled = False
         FocusControl = Edit8
@@ -539,8 +538,8 @@ object fConfiguracao: TfConfiguracao
       object Label9: TLabel
         Left = 8
         Top = 272
-        Width = 152
-        Height = 13
+        Width = 154
+        Height = 14
         Caption = 'Decimal do caractere de &quebra'
         Enabled = False
         FocusControl = Edit9
@@ -548,8 +547,8 @@ object fConfiguracao: TfConfiguracao
       object Label10: TLabel
         Left = 192
         Top = 272
-        Width = 147
-        Height = 13
+        Width = 150
+        Height = 14
         Caption = 'Coluna do caractere de q&uebra'
         Enabled = False
         FocusControl = Edit10
@@ -567,7 +566,7 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 48
         Width = 361
-        Height = 21
+        Height = 22
         Enabled = False
         TabOrder = 1
       end
@@ -593,7 +592,7 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 144
         Width = 361
-        Height = 21
+        Height = 22
         Enabled = False
         TabOrder = 4
       end
@@ -610,7 +609,7 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 216
         Width = 361
-        Height = 21
+        Height = 22
         Enabled = False
         TabOrder = 6
       end
@@ -627,7 +626,7 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 288
         Width = 177
-        Height = 21
+        Height = 22
         Enabled = False
         TabOrder = 8
       end
@@ -635,7 +634,7 @@ object fConfiguracao: TfConfiguracao
         Left = 192
         Top = 288
         Width = 177
-        Height = 21
+        Height = 22
         Enabled = False
         TabOrder = 9
       end
@@ -653,31 +652,27 @@ object fConfiguracao: TfConfiguracao
     object TabSheet5: TTabSheet
       Caption = 'Nomes'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label11: TLabel
         Left = 8
         Top = 64
-        Width = 37
-        Height = 13
+        Width = 36
+        Height = 14
         Caption = '&2'#186' n'#237'vel'
         FocusControl = Edit11
       end
       object Label12: TLabel
         Left = 8
         Top = 112
-        Width = 37
-        Height = 13
+        Width = 36
+        Height = 14
         Caption = '&3'#186' n'#237'vel'
         FocusControl = Edit12
       end
       object Label17: TLabel
         Left = 8
         Top = 16
-        Width = 37
-        Height = 13
+        Width = 36
+        Height = 14
         Caption = '&1'#186' n'#237'vel'
         FocusControl = Edit17
       end
@@ -685,21 +680,21 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 80
         Width = 201
-        Height = 21
+        Height = 22
         TabOrder = 1
       end
       object Edit12: TEdit
         Left = 8
         Top = 128
         Width = 201
-        Height = 21
+        Height = 22
         TabOrder = 2
       end
       object Edit17: TEdit
         Left = 8
         Top = 32
         Width = 201
-        Height = 21
+        Height = 22
         TabOrder = 0
       end
     end
@@ -709,8 +704,8 @@ object fConfiguracao: TfConfiguracao
       object Label13: TLabel
         Left = 8
         Top = 8
-        Width = 93
-        Height = 13
+        Width = 95
+        Height = 14
         Caption = 'Diret'#243'rio de &entrada'
         FocusControl = Edit13
       end
@@ -726,7 +721,7 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 56
         Width = 84
-        Height = 13
+        Height = 14
         Caption = 'Diret'#243'rio de &sa'#237'da'
         FocusControl = Edit14
       end
@@ -741,44 +736,40 @@ object fConfiguracao: TfConfiguracao
       object Label16: TLabel
         Left = 8
         Top = 104
-        Width = 146
-        Height = 13
+        Width = 144
+        Height = 14
         Caption = '&Data do corte (DD/MM/AAAA)'
       end
       object Edit13: TEdit
         Left = 8
         Top = 24
         Width = 361
-        Height = 21
+        Height = 22
         TabOrder = 0
       end
       object Edit14: TEdit
         Left = 8
         Top = 72
         Width = 361
-        Height = 21
+        Height = 22
         TabOrder = 1
       end
       object Edit16: TEdit
         Left = 8
         Top = 120
         Width = 121
-        Height = 21
+        Height = 22
         TabOrder = 2
       end
     end
     object TabSheet7: TTabSheet
       Caption = 'CD'
       ImageIndex = 6
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label15: TLabel
         Left = 8
         Top = 16
-        Width = 102
-        Height = 13
+        Width = 104
+        Height = 14
         Caption = 'Diret'#243'rio de &grava'#231#227'o'
         FocusControl = Edit15
       end
@@ -794,7 +785,7 @@ object fConfiguracao: TfConfiguracao
         Left = 8
         Top = 32
         Width = 361
-        Height = 21
+        Height = 22
         TabOrder = 0
       end
     end

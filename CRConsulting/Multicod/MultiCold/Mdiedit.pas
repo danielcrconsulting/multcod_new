@@ -373,6 +373,14 @@ If RelRemoto Then
                                                  EEE,
                                                  varPag)
     else
+      RetVal := formgeral.GetPagina(LogInRemotoForm.UsuEdit.Text,
+                                                 LogInRemotoForm.PassEdit.Text,
+                                                 ConnectionID,
+                                                 Filename,
+                                                 Pagina,
+                                                 EEE,
+                                                 varPag);
+    {
        RetVal := formgeral.GetPaginaL(LogInRemotoForm.UsuEdit.Text,
                                                  LogInRemotoForm.PassEdit.Text,
                                                  ConnectionID,
@@ -384,6 +392,7 @@ If RelRemoto Then
                                                  rel133,
                                                  CmprBrncs,
                                                  linini, linfim, coluna, pagini, pagfim);
+    }
     Retorno := TStringList.Create;
     Retorno.Delimiter := '|';
     Retorno.DelimitedText := RetVal;

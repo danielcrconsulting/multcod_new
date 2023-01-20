@@ -44,22 +44,22 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
       867
       61)
     object LblStatus: TLabel
-      Left = 12
-      Top = 24
-      Width = 5
-      Height = 19
-      Alignment = taCenter
+      Left = 672
+      Top = 36
+      Width = 66
+      Height = 16
       Anchors = [akLeft, akTop, akRight, akBottom]
+      Caption = 'Baixar arq'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -16
+      Font.Height = -13
       Font.Name = 'Tahoma'
-      Font.Style = []
+      Font.Style = [fsBold]
       ParentFont = False
     end
     object BtnFechar: TButton
-      Left = 767
-      Top = 16
+      Left = 780
+      Top = 6
       Width = 75
       Height = 25
       Anchors = [akRight, akBottom]
@@ -70,7 +70,7 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
     object ProgressBar1: TProgressBar
       Left = 1
       Top = 1
-      Width = 760
+      Width = 665
       Height = 59
       Align = alLeft
       TabOrder = 1
@@ -292,5 +292,28 @@ object FrmConsultaExportacoesRemoto: TFrmConsultaExportacoesRemoto
     Filter = '*.txt|*.txt'
     Left = 680
     Top = 192
+  end
+  object IdHTTP1: TIdHTTP
+    OnWork = IdHTTP1Work
+    OnWorkBegin = IdHTTP1WorkBegin
+    OnWorkEnd = IdHTTP1WorkEnd
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
+    Request.ContentLength = -1
+    Request.ContentRangeEnd = -1
+    Request.ContentRangeStart = -1
+    Request.ContentRangeInstanceLength = -1
+    Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    Request.BasicAuthentication = False
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    Request.Ranges.Units = 'bytes'
+    Request.Ranges = <>
+    HTTPOptions = [hoForceEncodeParams]
+    Left = 400
+    Top = 56
+  end
+  object IdAntiFreeze1: TIdAntiFreeze
+    Left = 472
+    Top = 56
   end
 end

@@ -138,6 +138,7 @@ Type
                               buscaSequencial: TBuscaSequencialDTO_M) : TResultadoBuscaSequencialDTO;
     function ExcluirArquivos(strid: String): Boolean;
     function RetornarArqTemplate(id: Integer): String;
+    procedure CompactarArquivo(arq: String);
   End;
 
 
@@ -763,6 +764,11 @@ begin
     DataSet.FieldByName('Tipo').AsString := 'Descompactador';
 end;
 
+procedure TFormGeral.CompactarArquivo(arq: String);
+begin
+  OMetodosServer.ServerMethodsPrincipalClient.CompactarArquivo(arq);
+end;
+
 procedure TFormGeral.ConfigurarConnect;
 var
   {OMetodosServer : clsMetodosServer;}
@@ -900,8 +906,11 @@ Begin
         //senhaAD := InputBox('Login AD',#31 + 'Usuário: ' + usuarioLogado + ' Digite a Senha para autencição no AD:','');
         if (not ValidarADNew(vfad.adusuario,vfad.adsenha)) or (Trim(vfad.adusuario) = '') or (Trim(vfad.adsenha) = '') then
         begin
-          ShowMessage('Usuário da rede não autorizado');
-          OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(vfad.adusuario,'FALHA');
+          if not vfad.cancelou then
+          begin
+            ShowMessage('Usuário da rede não autorizado');
+            OMetodosServer.ServerMethodsPrincipalClient.GravarLogAD(vfad.adusuario,'FALHA');
+          end;
           Application.Terminate;
           FreeAndNil(fad);
           Close;
